@@ -1,0 +1,16 @@
+{
+    "name":  "braver-app",
+    "version":  "1.0.0",
+    "private":  true,
+    "description":  "BRAVER — trier ses inquiétudes en trois zones. Not fearless. Just braver.",
+    "type":  "module",
+    "scripts":  {
+                    "dev":  "node dev-server.mjs"
+                },
+    "engines":  {
+                    "node":  "\u003e=18"
+                },
+    "dependencies":  {
+                         "@anthropic-ai/sdk":  "^1.11.0"
+                     }
+}

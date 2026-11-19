@@ -1,0 +1,11 @@
+{
+  "name": "BRAVER — Not fearless. Just braver.",
+  "short_name": "BRAVER",
+  "description": "Trier ses inquiétudes en trois zones : questionner, agir, accepter. En français et en darija.",
+  "start_url": "./",
+  "display": "standalone",
+  "background_color": "#FBF7F1",
+  "theme_color": "#2B1B4A",
+  "lang": "fr",
+  "icons": [{ "src": "assets/icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any" }]
+}
