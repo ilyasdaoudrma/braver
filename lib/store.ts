@@ -129,12 +129,14 @@ export function createStore(getBackends: () => StorageBackends = browserBackends
   const active = (): KeyValueStorage | null => (consent() === "device" ? io().local : io().session);
   const other = (): KeyValueStorage | null => (consent() === "device" ? io().session : io().local);
 
-  const write = (storage: KeyValueStorage | null, key: StoreKey, value: unknown): void => {
-    if (!storage) return;
+  /** True when the value is safely stored. On failure (quota, blocked) the value stays in memory only. */
+  const write = (storage: KeyValueStorage | null, key: StoreKey, value: unknown): boolean => {
+    if (!storage) return false;
     try {
       storage.setItem(STORE_PREFIX + key, JSON.stringify(value));
+      return true;
     } catch {
-      /* quota or blocked: the value stays in memory */
+      return false;
     }
   };
   const remove = (storage: KeyValueStorage | null, key: StoreKey): void => {
@@ -152,10 +154,26 @@ export function createStore(getBackends: () => StorageBackends = browserBackends
     return value;
   }
 
+  /** Writes one key to the active storage; the copy in the other storage is removed only once the write succeeded. */
+  const persist = (key: StoreKey): void => {
+    if (write(active(), key, cache.get(key))) remove(other(), key);
+  };
+
+  /** Applies new settings; when consent changes, every key moves to the matching storage. */
+  function applySettings(next: Settings): void {
+    const consentChanged = next.consent !== consent();
+    const snapshot = consentChanged ? STORE_KEYS.map((k) => [k, get(k)] as const) : [];
+    snapshot.forEach(([k, v]) => cache.set(k, v));
+    cache.set("settings", next);
+    for (const k of consentChanged ? STORE_KEYS : (["settings"] as StoreKey[])) persist(k);
+  }
+
   function set<K extends StoreKey>(key: K, value: StoreData[K]): void {
-    cache.set(key, value);
-    write(active(), key, value);
-    remove(other(), key);
+    if (key === "settings") applySettings(value as Settings);
+    else {
+      cache.set(key, value);
+      persist(key);
+    }
     emit();
   }
 
@@ -164,15 +182,7 @@ export function createStore(getBackends: () => StorageBackends = browserBackends
     set,
     update: (key, fn) => set(key, fn(get(key))),
     setConsent(next) {
-      const snapshot = new Map(STORE_KEYS.map((k) => [k, get(k)] as const));
-      snapshot.set("settings", { ...(snapshot.get("settings") as Settings), consent: next });
-      cache.clear();
-      snapshot.forEach((v, k) => cache.set(k, v));
-      for (const k of STORE_KEYS) {
-        write(active(), k, cache.get(k));
-        remove(other(), k);
-      }
-      emit();
+      set("settings", { ...get("settings"), consent: next });
     },
     wipe() {
       const { local, session } = io();

@@ -1,13 +1,16 @@
 // Output guards: every text that comes from the LLM goes through here before it is shown.
 // Rule (CLAUDE.md): no automatic reassurance, no diagnosis words, no irony.
 
-/** Sentences containing one of these are removed. */
+/** Sentences containing one of these are removed. Text is tested after apostrophes are unified to "'". */
 const FORBIDDEN: readonly RegExp[] = [
   /tu vas (y )?(r[ée]ussir|y arriver)/i,
   /ne t'?\s?inqui[eè]te/i,
   /t'?inqui[eè]te (pas|surtout pas)/i,
+  /(^|[.!?…,;]\s*)t'\s?inqui[eè]te\b/i, // "T'inquiète, …" at the start of a sentence (not "ce qui t'inquiète")
   /tout (ira|va aller) bien/i,
   /tout va bien/i,
+  /[çc]a va aller/i,
+  /pas de panique/i,
   /tu exag[eè]res/i,
   /tu dramatises/i,
   /arr[eê]te de dramatiser/i,
@@ -24,11 +27,16 @@ const FORBIDDEN: readonly RegExp[] = [
 /** Keys an LLM object may try to sneak in; they are dropped. */
 const IRONY_KEYS = new Set(["ironie", "irony", "ironieLocale", "joke", "blague"]);
 
+const unifyQuotes = (s: string): string => s.replace(/[’‘`´]/g, "'");
+
 export function hasForbidden(text: unknown): boolean {
-  return typeof text === "string" && FORBIDDEN.some((r) => r.test(text));
+  if (typeof text !== "string") return false;
+  const t = unifyQuotes(text);
+  return FORBIDDEN.some((r) => r.test(t));
 }
 
-const SENTENCE = /[^.!?…\n]+[.!?…]*\s*/g;
+/** Sentence = text up to . ! ? … or Arabic ؟ ۔ (inclusive), or a line break. */
+const SENTENCE = /[^.!?…؟۔\n]+[.!?…؟۔]*\s*/g;
 
 export interface GuardResult {
   text: string;
@@ -48,9 +56,33 @@ export function guardText(text: unknown, fallback: string): GuardResult {
   return { text: kept || fallback, corrected: true };
 }
 
+function guardValue(value: unknown, fallback: string, path: string, corrections: string[]): unknown {
+  if (typeof value === "string") {
+    const g = guardText(value, fallback);
+    if (g.corrected) corrections.push(`réassurance retirée (${path})`);
+    return g.text;
+  }
+  if (Array.isArray(value)) {
+    return value
+      .map((v, i) => guardValue(v, "", `${path}[${i}]`, corrections))
+      .filter((v) => v !== "");
+  }
+  if (value && typeof value === "object") {
+    const entries = Object.entries(value as Record<string, unknown>).flatMap(([k, v]): [string, unknown][] => {
+      if (IRONY_KEYS.has(k)) {
+        corrections.push(`ironie retirée (${path ? `${path}.` : ""}${k})`);
+        return [];
+      }
+      return [[k, guardValue(v, "", path ? `${path}.${k}` : k, corrections)]];
+    });
+    return Object.fromEntries(entries);
+  }
+  return value;
+}
+
 /**
- * Returns a copy of an LLM object with irony keys dropped and every string field guarded.
- * `fallbacks[field]` is used when a field ends up empty; fields without a fallback become "".
+ * Returns a copy of an LLM object with irony keys dropped and every string guarded, at any depth.
+ * Top-level `fallbacks[field]` is used when a field ends up empty; other strings become "" (and are removed from arrays).
  */
 export function guardObject<T extends Record<string, unknown>>(
   obj: T,
@@ -62,11 +94,7 @@ export function guardObject<T extends Record<string, unknown>>(
       corrections.push(`ironie retirée (${key})`);
       return [];
     }
-    if (typeof v !== "string") return [[key, v]];
-    const fb = fallbacks[key as keyof T] ?? "";
-    const g = guardText(v, fb);
-    if (g.corrected) corrections.push(`réassurance retirée (${key})`);
-    return [[key, g.text]];
+    return [[key, guardValue(v, fallbacks[key as keyof T] ?? "", key, corrections)]];
   });
   return { value: Object.fromEntries(entries) as T, corrections };
 }

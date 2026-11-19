@@ -1,5 +1,6 @@
 // Server-only Groq client (Route Handlers). Never import this from a "use client" file:
 // GROQ_API_KEY must stay on the server. Shared file: change it in a small "shared:" PR.
+import "server-only";
 import { z } from "zod";
 
 export const GROQ_URL = "https://api.groq.com/openai/v1/chat/completions";

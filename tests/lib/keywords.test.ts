@@ -12,6 +12,12 @@ describe("checkKeywords", () => {
     "wallah ma b9it baghi n3ich, kanfker n9tel rasi had liyamat",
     "j'ai recommencé a me couper le bras hier soir",
     "bba drebni b smta lyoum",
+    "bghit nmoot",
+    "baghi nmwt",
+    "bghit ntkhlas mn l7ayat",
+    "je me suis coupee les poignets hier",
+    "je pense a me jeter du pont",
+    "mon pere me bat quand il rentre",
   ])("flags danger: %s", (text) => {
     expect(checkKeywords(text).level).toBe("danger");
   });
@@ -22,6 +28,16 @@ describe("checkKeywords", () => {
       expect(checkKeywords(text).level).toBe("doubt");
     },
   );
+
+  it.each([
+    "arrête de me couper la parole",
+    "je dois me battre pour mon diplôme",
+    "ils vont me jeter dehors",
+    "ça me frappe à chaque fois",
+    "kanfkr f l mawt",
+  ])("sends ambiguous phrases to the model instead of alerting: %s", (text) => {
+    expect(checkKeywords(text).level).toBe("doubt");
+  });
 
   it.each(["ma bqitch nchouf l9ima dyal rasi", "rah mab9itch nchouf l9ima dyal rasi", "je ne vaux rien"])(
     "flags hopelessness for a gentle check-in: %s",

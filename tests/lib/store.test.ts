@@ -64,6 +64,27 @@ describe("store", () => {
     expect(s.get("settings")).toEqual({ ...defaults().settings, tone: "direct" });
   });
 
+  it("migrates every key when consent changes through settings", () => {
+    const local = memory();
+    const session = memory();
+    const s = createStore(() => ({ local, session }));
+    s.set("onboarded", true);
+    s.update("settings", (st) => ({ ...st, consent: "device" }));
+    expect(local.data.get(STORE_PREFIX + "onboarded")).toBe("true");
+    expect(session.data.size).toBe(0);
+    expect(createStore(() => ({ local, session: memory() })).get("onboarded")).toBe(true);
+  });
+
+  it("keeps the old copy when writing to the new storage fails", () => {
+    const session = memory();
+    const full: KeyValueStorage = { getItem: () => null, setItem: () => { throw new Error("QuotaExceeded"); }, removeItem: () => undefined };
+    const s = createStore(() => ({ local: full, session }));
+    s.set("onboarded", true);
+    s.setConsent("device");
+    expect(session.data.get(STORE_PREFIX + "onboarded")).toBe("true");
+    expect(s.get("onboarded")).toBe(true);
+  });
+
   it("keeps working in memory when storage is unavailable", () => {
     const s = createStore(() => ({ local: null, session: null }));
     s.set("onboarded", true);

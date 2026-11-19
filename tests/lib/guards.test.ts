@@ -9,8 +9,24 @@ describe("guards", () => {
     "Tu exagères un peu.",
     "Ma tkhafch, kolchi ghadi ydouz mzyan.",
     "ما تخافش",
+    "Ne t’inquiète pas.",
+    "T’inquiète, ça va aller.",
+    "Pas de panique.",
   ])("detects forbidden reassurance: %s", (s) => {
     expect(hasForbidden(s)).toBe(true);
+  });
+
+  it("does not flag a neutral question about what worries the person", () => {
+    expect(hasForbidden("Qu’est-ce qui t’inquiète le plus ?")).toBe(false);
+  });
+
+  it("splits Arabic sentences on ؟", () => {
+    expect(guardText("ما تخافش؟ دير خطوة صغيرة.", "fb")).toEqual({ text: "دير خطوة صغيرة.", corrected: true });
+  });
+
+  it("guards strings inside arrays and nested objects", () => {
+    const { value } = guardObject({ steps: ["Tout ira bien.", "Ouvre ton mail."], meta: { note: "Tu exagères.", ironie: "x" } });
+    expect(value).toEqual({ steps: ["Ouvre ton mail."], meta: { note: "" } });
   });
 
   it("keeps neutral text unchanged", () => {

@@ -18,10 +18,10 @@ const DANGER_WORDS = [
   // Français
   "suicide", "suicider", "mettre fin a mes jours", "envie de mourir", "veux mourir", "voudrais mourir",
   "plus envie de vivre", "plus la force de vivre", "veux me tuer", "vais me tuer", "me faire du mal",
-  "me couper", "me scarifier", "scarifie", "me frappe", "me frappent", "me bat ", "me battent", "m a frappe",
+  "me scarifier", "scarifie", "me frappent", "me battent", "m a frappe",
   "je suis en danger", "m agresse", "abuse de moi", "disparaitre pour toujours", "me reveillais plus",
   "me reveiller plus", "plus me reveiller", "mieux sans moi", "plus simple sans moi", "plus simple pour tout le monde",
-  "me jeter", "sauter du pont", "sauter par la fenetre",
+  "sauter du pont", "sauter par la fenetre",
   // Darija, lettres latines
   "bghit nmout", "bghit nmot", "baghi nmout", "baghya nmout", "ma bqitch bghit n3ich", "ma bqitch baghi n3ich",
   "ma bghitch n3ich", "ndir chi 7aja f rassi", "ndir chi 7aja f rasi", "nlo7 rasi", "nlou7 rassi",
@@ -40,6 +40,16 @@ const DANGER_PATTERNS: readonly { name: string; re: RegExp }[] = [
   { name: "ma bqit baghi nfi9", re: /\bb[q9k]it(ch)?\s(bghit|baghi|baghya)\snf[iy]{1,2}[q9k]\b/ },
   { name: "ma bghitch nfi9", re: /\bma\s?bghit(ch)?\snf[iy]{1,2}[q9k]\b/ },
   { name: "kaydrebni", re: /\b(kay|ki|ka)?d[ae]?r[ae]?b(ou|o)?n[iy]\b/ },
+  // "bghit nmout" with any spelling of nmout (nmoot, nmwt, nmut…)
+  { name: "bghit nmout", re: /\b(bghit|baghi|baghya|bghina)\s?nm(ou|oo|o|w|u)t\b/ },
+  { name: "ntkhlas mn l7ayat", re: /\bnt?khl[ae]?s\s(mn|men)\s?(l|el)?\s?[h7]ay?at[iy]?\b/ },
+  // Words that are figurative alone ("me couper la parole", "me jeter dehors", "ça me frappe") alert only in context.
+  { name: "me couper (corps)", re: /\bme\s(couper|coupe|suis\scoupee?)\s(le|les|la|l)?\s?(bras|poignets?|veines?|peau|jambes?|cuisses?)\b/ },
+  { name: "me jeter (vide)", re: /\bme\s(jeter|jette)\s(du|d\sun|par|sous|dans\sle\svide|de\sla|de\sl)\b/ },
+  {
+    name: "quelqu'un me frappe",
+    re: /\b(il|elle|ils|elles|on|pere|mere|papa|maman|bba|mama|copain|copine|mari|femme|frere|soeur|oncle|tante|prof|patron|coloc|voisin)\s(me\s)(frappe|frappent|bat|battent|tape|tapent)\b/,
+  },
 ];
 
 const HOPELESS_WORDS = [
@@ -59,6 +69,12 @@ const HOPELESS_PATTERNS: readonly { name: string; re: RegExp }[] = [
 
 const DOUBT_WORDS = [
   "me tuer", "en finir", "mourir", "crever", "nmout", "nmot", "نموت", "يقتلني", "يقتلوني", "ghadi yqtelni", "ghadi y9telni",
+  // Ambiguous alone: the model / LLM decides, offline → alert
+  "me couper", "me jeter", "me frappe", "me bat ", "lmout", "l mawt", "lmawt", "الموت",
+];
+
+const DOUBT_PATTERNS: readonly { name: string; re: RegExp }[] = [
+  { name: "nmout", re: /\bnm(ou|oo|o|w|u)t\b/ },
 ];
 
 const DANGER = prep(DANGER_WORDS);
@@ -76,7 +92,7 @@ export function checkKeywords(text: string): KeywordResult {
   if (danger) return { level: "danger", match: danger.trim() };
   const hopeless = findAny(norm, HOPELESS) ?? matchPatterns(norm, HOPELESS_PATTERNS);
   if (hopeless) return { level: "hopeless", match: hopeless.trim() };
-  const doubt = findAny(norm, DOUBT);
+  const doubt = findAny(norm, DOUBT) ?? matchPatterns(norm, DOUBT_PATTERNS);
   if (doubt) return { level: "doubt", match: doubt.trim() };
   return { level: "none", match: null };
 }
