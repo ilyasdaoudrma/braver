@@ -14,3 +14,14 @@ __pycache__/
 .pytest_cache/
 ml/*/data/raw/
 ml/*/data/cache/
+
+# Next.js
+/.next/
+/out/
+/build
+/coverage
+*.tsbuildinfo
+next-env.d.ts
+.DS_Store
+*.pem
+npm-debug.log*
