@@ -1,3 +1,7 @@
+# Coding agents (Claude Code, Antigravity, Codex)
+
+Read [CLAUDE.md](CLAUDE.md) first: team rules, product rules, git workflow. Then docs/ROADMAP.md and docs/REVIEW.md.
+
 <!-- BEGIN:nextjs-agent-rules -->
 
 ## This is NOT the Next.js you know

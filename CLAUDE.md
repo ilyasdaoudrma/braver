@@ -36,7 +36,7 @@ Team coding: **Ilyas** (Claude Code) and **Ayoub** (Antigravity). Both do ML + b
 3. Small conventional commits (`feat:`, `fix:`, `test:`, `refactor:`, `docs:`, `data:`).
 4. Before every push: `npm run lint && npm run typecheck && npm test && npm run build`. For `ml/`: `python -m pytest ml` passes. Click through what you changed at 375 px wide.
 5. PR with `Closes #N`, a "How I tested" section, and for ML PRs the metrics table. CI must be green.
-6. The other person reviews and merges. Merge at least twice a day, keep PRs small.
+6. The other person reviews (comment "OK" or approve), then **the author merges** once CI is green. If the reviewer has not answered within 1 h and the PR blocks work, Ilyas may merge it. Coding agents never merge on their own. Merge at least twice a day, keep PRs small.
 7. After any merge: `git pull`, then `git rebase main` on your branch.
 
 ## Files and ownership
