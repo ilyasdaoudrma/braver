@@ -22,8 +22,8 @@ describe("toGroqSchema", () => {
 
 describe("groqJSON", () => {
   it("returns data from the primary model and sends a strict json_schema", async () => {
-    const fetchImpl = vi.fn(async (_url: string, _init?: RequestInit) => ok({ zone: "scenario", why: "prédiction", step: null }));
-    const r = await groqJSON({ ...base, fetchImpl: fetchImpl as unknown as typeof fetch });
+    const fetchImpl = vi.fn<typeof fetch>(async () => ok({ zone: "scenario", why: "prédiction", step: null }));
+    const r = await groqJSON({ ...base, fetchImpl });
     expect(r.model).toBe(PRIMARY_MODEL);
     expect(r.data.zone).toBe("scenario");
     expect(r.ms).toBeGreaterThanOrEqual(0);
