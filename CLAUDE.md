@@ -1,62 +1,63 @@
 # BRAVER — rules for every coding agent (Claude Code, Antigravity, Codex)
 
-Read this file, then `docs/ROADMAP.md` (the plan and who owns what), then `docs/REVIEW.md` (what is wrong today) before writing code.
+Read this file, then `docs/ROADMAP.md` (plan, owners, datasets), then `docs/REVIEW.md` (what was wrong in the first prototype) before writing code. These three files are the source of truth.
 
 ## The project
 
-BRAVER is a mental-health **prevention** web app for young people in Morocco (hackathon in Oujda, **22 November 2026**).
-The user writes what worries them (French, Darija in Latin or Arabic letters). The AI sorts each worry into one of three zones:
+BRAVER is a mental-health **prevention** web app for young people in Morocco (hackathon in Oujda, **22 November 2026**, feature freeze **21 Nov 15:00**).
+The user writes what worries them (French, Darija in Latin or Arabic letters). AI sorts each worry into one zone:
 
-- **scenario**: a prediction or interpretation → note the prediction, then compare with what really happened (Replay)
+- **scenario**: a prediction or interpretation → note the prediction + certainty, compare later with what happened (**Replay**)
 - **action**: a real problem they can act on → one step of under 15 minutes
 - **acceptation**: real and out of their control → acknowledge, then one thing still in their control
 
 A **safety screen** stops everything when a message suggests danger (suicidal ideas, self-harm, violence suffered, immediate danger).
-Around the core: a dashboard (24 h / 7 d / 30 d), a breathing exercise, reading cards, a weekly GAD-7, a one-page summary for a professional.
+Platform around it: onboarding + consent, home with mood check-in, dashboard 24 h / 7 d / 30 d, breathing exercise, weekly GAD-7, reading cards, and a **Labo** page that shows the measured model performance.
 
-Team now coding: **Ilyas** and **Ayoub**. Both build the whole app; tasks are split by feature, not by layer (see `docs/ROADMAP.md`).
+Team coding: **Ilyas** (Claude Code) and **Ayoub** (Antigravity). Both do ML + backend + screens; tasks are split by feature (see ROADMAP).
 
-## Stack (do not change it)
+## Stack
 
-- Plain HTML + CSS + ES modules in `index.html`, `css/`, `js/`. **No framework, no build step.** Do not migrate to React/Next.js: there is no time and the app already works.
-- Serverless functions in `api/*.js` (Vercel). Shared code in `api/_lib.js`, prompts in `api/_prompts.js`.
-- Local server: `npm run dev` → http://localhost:3000 (reproduces Vercel).
-- Data stays **on the device** (localStorage with consent, else sessionStorage). No account, no database. Only the text being sorted (and texts being embedded) is sent to the AI, without any identifier.
-- AI keys only in `.env.local` (git-ignored) and in Vercel → Settings → Environment Variables. **Never in the code, never in a commit, never in a screenshot.**
+- **Next.js (App Router) + TypeScript + Tailwind**, deployed on Vercel. API = Route Handlers in `app/api/*/route.ts`.
+- **LLM: Groq, `openai/gpt-oss-20b`**, fallback `openai/gpt-oss-120b`, then the on-device trained models. Groq is OpenAI-compatible (`https://api.groq.com/openai/v1`). Use structured outputs (`response_format` json_schema) if Groq supports it for gpt-oss, else `json_object` + schema validation with **zod**. `reasoning_effort: "low"` for the sort. Timeout 8 s per try. Key: `GROQ_API_KEY`.
+- **No Gemini.** Remove every Gemini path from the old code.
+- **ML training in Python** under `ml/` (pandas, scikit-learn), **inference in the browser** in TypeScript from exported JSON weights. A parity test must prove TS and Python give the same probabilities (|Δ| < 1e-6) on 50 sample texts.
+- Data stays **on the device** (localStorage with consent, else sessionStorage). No account, no database. Only the text being sorted is sent to Groq, without any identifier.
+- The old prototype stays in `legacy/` for reference until everything is ported; do not edit it.
 
-## How we work (Git)
+## Secrets
 
-1. Never push to `main`. One branch per task: `feat/<task-id>-<short-name>` (example `feat/I3-memory`).
-2. Before starting: `git switch main && git pull`, then create your branch.
-3. Small commits, conventional messages (`feat:`, `fix:`, `refactor:`, `test:`, `docs:`).
-4. Before pushing: `npm test` (when present) and `for f in $(git ls-files '*.js' '*.mjs'); do node --check "$f"; done`. Open the app with `npm run dev` and click through what you changed, on a phone-sized window.
-5. Push, open a pull request with `Closes #<issue>` and a short "how I tested" section. CI must be green.
-6. The other person reviews and merges (Ilyas reviews Ayoub, Ayoub reviews Ilyas). Merge at least twice a day; keep PRs small.
-7. After a merge: everybody `git pull` and rebases their branch (`git rebase main`).
+`GROQ_API_KEY` only in `.env.local` (git-ignored) and Vercel → Settings → Environment Variables. Never in code, commits, logs, screenshots, notebooks or chat messages. The CI scans for keys.
 
-## Files and ownership (to avoid conflicts)
+## Git workflow (GitHub cannot enforce it on this free private repo — you must)
 
-- Each screen lives in its own file in `js/screens/` (created by task F0). Only edit the screen files of your own tasks.
-- **Shared files** — change them only in small, separate PRs and say so in the PR title: `js/store.js`, `js/router.js`, `js/screens/index.js`, `css/tokens.css`, `api/_lib.js`, `api/_prompts.js`, `index.html`, `package.json`.
-- Adding a screen = a new file in `js/screens/` + **one line** in `js/screens/index.js`. Nothing else in shared files.
-- New data in the store = a new key with a default value in `store.js`, never rename an existing key.
+1. Never push to `main` (only exception: none). One branch per issue: `feat/<ID>-<short-name>` (e.g. `feat/M1-safety-model`).
+2. Start: `git switch main && git pull && git switch -c feat/...`.
+3. Small conventional commits (`feat:`, `fix:`, `test:`, `refactor:`, `docs:`, `data:`).
+4. Before every push: `npm run lint && npm run typecheck && npm test && npm run build`. For `ml/`: `python -m pytest ml` passes. Click through what you changed at 375 px wide.
+5. PR with `Closes #N`, a "How I tested" section, and for ML PRs the metrics table. CI must be green.
+6. The other person reviews and merges. Merge at least twice a day, keep PRs small.
+7. After any merge: `git pull`, then `git rebase main` on your branch.
+
+## Files and ownership
+
+- Screens: `app/(screens)/<name>/page.tsx` + components in `components/<name>/`. Only edit the screens of your own issues.
+- **Shared files** (small separate PRs, say "shared:" in the title): `lib/store.ts`, `lib/types.ts`, `lib/groq.ts`, `app/layout.tsx`, `components/nav/*`, `tailwind.config.*`, `app/globals.css`, `package.json`.
+- New store data = a new key with a default value; never rename a key.
+- ML: `ml/safety/` (Ilyas), `ml/zones/` (Ayoub), `ml/eval/` (Ayoub), shared helpers in `ml/common/` (small PRs).
+- Data: `ml/*/data/raw/` is git-ignored (downloaded sources). Commit processed splits only when the source licence allows it; always commit the download + cleaning scripts and a `DATA_CARD.md` (sources, licence, counts per class and language, cleaning steps, known biases).
 
 ## Product rules (non-negotiable)
 
-- No diagnosis, no disorder names, no "tu vas réussir", "ne t'inquiète pas", "tout ira bien", "tu exagères". The guard in `js/engine.js` replaces these; keep it.
-- **No irony mode.** It was removed (task F0). Do not bring it back.
-- A probability or "how often the worst happened" comes **only** from the person's own Replay history. The AI never invents a probability.
-- Safety first: keyword filter and on-device classifier run **before** any network call; if the AI is unavailable, ambiguous danger phrases trigger the alert. "Ce partiel va me tuer" must NOT alert; "bghit nmout", "ma bqitch baghi nfi9 sbah" must alert.
-- Safety screen: calm tone, no jokes, verified Moroccan numbers, "J'ai besoin de te parler. Tu peux m'appeler ?" ready to send, and the "On s'est mal compris" button.
-- Breathing: claim only what is measured (cyclic sighing improved mood and lowered breathing rate, Balban et al., Cell Reports Medicine 2023). Never claim it lowers cortisol.
-- GAD-7: show the score and its trend, never a diagnosis label.
-- Only numbers we measured go in the pitch. Write `[X]` until measured.
+- No diagnosis, no disorder names, no "tu vas réussir", "ne t'inquiète pas", "tout ira bien", "tu exagères". Keep a code-level guard that replaces these.
+- **No irony mode.** Tone choice "Doux / Direct": Direct = shorter, more direct sentences, no jokes.
+- Probabilities ("le pire est arrivé 1 fois sur 8") come **only** from the person's own Replay history, computed in code. The LLM never invents a probability.
+- Safety first: keywords and the trained classifier run on the device **before** any network call. Ambiguous score → LLM decides; no network → alert. "Ce partiel va me tuer" must NOT alert; "bghit nmout", "ma bqitch baghi nfi9 sbah", "kayderbni" must alert. Hopelessness ("ma bqitch nchouf l9ima dyal rasi") → gentle check-in card with the help button.
+- Safety screen: calm, no jokes, Moroccan numbers (19, 112, 15, 177, 2511 ONDE <18, 8350 Kolona Maak), ready message "J'ai besoin de te parler. Tu peux m'appeler ?", and "On s'est mal compris".
+- Breathing: claim only "le soupir cyclique a amélioré l'humeur et ralenti la respiration (Stanford, 2023)". Never cortisol.
+- GAD-7: score and trend only, never a diagnosis label; score ≥ 15 → calm suggestion to talk to a professional.
+- **Metrics**: report accuracy, precision, recall, F1 (per class + macro), confusion matrix, on a **held-out test set never used for training or prompt tuning**, per language, with the number of examples. For safety, recall on the danger class is the headline. Never round up, never report a number you did not measure.
 
 ## UI rules
 
-- Mobile first (test at 375 px wide). No pure white `#FFF` or pure black `#000`. One accent colour per zone (keep the existing palette).
-- Icons: one SVG set, no emoji as icons.
-- Every data view has loading, empty and error states. No full-screen blocking spinner longer than 1 s: show the local result first, then upgrade it with the AI result.
-- Motion 150–300 ms, ease-out, respect `prefers-reduced-motion`.
-- Labels above fields, buttons say what happens ("Trier mes inquiétudes", not "OK").
-- French UI text, tutoiement, simple words.
+Mobile first (375 px). No pure `#FFF` / `#000`. Palette from the prototype: paper `#EDF0F4`, ink `#131B2C`, scenario `#5B3FD6`, action `#B93D0A`, acceptation `#0B7065`, focus `#2D6CDF` (+ dark-mode tokens). Fonts: Bricolage Grotesque (titles), Atkinson Hyperlegible (text), IBM Plex Sans Arabic (Arabic). Icons: lucide-react only, no emoji. Every data view has loading, empty and error states. No blocking spinner over 1 s: show the on-device result first, then upgrade with the LLM result. Motion 150–300 ms ease-out, respect `prefers-reduced-motion`. Labels above fields, buttons say what happens. French UI, tutoiement.

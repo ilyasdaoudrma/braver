@@ -20,8 +20,10 @@ Tested live on https://braver-app.vercel.app (phone size and direct API calls) a
 6. **AI depth is thin for an AI hackathon.** One prompt + one fallback. Nothing trained, nothing retrieved, no measured comparison between configurations.
 7. **Code shape blocks two people working at once.** `js/app.js` is 1,061 lines holding every screen → constant merge conflicts. No tests.
 
-## What we change (summary — details and owners in ROADMAP.md)
+## What we change (decided 19 Nov, details in ROADMAP.md)
 
-| Keep | Change | Add | Remove |
-|---|---|---|---|
-| Three zones, schema, fallback, safety screen, Replay, calibration, Labo, summary, offline mode | Fast non-blocking sort (local result first, AI upgrades it), reliable model chain, hopelessness → gentle check-in, test set written by humans | Memory (embeddings of past worries, used in the sort and shown on the card), trained on-device safety classifier, measured comparison of 3 safety configs, dashboard, breathing, GAD-7, reading cards, onboarding, 30-day demo data | Irony mode, the "AI-written blind test" claim, any number not re-measured |
+- Rebuild in **Next.js + TypeScript**; the prototype moves to `legacy/` as reference.
+- LLM: **Groq `openai/gpt-oss-20b`** (fallback `gpt-oss-120b`), no Gemini.
+- Two models **we train** (safety, zones) on public datasets translated to French and Darija, running on the phone, replacing the keyword "local rules".
+- Model performance measured like a real ML project: accuracy, precision, recall, F1, confusion matrices, per language, on held-out public test splits and a hand-written Darija set; shown in the Labo and in a new deck.
+- Platform: onboarding + consent, home with mood, dashboard, breathing, GAD-7, reading cards. Irony removed.

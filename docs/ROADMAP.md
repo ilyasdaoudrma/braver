@@ -1,95 +1,111 @@
-# BRAVER roadmap — 19 → 22 November 2026
+# BRAVER roadmap v2 — Next.js + Groq gpt-oss-20b + trained models — 19 → 22 Nov 2026
 
-Two people code: **Ilyas** and **Ayoub**. Both build front + back + AI. Tasks are split by feature so each person owns different files.
-Every task = one GitHub issue = one branch = one pull request. IDs below match the issue titles.
+Two people code: **Ilyas** (Claude Code) and **Ayoub** (Antigravity). Each does data + training + backend + screens.
+Every task = one GitHub issue = one branch = one PR. IDs match the issue titles. **Must** tasks first; **Could** tasks only if Musts are merged.
 
 ## Timeline
 
 | When | Ilyas | Ayoub |
 |---|---|---|
-| **19 Nov evening** | **F0 foundation** (must be merged first, ~2 h) | A1 shell + onboarding (new files only), start I4 training script |
-| **20 Nov** | I1 fast + reliable AI, I3 memory | I4 safety classifier, A3 breathing, A4 GAD-7 |
-| **21 Nov until 15:00** | A2 dashboard, I6 summary v2, A6 demo data | I5 eval v2 + Labo, A5 reading cards |
-| **21 Nov 15:00** | **Feature freeze.** Both: bug fixes only, run the eval on the human test set, put numbers in the pitch, record the backup video, rehearse twice | same |
-| **22 Nov** | Hackathon. Stop coding 2–3 h before the end | same |
+| **19 Nov night** | **F0** Next.js foundation (blocks screens) | **D2** zone dataset (in `ml/zones`, no conflict with F0) |
+| **20 Nov morning** | **I1** Groq engine + non-blocking sort | **M2** zone classifier |
+| **20 Nov afternoon** | **D1** safety dataset → **M1** safety classifier | **S2a** onboarding, home, mood, dashboard |
+| **20 Nov evening** | Both: hand-label the Darija test set (150 sentences each, see "Test sets") | same |
+| **21 Nov morning** | **S1** sort, safety, Replay screens | **E1** evaluation + Labo, **S2b** breathing, GAD-7, reading cards |
+| **21 Nov 15:00** | **Feature freeze.** Final eval run on the deployed pipeline → `ml/eval/results/` → numbers + charts for the new deck. Backup video. Rehearse. | same |
+| **22 Nov** | Hackathon. Stop coding 2–3 h before the end. | same |
 
-If a task is late at freeze time, cut it; never ship it half-done into the demo.
-
-Ask **Mossab or Soukaina** (not coding anymore) to collect **60+ test sentences written by people outside the team** before 21 Nov noon: French, Darija Latin, Darija Arabic, with a label `danger: oui/non` and the expected zone. Goes into `eval/sentences-humains.csv`.
+Could (only if time): **I3** memory, PDF summary for a professional (not in scope unless Ilyas asks).
 
 ---
 
-## F0 — Foundation (Ilyas, first, blocks the rest)
+## Datasets (download with scripts, never by hand; check each licence/card first and write it in DATA_CARD.md)
 
-- Split `js/app.js` into `js/router.js` + one file per screen in `js/screens/` (`vide.js`, `tri.js`, `replay.js`, `aide.js`, `plus.js`, `resume.js`, `labo.js`) + `js/screens/index.js` that lists the screens (adding a screen = one line there). Behaviour must stay identical: click through every screen before/after.
-- `css/tokens.css`: move colours, spacing, radius, fonts into CSS variables (light + dark).
-- **Remove irony** everywhere: prompt (`api/_prompts.js`), schema, `engine.js` fallback, UI toggle. Keep a tone choice "Doux / Direct" where Direct = shorter, more direct sentences, no jokes.
-- Store API in `js/store.js`: add keys with defaults for `moods`, `gad7`, `breathing`, `embeddings`, `onboarded` (no renames).
-- Add `npm test` (Node's built-in `node:test`) with first tests on `engine.js`: forbidden reassurance replaced, irony never present, "bghit nmout" → alert, "ce partiel va me tuer" → no alert.
-- Done when: app behaves as before minus irony, tests pass, CI green.
+Safety (danger vs no danger):
+- `vibhorag101/suicide_prediction_dataset_phr` — https://huggingface.co/datasets/vibhorag101/suicide_prediction_dataset_phr (English Reddit, binary suicide / non-suicide, already cleaned)
+- `jquiros/suicide` — https://huggingface.co/datasets/jquiros/suicide (English, binary, backup / extra)
+- `nvidia/Aegis-AI-Content-Safety-Dataset-2.0` — https://huggingface.co/datasets/nvidia/Aegis-AI-Content-Safety-Dataset-2.0 (use only the "Suicide and Self Harm" category as positives + safe prompts as negatives; gated: accept terms on the page)
+- Arabic suicidality tweets, Abdulsalam et al. 2023 (5,719 tweets, 1,429 suicidal) — paper https://arxiv.org/abs/2309.00246 (look for the data link on the arXiv page / "Code, Data and Media"; if not downloadable in 15 min, skip it)
+- AraDepSu (depressed / suicidal / neutral Arabic tweets) — https://aclanthology.org/2022.wanlp-1.28 (same rule: skip if no public link)
+- Hard negatives and Darija: the sentences already in `legacy/js/data.js` (21 dossier sentences + 24 "aveugle" sentences + keyword lists), hyperboles like "ce partiel va me tuer", "had l exam ghadi yqtelni".
+
+Zones (scenario / action / acceptation): no public dataset has these labels, so we build one.
+- `danthareja/cognitive-distortion` — https://huggingface.co/datasets/danthareja/cognitive-distortion (fortune-telling, mind reading, catastrophizing → **scenario** candidates)
+- Non-danger posts from the safety datasets above (daily worries) as raw text for **action / acceptation** candidates.
+- Labelling: `openai/gpt-oss-120b` on Groq proposes a zone with the BRAVER definitions; Ilyas and Ayoub **check by hand** a random 300 and report the agreement (%, Cohen's kappa). Only hand-checked rows go into the test set.
+
+Languages: public data is mostly English / Arabic. Translate a stratified sample (e.g. 1,500 per task) to **French**, **Darija in Latin letters** and **Darija in Arabic letters** with `openai/gpt-oss-120b` (batches of 20, JSON output, cached on disk, respect Groq rate limits). Mark every row with `lang` and `source` (`original` / `translated` / `handwritten`).
+
+## Test sets (held out — never used for training, prompt tuning or thresholds)
+
+1. **Public test split**: stratified 15 % of each processed dataset (fixed seed 42), saved once in `ml/*/data/splits/test.csv`, with its hash written in the data card.
+2. **Darija hand-written set**: 300 short sentences written and labelled by Ilyas and Ayoub (150 each), Latin and Arabic script, both tasks labelled (`danger` yes/no, `zone`). File `ml/eval/data/darija_handwritten.csv`. Write them **before** looking at model outputs.
+
+Metrics are reported separately for each test set and each language.
+
+---
+
+## F0 — Next.js foundation (Ilyas, Must, first)
+
+- Move the current app into `legacy/` (unchanged, for reference). Create Next.js App Router + TypeScript + Tailwind + ESLint at the root; scripts `dev`, `build`, `lint`, `typecheck`, `test` (Vitest).
+- Port to TypeScript in `lib/`: `types.ts` (Zone, Worry, SortResult, ReplayEntry, Mood, Gad7Entry, BreathingSession, Settings), `store.ts` (localStorage with consent, all keys with defaults: worries, replays, moods, gad7, breathing, embeddings, settings, onboarded), `guards.ts` (forbidden-reassurance replacement, no irony), `keywords.ts` (from legacy data.js), `helplines.ts`.
+- `lib/groq.ts`: one function `groqJSON({system, user, schema, model})` with 8 s timeout, fallback 20b → 120b, returns `{data, model, ms}`; zod validation.
+- App shell: layout, fonts, Tailwind tokens (palette + dark mode), bottom nav **Accueil · Vider · Replay · Suivi · Plus**, "Besoin d'aide" button on every screen, empty placeholder pages for every screen so Ayoub can fill his.
+- CI: lint, typecheck, test, build, key scan; `ml` pytest job.
+- Done when: `npm run build` passes, all placeholder routes open, tests on guards and keywords pass.
 
 ## Ilyas
 
-### I1 — Fast and reliable AI
-- The sort shows the **local-rules result instantly**, then upgrades each card when the AI answers (small "IA ✓" badge). No blocking blur.
-- Model chain: Claude (if `ANTHROPIC_API_KEY`) → `gemini-3.5-flash` → `gemini-3.5-flash-lite`; timeout 8 s per try; return which model answered and latency.
-- `/api/health` reports provider, model, and last latency; footer shows it.
-- Target: 90 % of sorts under 8 s on the deployed app. Measure 20 sorts and write the result in the PR.
+### I1 — Groq engine + non-blocking sort (Must)
+- `app/api/sort/route.ts`, `app/api/replay/route.ts`, `app/api/health/route.ts` on Groq (`openai/gpt-oss-20b` → `openai/gpt-oss-120b`), prompts ported from `legacy/api/_prompts.js` **without irony**, zod schemas, input limits (12 lines, 500 chars).
+- Client: the on-device result (safety model + zone model) appears instantly, then each card upgrades when Groq answers (badge "IA · gpt-oss-20b · 1.4 s"). If Groq fails → stays on-device, footer says so.
+- Measure 30 sorts on the deployed app: p50 / p90 latency, % answered by 20b vs 120b vs on-device. Put the table in the PR.
 
-### I3 — Memory (retrieval over the person's own history)
-- New `/api/embed` (Gemini embeddings, or the configured provider) returns a vector for a text. Vectors are stored **on the device** with each worry (`store.embeddings`). No server storage.
-- Before a sort, find the 3 most similar past worries by cosine similarity (≥ a threshold you tune) and send them with their Replay outcome to `/api/sort` as context.
-- Card shows: "3ᵉ fois que tu as peur d'un entretien. Tu étais sûr à 85–90 %. Le pire est arrivé 0 fois sur 3." Numbers computed in code from Replay, never by the model.
-- Works offline: if embeddings are unavailable, fall back to a word-overlap similarity.
-- Tests: similarity ranking, outcome counting.
+### D1 — Safety dataset (Must)
+- `ml/safety/download.py`, `clean.py` (dedupe, strip URLs/usernames, length 5–400 chars, balance classes), `translate.py` (FR + Darija Latin + Darija Arabic via gpt-oss-120b, cached), `split.py` (train/val/test 70/15/15 stratified by label × language, seed 42).
+- `ml/safety/DATA_CARD.md` with sources, licences, counts per class × language, hash of the test file.
 
-### A2 — Dashboard ("Suivi")
-- One-tap mood check-in (5 levels + optional emotion chips), shown on the home screen.
-- Toggle 24 h / 7 j / 30 j: mood line, worries per zone, small steps done, calibration chart, breathing sessions, GAD-7 trend.
-- Empty state ("Pas encore assez de données — reviens après quelques jours"), loading and error states. No streaks that punish a missed day.
+### M1 — Safety classifier + pipeline (Must)
+- `ml/safety/train.py`: TF-IDF character n-grams (char_wb, 2–5, max ~20k features, lowercase + Arabic normalisation identical in TS) + LogisticRegression (class_weight balanced). Tune the threshold on **val** for recall ≥ 0.95 on danger. Report on **test**: accuracy, precision, recall, F1, confusion matrix, per language.
+- Export `public/models/safety.json` (vocab, idf, coef, intercept, threshold, version). `lib/safety/model.ts` reproduces the exact features; `ml/safety/parity_cases.json` + a Vitest parity test.
+- `lib/safety/pipeline.ts`: keywords → model → (ambiguous band or online) LLM check. Hopelessness → check-in card (separate small keyword list + model score band).
 
-### I6 — Summary for a professional v2
-- Uses 30 days: what weighs most (themes), predictions noted vs worst outcomes, steps done, GAD-7 trend, breathing use. Model rewrites in first person, facts only (existing `SUMMARY_SYSTEM`).
-- Consent screen before generating; print / save as PDF; nothing sent anywhere unless the person shares it.
+### S1 — Core screens (Must)
+- **Vider**: textarea (one worry per line), dictation optional, "Charger l'exemple", "Trier mes inquiétudes".
+- **Tri**: three zones, cards with "pourquoi", move a card ("Pas la bonne zone ?"), scenario card (prediction + certainty slider → "Noter ma prédiction"), action card (fear 0–10, 10-min timer, "C'est fait"), acceptation card (validation + control + "Respirer" link to Ayoub's breathing).
+- **Sécurité**: full-screen calm screen (rules in CLAUDE.md).
+- **Replay**: predictions to check, "Raconter ce qui s'est passé" → compare (LLM comment from /api/replay), calibration chart computed from the person's own entries.
 
-### A6 — Demo data
-- "Charger la démo de Yassine" in Plus: 30 days of coherent fictional data (worries in 3 languages, Replays with certainty and outcomes, moods, 4 GAD-7, breathing sessions), clearly marked as fictional. "Effacer la démo" restores the empty app.
+### I3 — Memory (Could)
+- First check `GET https://api.groq.com/openai/v1/models` for an embedding model; if one exists use it via `/api/embed`, else `@huggingface/transformers` in the browser with `Xenova/multilingual-e5-small` (lazy-loaded, only when the user opens a sort). Vectors stored on the device.
+- Top-3 similar past worries + their Replay outcomes → context for /api/sort and a line on the card ("3ᵉ fois… le pire est arrivé 0 fois sur 3"), numbers computed in code.
 
 ## Ayoub
 
-### A1 — App shell, onboarding, consent
-- Bottom nav: **Accueil · Vider · Replay · Suivi · Plus**. "Besoin d'aide maintenant" reachable from every screen.
-- Onboarding: 3 short screens (what BRAVER does, what it is not, data stays on the phone) with **Passer** and **Suivant**, then the consent choice (keep on this phone / session only).
-- Home screen: mood check-in slot (A2 fills it), "Vide ta tête" button, last Replay to complete.
-- Uses `css/tokens.css`; loading/empty/error states; reduced-motion respected.
+### D2 — Zone dataset (Must, start now in `ml/zones/`)
+- `ml/zones/download.py`, `build.py` (scenario candidates from cognitive-distortion; action/acceptation candidates from daily-worry posts), `label.py` (gpt-oss-120b proposes a zone with the BRAVER definitions, JSON, cached), `translate.py` (same three languages), `split.py` (70/15/15 stratified, seed 42).
+- Hand-check 300 random labelled rows with Ilyas → agreement % and Cohen's kappa in `ml/zones/DATA_CARD.md`.
 
-### I4 — Safety v2: trained on-device classifier
-- `scripts/train-safety.mjs` trains a small classifier (character n-grams 2–5 + logistic regression, written in plain JS, no heavy library) on: the keyword list, the existing test sentences, and generated variants (spelling variants 3/7/9, Arabic/Latin Darija). Output: `js/safety-model.json` (weights) + a training report (`eval/safety-train-report.md`).
-- `js/safety.js` runs: keywords → classifier → (if network) AI check. Any layer can raise the alert; ambiguous score band → AI decides; no network → alert.
-- Hopelessness / worthlessness ("ma bqitch nchouf l9ima dyal rasi", "ma kayn ta chi faida") → not a full alert but a **gentle check-in card** ("Ça a l'air lourd. Tu veux en parler à quelqu'un ?") with the help button.
-- Runs in < 10 ms on the phone. Tests for the must-alert and must-not-alert lists.
+### M2 — Zone classifier (Must)
+- Same recipe as M1 (char n-grams + multinomial LogisticRegression), export `public/models/zones.json`, `lib/zones/model.ts`, parity test. This replaces the old keyword "local rules" as the offline sorter.
+- Report accuracy, macro-F1, per-class precision/recall/F1, confusion matrix on test.
 
-### I5 — Eval v2 and the Labo
-- Labo runs the human test set (`eval/sentences-humains.csv`) on 3 configurations: **keywords only**, **keywords + classifier**, **keywords + classifier + AI**. Reports sensitivity (dangers caught), specificity (calm sentences left alone), zone accuracy, latency.
-- "Copier pour le pitch" gives a table. Keep the old sets as secondary.
-- Never train the classifier on the human test set (keep it held out).
+### E1 — Evaluation + Labo (Must)
+- `ml/eval/run_pipeline.py` (or a Node script calling the deployed `/api/sort`) evaluates the **full pipeline as the app runs it** (keywords → safety model → gpt-oss-20b → fallbacks) on both held-out test sets: safety (accuracy, precision, recall, F1, confusion matrix, false-negative list) and zones (accuracy, per-class P/R/F1, macro-F1, 3×3 confusion matrix), per language, plus latency p50/p90 and which model answered. Respect Groq rate limits (sleep + resume from cache).
+- Outputs: `ml/eval/results/<date>/metrics.json`, `METRICS.md` (tables ready for slides), PNG confusion matrices and bar charts (matplotlib, BRAVER palette).
+- **Labo** page (`app/(screens)/labo`): shows the latest metrics.json (tables + confusion matrices), dataset sizes, test-set description, and a "Tester une phrase" box showing each pipeline layer's decision.
 
-### A3 — Breathing ("Respirer")
-- Cyclic sighing: inhale, short second inhale, long exhale; animated circle; 2 or 5 minutes; optional vibration; "Passer".
-- Mood before/after (one tap each), saved to `store.breathing`. Suggested from Acceptation cards and from the home screen.
-- Copy: "Le soupir cyclique a amélioré l'humeur et ralenti la respiration dans une étude de Stanford (2023)." Nothing about cortisol.
+### S2a — Onboarding, home, mood, dashboard (Must)
+- Onboarding: 3 short screens with **Passer** / **Suivant**, then consent (keep on this phone / session only).
+- Accueil: one-tap mood check-in (5 levels + optional emotion chips), "Vide ta tête" button, last Replay to complete, GAD-7 reminder.
+- Suivi (dashboard): toggle 24 h / 7 j / 30 j: mood line, worries per zone, steps done, calibration, breathing sessions, GAD-7 trend. Empty / loading / error states, no punishing streaks.
+- Demo data: "Charger la démo de Yassine" (30 days, fictional, labelled) and "Effacer" in Plus.
 
-### A4 — GAD-7 weekly ("Mon point de la semaine")
-- 7 questions, 4 answers each, one per screen, Passer allowed. Score 0–21 and a trend line, **no diagnosis label**.
-- If score ≥ 15: a calm card suggesting to talk to a professional, with a link to the summary and to the help screen.
-- Reminder on the home screen when 7 days passed.
+### S2b — Breathing, GAD-7, reading cards (Must, cards Could)
+- Respirer: cyclic sighing, animated, 2 or 5 min, optional vibration, Passer, mood before/after saved.
+- GAD-7: one question per screen, 0–21 score, trend, no label, ≥ 15 → calm suggestion + help link.
+- À lire (Could): 6–8 short cards in `content/cartes/*.md`, linked from each zone card, "À relire par un psychologue".
 
-### A5 — Reading cards ("À lire")
-- 6–8 short cards in `content/cartes/*.md` (one idea each: scénario, action, acceptation, rumination, demander de l'aide, sommeil avant un examen…), rendered with a tiny Markdown renderer (no library). Label each "À relire par un psychologue" until reviewed.
-- Each sorted card links to the reading card of its zone.
+## After freeze (both)
 
-## Both, 21 Nov after freeze
-
-- Run I5 on the human set with the deployed model. Put the numbers in `docs/pitch` slide 8 (replace "24 phrases écrites par une IA").
-- Update slides: add memory, dashboard, safety v2 comparison; remove irony slide (annex 12).
-- Phone test of the full demo path 3 times; record the backup video; rehearse the pitch twice.
+Final E1 run on the deployed pipeline, commit results, export charts for the new deck (we build a new PowerPoint; the old one is in `docs/pitch/` for reference only). Phone test of the demo path 3×, backup video, rehearse twice.
