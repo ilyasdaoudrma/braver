@@ -1,0 +1,60 @@
+{
+ "what": "Zone labels of the 100 worries in to_check_100.csv re-checked by Claude (an AI) on 20 Nov at Ilyas's request. NOT a human check: the human_label column stays empty.",
+ "n": 100,
+ "agreement_claude_qwen": 0.93,
+ "kappa_claude_qwen": 0.8901788515845623,
+ "n_with_safeguard": 91,
+ "agreement_claude_safeguard": 0.967032967032967,
+ "kappa_claude_safeguard": 0.9456824512534819,
+ "disagreements": [
+  {
+   "group": "z-sce-21-05",
+   "qwen": "action",
+   "claude": "scenario",
+   "in_test": false,
+   "fr": "Je pense que je vais devoir vendre mon ordinateur pour payer le loyer."
+  },
+  {
+   "group": "z-acc-40-03",
+   "qwen": "acceptation",
+   "claude": "scenario",
+   "in_test": false,
+   "fr": "mon père a dit que je ne trouverai jamais de travail dans ce domaine"
+  },
+  {
+   "group": "z-sce-12-11",
+   "qwen": "acceptation",
+   "claude": "scenario",
+   "in_test": false,
+   "fr": "Je suis convaincu que ma mère va me dire que je ne suis pas assez responsable."
+  },
+  {
+   "group": "z-acc-12-13",
+   "qwen": "action",
+   "claude": "acceptation",
+   "in_test": false,
+   "fr": "Nous avons découvert une infestation de termites dans la maison, les réparations coûteront cher."
+  },
+  {
+   "group": "z-acc-21-04",
+   "qwen": "acceptation",
+   "claude": "action",
+   "in_test": false,
+   "fr": "J'ai eu une amende de parking et maintenant je n'ai plus assez pour la carte étudiante."
+  },
+  {
+   "group": "z-acc-42-00",
+   "qwen": "scenario",
+   "claude": "action",
+   "in_test": false,
+   "fr": "J'ai vu sur Facebook que mon ami a eu sa formation en grande entreprise et je cherche toujours."
+  },
+  {
+   "group": "z-sce-21-00",
+   "qwen": "acceptation",
+   "claude": "scenario",
+   "in_test": false,
+   "fr": "Je ne recevrai jamais la bourse, je vais devoir travailler à plein temps."
+  }
+ ]
+}

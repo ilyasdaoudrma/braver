@@ -35,6 +35,12 @@ All labels (both AIs, generator, intent): `data/processed/labelled.csv`.
 `data/to_check_100.csv` = 100 random worries (seed 42) with both AI labels and an empty `human_label` column, for
 Ilyas to verify by hand. Until then, **no human has checked these labels**.
 
+**Check by Claude (an AI, 20 Nov, at Ilyas's request — still not a human check):** Claude re-labelled the same 100 worries
+(column `claude_label`; `human_label` stays empty). Agreement with qwen 0.93, Cohen's kappa 0.8902 (n = 100); with the
+safeguard model 0.9670, kappa 0.9457 (n = 91). The 7 disagreements (`results/claude_check.json`) are mostly predictions
+labelled as action/acceptation ("je vais devoir vendre mon ordinateur", "je ne recevrai jamais la bourse"); none of them
+is in the test split.
+
 ## Counts
 
 601 worries × 3 languages = 1,803 rows. Every worry exists in fr, darija_latn and darija_arab with the same label.
