@@ -5,6 +5,7 @@ import { ArrowRight, Sparkles } from "lucide-react";
 import { MAX_CHARS, MAX_LINES } from "@/lib/sort/api";
 import { isSorting, startSort } from "@/lib/sort/session";
 import { loadSafetyModel } from "@/lib/safety/model";
+import { loadZonesModel } from "@/lib/zones/model";
 import { useStoreValue } from "@/lib/use-store";
 
 const EXAMPLE = [
@@ -38,6 +39,7 @@ export function ViderForm() {
 
   useEffect(() => {
     void loadSafetyModel();
+    void loadZonesModel();
   }, []);
 
   async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
@@ -56,7 +58,7 @@ export function ViderForm() {
   /** Usually already loaded on mount. If it is still missing, keywords + LLM decide (offline → alert). */
   async function waitForModel() {
     let timer: ReturnType<typeof setTimeout> | undefined;
-    await Promise.race([loadSafetyModel(), new Promise((r) => (timer = setTimeout(r, MODEL_WAIT_MS)))]);
+    await Promise.race([Promise.all([loadSafetyModel(), loadZonesModel()]), new Promise((r) => (timer = setTimeout(r, MODEL_WAIT_MS)))]);
     clearTimeout(timer);
   }
 
