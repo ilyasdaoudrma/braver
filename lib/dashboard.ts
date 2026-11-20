@@ -48,7 +48,8 @@ export function inPeriod(
   if (!iso) return false;
   const t = Date.parse(iso);
   const span = PERIODS.find((p) => p.id === period)?.ms ?? 0;
-  return Number.isFinite(t) && t <= now.getTime() && t > now.getTime() - span;
+  // Small tolerance: the screen clock (useNow) is refreshed once a minute, an entry saved since must still count.
+  return Number.isFinite(t) && t <= now.getTime() + 120_000 && t > now.getTime() - span;
 }
 
 export function dashboard(
@@ -81,9 +82,11 @@ export function dashboard(
   const gad7 = within(data.gad7, (g) => g.at).sort((a, b) =>
     a.at.localeCompare(b.at),
   );
+  const stepsDone = data.worries.filter((w) => inPeriod(w.doneAt, period, now));
   const all = [
     ...moods,
     ...worries,
+    ...stepsDone,
     ...replaysChecked,
     ...breathing,
     ...gad7,
@@ -96,8 +99,7 @@ export function dashboard(
     zones,
     worries: worries.length,
     actions: zones.action,
-    stepsDone: data.worries.filter((w) => inPeriod(w.doneAt, period, now))
-      .length,
+    stepsDone: stepsDone.length,
     calibration: calibration(replaysChecked),
     breathing: {
       sessions: breathing.length,

@@ -95,9 +95,9 @@ function MoodLine({
           strokeLinejoin="round"
           strokeLinecap="round"
         />
-        {d.moods.map((m) => (
+        {d.moods.map((m, i) => (
           <circle
-            key={m.at}
+            key={`${m.at}-${i}`}
             cx={x(m.at)}
             cy={y(m.level)}
             r="3.5"
@@ -154,9 +154,9 @@ function Gad7Trend({ d }: { d: Dashboard }) {
       className="flex items-end gap-2"
       aria-label="Scores du questionnaire, du plus ancien au plus récent"
     >
-      {d.gad7.map((g) => (
+      {d.gad7.map((g, i) => (
         <li
-          key={g.at}
+          key={`${g.at}-${i}`}
           className="flex flex-1 flex-col items-center gap-1 text-xs"
         >
           <span className="font-bold tabular-nums">{g.score}</span>
@@ -204,15 +204,14 @@ export function SuiviView() {
       </h1>
       <div
         className="grid grid-cols-3 gap-1 rounded-full bg-surface-2 p-1"
-        role="radiogroup"
+        role="group"
         aria-label="Période"
       >
         {PERIODS.map((p) => (
           <button
             key={p.id}
             type="button"
-            role="radio"
-            aria-checked={period === p.id}
+            aria-pressed={period === p.id}
             onClick={() => setPeriod(p.id)}
             className={`min-h-10 rounded-full text-sm font-bold transition-colors duration-200 ${period === p.id ? "bg-ink text-paper" : "text-ink-2"}`}
           >

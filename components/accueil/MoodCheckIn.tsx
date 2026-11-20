@@ -92,10 +92,13 @@ export function MoodCheckIn() {
 
   function save() {
     if (!level) return;
-    updateMoods((list) => [
-      ...list,
-      { id: uid(), at: new Date().toISOString(), level, emotions },
-    ]);
+    const at = new Date().toISOString();
+    // "Changer" replaces today's entry instead of adding a second point for the same day.
+    updateMoods((list) =>
+      editing && today
+        ? list.map((m) => (m.id === today.id ? { ...m, at, level, emotions } : m))
+        : [...list, { id: uid(), at, level, emotions }],
+    );
     setEditing(false);
     setLevel(null);
     setEmotions([]);
@@ -150,6 +153,11 @@ export function MoodCheckIn() {
             ))}
           </div>
         </fieldset>
+      )}
+      {editing && (
+        <button type="button" onClick={() => setEditing(false)} className="min-h-11 w-full rounded-full border border-ink/20 px-5 font-bold">
+          Garder mon humeur
+        </button>
       )}
       <button
         type="button"

@@ -14,7 +14,7 @@ export function HomeView() {
   const [replays] = useStoreValue("replays");
   const [gad7] = useStoreValue("gad7");
   const due =
-    now === null ? [] : groupEntries(replays, todayKey(new Date(now))).due;
+    now === null ? [] : groupEntries(replays.filter((r) => !r.demo), todayKey(new Date(now))).due // own predictions only, never a demo reminder;
   const lastGad7 = gad7
     .filter((g) => !g.demo)
     .map((g) => Date.parse(g.at))

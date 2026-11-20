@@ -56,10 +56,14 @@ const CHOICES: {
 export function Onboarding() {
   const router = useRouter();
   const [step, setStep] = useState(0);
-  const [consent, setConsent] = useState<Exclude<Consent, null>>("device");
+  // No pre-selected answer: storing on the phone must be an explicit choice.
+  const [consent, setConsent] = useState<Consent>(
+    () => store.get("settings").consent,
+  );
   const onConsent = step >= SLIDES.length;
 
   function finish() {
+    if (!consent) return;
     store.setConsent(consent);
     store.set("onboarded", true);
     router.replace("/accueil");
@@ -109,7 +113,8 @@ export function Onboarding() {
         <button
           type="button"
           onClick={finish}
-          className="inline-flex min-h-12 w-full items-center justify-center gap-2 rounded-full bg-ink px-6 font-bold text-paper transition-transform duration-200 ease-out active:scale-[0.98]"
+          disabled={!consent}
+          className="inline-flex min-h-12 w-full items-center justify-center gap-2 rounded-full bg-ink px-6 font-bold text-paper transition-transform duration-200 ease-out active:scale-[0.98] disabled:opacity-40"
         >
           Commencer
           <ArrowRight aria-hidden size={18} />
