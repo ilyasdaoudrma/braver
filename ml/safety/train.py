@@ -14,6 +14,7 @@ from __future__ import annotations
 
 import hashlib
 import json
+import math
 import sys
 from datetime import date
 from pathlib import Path
@@ -152,7 +153,8 @@ def main() -> None:
 
 
 def fmt(x: float | None) -> str:
-    return "-" if x is None else f"{x:.4f}"
+    # Truncated, never rounded up (CLAUDE.md): 0.94088 -> "0.9408".
+    return "-" if x is None else f"{math.floor(x * 10000) / 10000:.4f}"
 
 
 def write_markdown(r: dict) -> None:
