@@ -1,0 +1,29 @@
+{
+ "what": "AI-AI agreement between qwen3.8-27b (final label) and gpt-oss-safeguard-20b on blind zone labels (French text of each worry). Not a human check.",
+ "n_groups": 559,
+ "agreement_qwen_safeguard": 0.9284436493738819,
+ "cohen_kappa_qwen_safeguard": 0.8880141034116633,
+ "agreement_qwen_generation_intent": 0.9266547406082289,
+ "confusion_qwen_rows_vs_safeguard_cols": [
+  [
+   198,
+   0,
+   3
+  ],
+  [
+   5,
+   227,
+   15
+  ],
+  [
+   15,
+   2,
+   94
+  ]
+ ],
+ "labels": [
+  "scenario",
+  "action",
+  "acceptation"
+ ]
+}
