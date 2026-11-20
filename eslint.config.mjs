@@ -15,6 +15,8 @@ const eslintConfig = defineConfig([
     // BRAVER: prototype kept for reference, Python ML code
     "legacy/**",
     "ml/**",
+    // Deck builder (Node script run outside the app)
+    "docs/**",
   ]),
 ]);
 
