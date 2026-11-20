@@ -13,7 +13,11 @@ export const CHECK_DELAYS = [
 
 /** Local calendar date YYYY-MM-DD, `days` after `from`. */
 export function addDays(from: Date, days: number): string {
-  const d = new Date(from.getFullYear(), from.getMonth(), from.getDate() + days);
+  const d = new Date(
+    from.getFullYear(),
+    from.getMonth(),
+    from.getDate() + days,
+  );
   const mm = String(d.getMonth() + 1).padStart(2, "0");
   const dd = String(d.getDate()).padStart(2, "0");
   return `${d.getFullYear()}-${mm}-${dd}`;
@@ -33,7 +37,10 @@ export interface NewPrediction {
   days: number;
 }
 
-export function makeEntry(p: NewPrediction, now: Date = new Date()): ReplayEntry {
+export function makeEntry(
+  p: NewPrediction,
+  now: Date = new Date(),
+): ReplayEntry {
   return {
     id: p.id,
     worryId: p.worryId,
@@ -58,12 +65,19 @@ export interface ReplayGroups {
 }
 
 /** Pending entries whose date has come (oldest first), pending later ones, and checked ones (newest first). */
-export function groupEntries(entries: readonly ReplayEntry[], today: string = todayKey()): ReplayGroups {
-  const pending = entries.filter((e) => e.status === "pending").sort((a, b) => a.checkAt.localeCompare(b.checkAt));
+export function groupEntries(
+  entries: readonly ReplayEntry[],
+  today: string = todayKey(),
+): ReplayGroups {
+  const pending = entries
+    .filter((e) => e.status === "pending")
+    .sort((a, b) => a.checkAt.localeCompare(b.checkAt));
   return {
     due: pending.filter((e) => e.checkAt <= today),
     later: pending.filter((e) => e.checkAt > today),
-    done: entries.filter((e) => e.status === "done").sort((a, b) => (b.createdAt ?? "").localeCompare(a.createdAt ?? "")),
+    done: entries
+      .filter((e) => e.status === "done")
+      .sort((a, b) => (b.createdAt ?? "").localeCompare(a.createdAt ?? "")),
   };
 }
 
@@ -79,6 +93,8 @@ export interface CalibrationBucket {
 }
 
 export interface Calibration {
+  /** True when only the fictional demo entries are counted (the person has none of their own yet). */
+  demo: boolean;
   n: number;
   worst: number;
   partly: number;
@@ -89,7 +105,10 @@ const BOUNDS = [0, 20, 40, 60, 80, 101];
 
 /** Calibration from the person's own checked predictions. */
 export function calibration(entries: readonly ReplayEntry[]): Calibration {
-  const done = entries.filter((e) => e.status === "done" && e.worstHappened);
+  const checked = entries.filter((e) => e.status === "done" && e.worstHappened);
+  // The person's own entries only; the demo counts only while they have none (and is then labelled).
+  const own = checked.filter((e) => !e.demo);
+  const done = own.length ? own : checked;
   const buckets: CalibrationBucket[] = BOUNDS.slice(0, -1).map((from, i) => {
     const to = BOUNDS[i + 1];
     const inside = done.filter((e) => e.certainty >= from && e.certainty < to);
@@ -99,10 +118,13 @@ export function calibration(entries: readonly ReplayEntry[]): Calibration {
       n: inside.length,
       worst: inside.filter((e) => e.worstHappened === "oui").length,
       partly: inside.filter((e) => e.worstHappened === "en_partie").length,
-      meanCertainty: inside.length ? inside.reduce((s, e) => s + e.certainty, 0) / inside.length : null,
+      meanCertainty: inside.length
+        ? inside.reduce((s, e) => s + e.certainty, 0) / inside.length
+        : null,
     };
   });
   return {
+    demo: own.length === 0 && done.length > 0,
     n: done.length,
     worst: done.filter((e) => e.worstHappened === "oui").length,
     partly: done.filter((e) => e.worstHappened === "en_partie").length,
@@ -111,16 +133,24 @@ export function calibration(entries: readonly ReplayEntry[]): Calibration {
 }
 
 /** "le pire est arrivé 1 fois sur 8" — exact counts, never a rounded percentage. */
-export function worstSentence(c: Pick<Calibration, "n" | "worst" | "partly">): string | null {
+export function worstSentence(
+  c: Pick<Calibration, "n" | "worst" | "partly">,
+): string | null {
   if (!c.n) return null;
   const times = (k: number) => `${k} fois`;
-  const intro = c.n > 1 ? `Sur tes ${c.n} prédictions vérifiées` : "Sur ta prédiction vérifiée";
+  const intro =
+    c.n > 1
+      ? `Sur tes ${c.n} prédictions vérifiées`
+      : "Sur ta prédiction vérifiée";
   const base = `${intro}, le pire est arrivé ${times(c.worst)} sur ${c.n}`;
   return c.partly ? `${base}, en partie ${times(c.partly)}.` : `${base}.`;
 }
 
 /** Comment made on the phone when the LLM does not answer. No number, no reassurance. */
-export function localComment(entry: Pick<ReplayEntry, "prediction" | "certainty">, worst: WorstHappened): string {
+export function localComment(
+  entry: Pick<ReplayEntry, "prediction" | "certainty">,
+  worst: WorstHappened,
+): string {
   if (worst === "non")
     return `Tu étais sûr·e à ${entry.certainty} % que « ${entry.prediction} ». Ce n'est pas ce qui s'est passé. Garde cette trace pour la prochaine fois que ton esprit prédit la même chose.`;
   if (worst === "en_partie")
@@ -137,7 +167,12 @@ export async function fetchComment(
   worst: WorstHappened,
   fetchImpl: typeof fetch = fetch,
 ): Promise<{ comment: string; source: SortSource; model: string | null }> {
-  const body: ReplayRequest = { prediction: entry.prediction, outcome, certainty: entry.certainty, worstHappened: worst };
+  const body: ReplayRequest = {
+    prediction: entry.prediction,
+    outcome,
+    certainty: entry.certainty,
+    worstHappened: worst,
+  };
   try {
     const res = await fetchImpl("/api/replay", {
       method: "POST",

@@ -4,9 +4,20 @@ import { CloudOff, Cpu, PenLine, Sparkles } from "lucide-react";
 import { useSortSession } from "@/lib/sort/session";
 import type { SortOutcome } from "@/lib/sort/engine";
 import { ZONES } from "@/lib/types";
-import { formatSeconds, shortModel, SortCardView, ZONE_LABEL } from "./SortCardView";
+import {
+  formatSeconds,
+  shortModel,
+  SortCardView,
+  ZONE_LABEL,
+} from "./SortCardView";
 
-function EngineFooter({ outcome, upgrading }: { outcome: SortOutcome; upgrading: boolean }) {
+function EngineFooter({
+  outcome,
+  upgrading,
+}: {
+  outcome: SortOutcome;
+  upgrading: boolean;
+}) {
   let icon = <Cpu aria-hidden size={16} />;
   let text = "Tri fait sur ton téléphone.";
   if (upgrading) text = "Tri fait sur ton téléphone. L'IA affine tes cartes…";
@@ -18,7 +29,11 @@ function EngineFooter({ outcome, upgrading }: { outcome: SortOutcome; upgrading:
     text = "L'IA n'a pas répondu : tri fait sur ton téléphone.";
   }
   return (
-    <p role="status" aria-live="polite" className="flex items-center gap-2 text-sm text-ink-2">
+    <p
+      role="status"
+      aria-live="polite"
+      className="flex items-center gap-2 text-sm text-ink-2"
+    >
       {icon}
       {text}
     </p>
@@ -35,7 +50,10 @@ export function TriView() {
       <section className="enter space-y-4 rounded-2xl border border-dashed border-line bg-surface p-6 text-center">
         <p className="font-bold">Rien à trier pour l&apos;instant</p>
         <p className="text-ink-2">Écris d&apos;abord ce qui t&apos;inquiète.</p>
-        <Link href="/vider" className="inline-flex min-h-11 items-center gap-2 rounded-full bg-ink px-5 font-bold text-paper">
+        <Link
+          href="/vider"
+          className="inline-flex min-h-11 items-center gap-2 rounded-full bg-ink px-5 font-bold text-paper"
+        >
           <PenLine aria-hidden size={16} />
           Vider ma tête
         </Link>
@@ -47,7 +65,10 @@ export function TriView() {
   return (
     <section className="space-y-6" aria-labelledby="tri-title">
       <div className="space-y-2">
-        <h1 id="tri-title" className="font-display text-3xl font-bold tracking-tight">
+        <h1
+          id="tri-title"
+          className="font-display text-3xl font-bold tracking-tight"
+        >
           Ton tri
         </h1>
         <EngineFooter outcome={outcome} upgrading={upgrading} />
@@ -58,10 +79,16 @@ export function TriView() {
         return (
           <div key={zone} className="space-y-3">
             <h2 className="font-display text-xl font-bold">
-              {ZONE_LABEL[zone]} <span className="text-ink-2">· {cards.length}</span>
+              {ZONE_LABEL[zone]}{" "}
+              <span className="text-ink-2">· {cards.length}</span>
             </h2>
             {cards.map((card) => (
-              <SortCardView key={card.index} card={card} upgrading={upgrading} worryId={session.saved ? session.worryIds[card.index] : null} />
+              <SortCardView
+                key={card.index}
+                card={card}
+                upgrading={upgrading}
+                worryId={session.saved ? session.worryIds[card.index] : null}
+              />
             ))}
           </div>
         );

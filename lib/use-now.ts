@@ -12,6 +12,11 @@ function read(): number {
 }
 
 function subscribe(onChange: () => void): () => void {
+  // Coming back to a screen after a long time: refresh at once, not after the next tick.
+  if (snapshot !== null && Date.now() - snapshot >= TICK_MS) {
+    snapshot = Date.now();
+    queueMicrotask(onChange);
+  }
   const t = window.setInterval(() => {
     snapshot = Date.now();
     onChange();

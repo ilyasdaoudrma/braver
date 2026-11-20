@@ -24,7 +24,10 @@ export function ActionPanel({ worryId }: { worryId: string }) {
   useEffect(() => {
     if (!running) return;
     const tick = () => {
-      const rest = Math.max(0, Math.round(((endsAt.current ?? Date.now()) - Date.now()) / 1000));
+      const rest = Math.max(
+        0,
+        Math.round(((endsAt.current ?? Date.now()) - Date.now()) / 1000),
+      );
       setLeft(rest);
       if (rest === 0) setRunning(false);
     };
@@ -34,7 +37,10 @@ export function ActionPanel({ worryId }: { worryId: string }) {
 
   if (worry?.doneAt) {
     return (
-      <div className="flex items-center gap-2 rounded-xl bg-action-soft p-3 font-bold text-action" role="status">
+      <div
+        className="flex items-center gap-2 rounded-xl bg-action-soft p-3 font-bold text-action"
+        role="status"
+      >
         <Check aria-hidden size={18} />
         Fait. Ta peur avant : {worry.fearBefore ?? "?"} / 10.
       </div>
@@ -58,14 +64,21 @@ export function ActionPanel({ worryId }: { worryId: string }) {
 
   function handleDone() {
     const at = new Date().toISOString();
-    updateWorries((ws) => ws.map((w) => (w.id === worryId ? { ...w, fearBefore: fear, doneAt: at } : w)));
+    updateWorries((ws) =>
+      ws.map((w) =>
+        w.id === worryId ? { ...w, fearBefore: fear, doneAt: at } : w,
+      ),
+    );
     setRunning(false);
   }
 
   return (
     <div className="space-y-4 rounded-xl bg-surface-2 p-3">
       <div className="space-y-2">
-        <label htmlFor={`${id}-f`} className="flex items-baseline justify-between font-bold">
+        <label
+          htmlFor={`${id}-f`}
+          className="flex items-baseline justify-between font-bold"
+        >
           <span>Ta peur avant de commencer</span>
           <span className="tabular-nums text-action" aria-hidden>
             {fear} / 10
@@ -83,7 +96,10 @@ export function ActionPanel({ worryId }: { worryId: string }) {
         />
       </div>
       <div className="flex items-center gap-2">
-        <p className="min-w-16 font-display text-2xl font-bold tabular-nums" aria-live="off">
+        <p
+          className="min-w-16 font-display text-2xl font-bold tabular-nums"
+          aria-live="off"
+        >
           {mmss(left)}
         </p>
         <button
@@ -91,16 +107,35 @@ export function ActionPanel({ worryId }: { worryId: string }) {
           onClick={toggle}
           className="inline-flex min-h-11 flex-1 items-center justify-center gap-2 rounded-full border border-ink/20 px-4 font-bold"
         >
-          {running ? <Pause aria-hidden size={16} /> : <Play aria-hidden size={16} />}
-          {running ? "Mettre en pause" : left === TIMER_SECONDS ? "Lancer 10 minutes" : left === 0 ? "Relancer" : "Reprendre"}
+          {running ? (
+            <Pause aria-hidden size={16} />
+          ) : (
+            <Play aria-hidden size={16} />
+          )}
+          {running
+            ? "Mettre en pause"
+            : left === TIMER_SECONDS
+              ? "Lancer 10 minutes"
+              : left === 0
+                ? "Relancer"
+                : "Reprendre"}
         </button>
         {left !== TIMER_SECONDS && (
-          <button type="button" onClick={reset} aria-label="Remettre le minuteur à 10 minutes" className="inline-flex size-11 items-center justify-center rounded-full border border-ink/20">
+          <button
+            type="button"
+            onClick={reset}
+            aria-label="Remettre le minuteur à 10 minutes"
+            className="inline-flex size-11 items-center justify-center rounded-full border border-ink/20"
+          >
             <RotateCcw aria-hidden size={16} />
           </button>
         )}
       </div>
-      {left === 0 && <p role="status" className="text-sm text-ink-2">Les 10 minutes sont passées. Où en es-tu ?</p>}
+      {left === 0 && (
+        <p role="status" className="text-sm text-ink-2">
+          Les 10 minutes sont passées. Où en es-tu ?
+        </p>
+      )}
       <button
         type="button"
         onClick={handleDone}

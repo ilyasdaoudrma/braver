@@ -18,7 +18,13 @@ export function shortModel(model: string): string {
   return model.split("/").pop() ?? model;
 }
 
-function SourceBadge({ card, upgrading }: { card: SortCard; upgrading: boolean }) {
+function SourceBadge({
+  card,
+  upgrading,
+}: {
+  card: SortCard;
+  upgrading: boolean;
+}) {
   if (card.source === "llm" && card.model) {
     return (
       <span className="inline-flex items-center gap-1 rounded-full bg-surface-2 px-2 py-0.5 text-xs font-bold text-ink-2">
@@ -30,7 +36,15 @@ function SourceBadge({ card, upgrading }: { card: SortCard; upgrading: boolean }
   }
   return (
     <span className="inline-flex items-center gap-1 rounded-full bg-surface-2 px-2 py-0.5 text-xs font-bold text-ink-2">
-      {upgrading ? <Loader2 aria-hidden size={12} className="animate-spin motion-reduce:animate-none" /> : <Cpu aria-hidden size={12} />}
+      {upgrading ? (
+        <Loader2
+          aria-hidden
+          size={12}
+          className="animate-spin motion-reduce:animate-none"
+        />
+      ) : (
+        <Cpu aria-hidden size={12} />
+      )}
       {upgrading ? "Sur le téléphone · l'IA affine" : "Sur le téléphone"}
     </span>
   );
@@ -40,7 +54,9 @@ function Field({ label, value }: { label: string; value: string | null }) {
   if (!value) return null;
   return (
     <div className="space-y-0.5">
-      <p className="text-xs font-bold tracking-wide text-ink-2 uppercase">{label}</p>
+      <p className="text-xs font-bold tracking-wide text-ink-2 uppercase">
+        {label}
+      </p>
       <p dir="auto">{value}</p>
     </div>
   );
@@ -53,11 +69,22 @@ interface SortCardViewProps {
   worryId: string | null;
 }
 
-function ZonePanel({ card, worryId }: { card: SortCard; worryId: string | null }) {
+function ZonePanel({
+  card,
+  worryId,
+}: {
+  card: SortCard;
+  worryId: string | null;
+}) {
   if (!worryId) {
-    return <p className="rounded-xl bg-surface-2 p-3 text-sm text-ink-2">L&apos;IA affine ta carte, encore un instant…</p>;
+    return (
+      <p className="rounded-xl bg-surface-2 p-3 text-sm text-ink-2">
+        L&apos;IA affine ta carte, encore un instant…
+      </p>
+    );
   }
-  if (card.zone === "scenario") return <ScenarioPanel card={card} worryId={worryId} />;
+  if (card.zone === "scenario")
+    return <ScenarioPanel card={card} worryId={worryId} />;
   if (card.zone === "action") return <ActionPanel worryId={worryId} />;
   return (
     <Link
@@ -73,12 +100,29 @@ function ZonePanel({ card, worryId }: { card: SortCard; worryId: string | null }
 export function SortCardView({ card, upgrading, worryId }: SortCardViewProps) {
   const style = ZONE_STYLE[card.zone];
   return (
-    <article className="enter relative overflow-hidden rounded-2xl border border-line bg-surface p-4 pl-5" aria-label={`${ZONE_LABEL[card.zone]} : ${card.text}`}>
-      <span aria-hidden className={`absolute inset-y-0 left-0 w-1.5 ${style.bar}`} />
+    <article
+      className="enter relative overflow-hidden rounded-2xl border border-line bg-surface p-4 pl-5"
+      aria-label={`${ZONE_LABEL[card.zone]} : ${card.text}`}
+    >
+      <span
+        aria-hidden
+        className={`absolute inset-y-0 left-0 w-1.5 ${style.bar}`}
+      />
       <div className="mb-3 flex flex-wrap items-center gap-2">
-        <span className={`rounded-full px-2 py-0.5 text-xs font-bold ${style.chip}`}>{ZONE_LABEL[card.zone]}</span>
-        <SourceBadge card={card} upgrading={upgrading && card.source === "device"} />
-        {card.checking && <span className="rounded-full bg-surface-2 px-2 py-0.5 text-xs font-bold text-ink-2">Vérification</span>}
+        <span
+          className={`rounded-full px-2 py-0.5 text-xs font-bold ${style.chip}`}
+        >
+          {ZONE_LABEL[card.zone]}
+        </span>
+        <SourceBadge
+          card={card}
+          upgrading={upgrading && card.source === "device"}
+        />
+        {card.checking && (
+          <span className="rounded-full bg-surface-2 px-2 py-0.5 text-xs font-bold text-ink-2">
+            Vérification
+          </span>
+        )}
       </div>
       <p dir="auto" className="mb-3 font-bold">
         {card.text}
@@ -97,7 +141,9 @@ export function SortCardView({ card, upgrading, worryId }: SortCardViewProps) {
       <MoveCard index={card.index} zone={card.zone} disabled={!worryId} />
       {card.distress && (
         <div className="mt-4 space-y-3 rounded-xl bg-surface-2 p-3">
-          <p className="font-bold">Ça a l&apos;air lourd. Tu veux en parler à quelqu&apos;un ?</p>
+          <p className="font-bold">
+            Ça a l&apos;air lourd. Tu veux en parler à quelqu&apos;un ?
+          </p>
           <HelpButton />
         </div>
       )}

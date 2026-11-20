@@ -7,7 +7,15 @@ import { moveCard } from "@/lib/sort/session";
 import { ZONE_LABEL } from "./zones";
 
 /** "Pas la bonne zone ?" — the person can move the card; their choice is saved. */
-export function MoveCard({ index, zone, disabled }: { index: number; zone: Zone; disabled: boolean }) {
+export function MoveCard({
+  index,
+  zone,
+  disabled,
+}: {
+  index: number;
+  zone: Zone;
+  disabled: boolean;
+}) {
   const [open, setOpen] = useState(false);
   return (
     <div className="mt-3">
@@ -22,7 +30,11 @@ export function MoveCard({ index, zone, disabled }: { index: number; zone: Zone;
         Pas la bonne zone ?
       </button>
       {open && (
-        <div className="enter flex flex-wrap gap-2" role="group" aria-label="Déplacer la carte vers">
+        <div
+          className="enter flex flex-wrap gap-2"
+          role="group"
+          aria-label="Déplacer la carte vers"
+        >
           {ZONES.filter((z) => z !== zone).map((z) => (
             <button
               key={z}

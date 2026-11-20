@@ -9,11 +9,21 @@ import { useStoreValue } from "@/lib/use-store";
 
 function formatDay(iso: string): string {
   const [y, m, d] = iso.split("-").map(Number);
-  return new Date(y, m - 1, d).toLocaleDateString("fr-FR", { weekday: "long", day: "numeric", month: "long" });
+  return new Date(y, m - 1, d).toLocaleDateString("fr-FR", {
+    weekday: "long",
+    day: "numeric",
+    month: "long",
+  });
 }
 
 /** Scenario card: how sure the person is, and when to check. Saves a Replay entry. */
-export function ScenarioPanel({ card, worryId }: { card: SortCard; worryId: string }) {
+export function ScenarioPanel({
+  card,
+  worryId,
+}: {
+  card: SortCard;
+  worryId: string;
+}) {
   const id = useId();
   const [replays, updateReplays] = useStoreValue("replays");
   const [certainty, setCertainty] = useState(70);
@@ -22,11 +32,18 @@ export function ScenarioPanel({ card, worryId }: { card: SortCard; worryId: stri
 
   if (noted) {
     return (
-      <div className="flex items-start gap-2 rounded-xl bg-scenario-soft p-3 text-scenario" role="status">
+      <div
+        className="flex items-start gap-2 rounded-xl bg-scenario-soft p-3 text-scenario"
+        role="status"
+      >
         <CalendarCheck aria-hidden size={18} className="mt-0.5 shrink-0" />
         <p>
-          Prédiction notée, sûr·e à {noted.certainty} %. On te la repose {formatDay(noted.checkAt)}.{" "}
-          <Link href="/replay" className="font-bold underline underline-offset-4">
+          Prédiction notée, sûr·e à {noted.certainty} %. On te la repose{" "}
+          {formatDay(noted.checkAt)}.{" "}
+          <Link
+            href="/replay"
+            className="font-bold underline underline-offset-4"
+          >
             Voir le Replay
           </Link>
         </p>
@@ -36,16 +53,31 @@ export function ScenarioPanel({ card, worryId }: { card: SortCard; worryId: stri
 
   function handleNote() {
     const prediction = card.prediction ?? card.text;
-    updateReplays((list) => [
-      ...list,
-      makeEntry({ id: uid(), worryId, text: card.text, prediction, question: card.question, certainty, days }),
-    ]);
+    updateReplays((list) =>
+      list.some((r) => r.worryId === worryId)
+        ? list
+        : [
+            ...list,
+            makeEntry({
+              id: uid(),
+              worryId,
+              text: card.text,
+              prediction,
+              question: card.question,
+              certainty,
+              days,
+            }),
+          ],
+    );
   }
 
   return (
     <div className="space-y-4 rounded-xl bg-surface-2 p-3">
       <div className="space-y-2">
-        <label htmlFor={`${id}-c`} className="flex items-baseline justify-between font-bold">
+        <label
+          htmlFor={`${id}-c`}
+          className="flex items-baseline justify-between font-bold"
+        >
           <span>À quel point tu en es sûr·e ?</span>
           <span className="tabular-nums text-scenario" aria-hidden>
             {certainty} %
@@ -73,7 +105,14 @@ export function ScenarioPanel({ card, worryId }: { card: SortCard; worryId: stri
                 days === d.days ? "bg-scenario text-paper" : "text-ink-2"
               }`}
             >
-              <input type="radio" name={`${id}-d`} value={d.days} checked={days === d.days} onChange={() => setDays(d.days)} className="sr-only" />
+              <input
+                type="radio"
+                name={`${id}-d`}
+                value={d.days}
+                checked={days === d.days}
+                onChange={() => setDays(d.days)}
+                className="sr-only"
+              />
               {d.label}
             </label>
           ))}

@@ -86,3 +86,14 @@ describe("comments", () => {
     expect(r.source).toBe("device");
   });
 });
+
+describe("calibration and the demo", () => {
+  it("counts only the person's own entries when they have some", () => {
+    const own = done(80, "oui");
+    const demo = { ...done(90, "non"), demo: true };
+    expect(calibration([own, demo])).toMatchObject({ n: 1, worst: 1, demo: false });
+  });
+  it("uses (and flags) the demo only while there is nothing of their own", () => {
+    expect(calibration([{ ...done(90, "non"), demo: true }])).toMatchObject({ n: 1, demo: true });
+  });
+});
