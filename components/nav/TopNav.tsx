@@ -20,7 +20,7 @@ export function TopNav() {
               <Link
                 href={tab.href}
                 aria-current={active ? "page" : undefined}
-                className={`relative flex h-11 items-center gap-2 rounded-xl px-4 text-sm font-bold ${active ? "text-paper" : "text-ink-2 hover:bg-surface-2 hover:text-ink"}`}
+                className={`relative flex h-11 items-center gap-2 rounded-xl px-3 text-sm font-bold xl:px-4 ${active ? "text-paper" : "text-ink-2 hover:bg-surface-2 hover:text-ink"}`}
               >
                 {active && (
                   <motion.span
