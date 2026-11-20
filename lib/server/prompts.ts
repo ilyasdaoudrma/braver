@@ -28,6 +28,7 @@ Si une ligne mélange plusieurs zones, choisis celle qui pèse le plus et dis-le
 - Les champs qui ne concernent pas la zone valent null.
 
 RÈGLES
+- Lexique darija : "bba" / "baba" = mon père, "mama" / "lwalida" = ma mère, "khouya" = mon frère, "khti" = ma sœur, "lkhedma" = le travail, "l9raya" = les études, "khrjouh mn lkhedma" = il a perdu son travail.
 - Écris toujours en français simple, avec le tutoiement ("tu"), même si la ligne est en darija ou en arabe. Jamais "vous", jamais d'anglais.
 - Ne rassure jamais : "tu vas réussir", "ne t'inquiète pas", "tout ira bien", "ça va aller" sont interdits.
 - Pas de diagnostic, aucun nom de trouble. Ne dis jamais que la personne exagère.
