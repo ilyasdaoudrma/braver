@@ -13,7 +13,7 @@ export function ScreenPlaceholder({ title, description, issue, owner }: ScreenPl
   return (
     <section className="enter space-y-6" aria-labelledby="screen-title">
       <div className="space-y-2">
-        <h1 id="screen-title" className="font-display text-3xl font-bold tracking-tight">
+        <h1 id="screen-title" className="font-display text-4xl font-light tracking-tight">
           {title}
         </h1>
         <p className="text-ink-2">{description}</p>

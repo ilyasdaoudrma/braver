@@ -111,7 +111,7 @@ export function BreathingView() {
     return (
       <section className="enter space-y-4 text-center" aria-labelledby="breath-phase">
         <Circle state={state} still={still} />
-        <p id="breath-phase" ref={heading} tabIndex={-1} className="font-display text-2xl font-bold focus:outline-none" aria-live="polite">
+        <p id="breath-phase" ref={heading} tabIndex={-1} className="font-display text-2xl font-medium focus:outline-none" aria-live="polite">
           {state.phase.label}
         </p>
         <p className="tabular-nums text-ink-2">
@@ -128,7 +128,7 @@ export function BreathingView() {
   if (step === "after") {
     return (
       <section className="enter space-y-6" aria-labelledby="after-title">
-        <h1 id="after-title" ref={heading} tabIndex={-1} className="font-display text-3xl font-bold tracking-tight focus:outline-none">
+        <h1 id="after-title" ref={heading} tabIndex={-1} className="font-display text-4xl font-light tracking-tight focus:outline-none">
           Et maintenant ?
         </h1>
         <MoodPicker name="after" legend="Comment tu te sens après ?" value={after} onChange={setAfter} />
@@ -161,7 +161,7 @@ export function BreathingView() {
   return (
     <section className="enter space-y-6" aria-labelledby="breath-title">
       <div className="space-y-2">
-        <h1 id="breath-title" className="font-display text-3xl font-bold tracking-tight">
+        <h1 id="breath-title" className="font-display text-4xl font-light tracking-tight">
           Respirer
         </h1>
         <p className="text-ink-2">Le soupir cyclique : deux inspirations par le nez, puis une longue expiration par la bouche.</p>

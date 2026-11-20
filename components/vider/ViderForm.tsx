@@ -6,6 +6,7 @@ import { MAX_CHARS, MAX_LINES } from "@/lib/sort/api";
 import { isSorting, startSort } from "@/lib/sort/session";
 import { loadSafetyModel } from "@/lib/safety/model";
 import { loadZonesModel } from "@/lib/zones/model";
+import { pick, useLang } from "@/lib/i18n";
 import { useStoreValue } from "@/lib/use-store";
 
 const EXAMPLE = [
@@ -28,6 +29,7 @@ function validate(raw: string): string | null {
 
 export function ViderForm() {
   const router = useRouter();
+  const lang = useLang();
   const fieldId = useId();
   const [settings] = useStoreValue("settings");
   const [text, setText] = useState("");
@@ -77,13 +79,22 @@ export function ViderForm() {
   return (
     <form onSubmit={handleSubmit} className="enter space-y-6" noValidate>
       <div className="space-y-2">
-        <h1 className="font-display text-3xl font-bold tracking-tight">Vide ta tête</h1>
-        <p className="text-ink-2">Écris ce qui t&apos;inquiète. Une inquiétude par ligne, en français ou en darija.</p>
+        <h1 className="font-display text-5xl font-light tracking-tight">
+          {pick(lang, "Vide ta ", "Clear your ")}
+          <span className="accent-serif">{pick(lang, "tête", "head")}</span>
+        </h1>
+        <p className="text-ink-2">
+          {pick(
+            lang,
+            "Écris ce qui t'inquiète. Une inquiétude par ligne, en français ou en darija.",
+            "Write what worries you. One worry per line, in French or Darija (the sorting answers in French).",
+          )}
+        </p>
       </div>
 
       <div className="space-y-2">
         <label htmlFor={fieldId} className="block font-bold">
-          Ce qui t&apos;inquiète
+          {pick(lang, "Ce qui t'inquiète", "What worries you")}
         </label>
         <textarea
           id={fieldId}
@@ -116,10 +127,10 @@ export function ViderForm() {
       <button
         type="submit"
         disabled={!canSort || submitting}
-        className="inline-flex min-h-12 w-full items-center justify-center gap-2 rounded-full bg-ink px-6 font-bold text-paper transition-[opacity,transform] duration-200 ease-out active:scale-[0.98] disabled:opacity-40"
+        className="group inline-flex min-h-14 w-full items-center justify-center gap-2 rounded-2xl bg-ink px-6 font-bold text-paper shadow-[0_18px_36px_-18px_rgba(27,35,51,0.8)] hover:-translate-y-0.5 disabled:opacity-40 disabled:hover:translate-y-0"
       >
-        Trier mes inquiétudes
-        <ArrowRight aria-hidden size={18} />
+        {pick(lang, "Trier mes inquiétudes", "Sort my worries")}
+        <ArrowRight aria-hidden size={18} className="transition-transform duration-300 group-hover:translate-x-1" />
       </button>
     </form>
   );

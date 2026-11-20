@@ -37,12 +37,12 @@ export function Gad7View() {
     const trend = trendText(own.map((e) => e.score));
     return (
       <section className="enter space-y-5" aria-labelledby="gad-done">
-        <h1 id="gad-done" ref={heading} tabIndex={-1} className="font-display text-3xl font-bold tracking-tight focus:outline-none">
+        <h1 id="gad-done" ref={heading} tabIndex={-1} className="font-display text-4xl font-light tracking-tight focus:outline-none">
           Merci
         </h1>
         <div className="rounded-2xl border border-line bg-surface p-5">
           <p className="text-ink-2">Ton score sur les deux dernières semaines</p>
-          <p className="font-display text-5xl font-bold tabular-nums">
+          <p className="font-display text-6xl font-light tabular-nums">
             {score}
             <span className="text-2xl text-ink-2"> / 21</span>
           </p>
@@ -85,7 +85,7 @@ export function Gad7View() {
       </div>
       <div className="space-y-2">
         <p className="text-ink-2">{GAD7_INTRO}</p>
-        <h1 id="gad-q" ref={heading} tabIndex={-1} className="font-display text-2xl font-bold focus:outline-none">
+        <h1 id="gad-q" ref={heading} tabIndex={-1} className="font-display text-2xl font-medium focus:outline-none">
           {GAD7_QUESTIONS[i]}
         </h1>
       </div>

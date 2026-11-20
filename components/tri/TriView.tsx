@@ -69,7 +69,7 @@ export function TriView() {
       <div className="space-y-2">
         <h1
           id="tri-title"
-          className="font-display text-3xl font-bold tracking-tight"
+          className="font-display text-4xl font-light tracking-tight"
         >
           Ton tri
         </h1>
@@ -80,7 +80,7 @@ export function TriView() {
         if (!cards.length) return null;
         return (
           <div key={zone} className="space-y-3">
-            <h2 className="font-display text-xl font-bold">
+            <h2 className="font-display text-xl font-semibold">
               {ZONE_LABEL[zone]}{" "}
               <span className="text-ink-2">· {cards.length}</span>
             </h2>

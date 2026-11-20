@@ -97,7 +97,7 @@ export function ActionPanel({ worryId }: { worryId: string }) {
       </div>
       <div className="flex items-center gap-2">
         <p
-          className="min-w-16 font-display text-2xl font-bold tabular-nums"
+          className="min-w-16 font-display text-2xl font-medium tabular-nums"
           aria-live="off"
         >
           {mmss(left)}

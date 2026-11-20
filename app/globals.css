@@ -1,46 +1,30 @@
 @import "tailwindcss";
 
-/* BRAVER design tokens. Shared file: change in a small "shared:" PR.
+/* BRAVER design tokens — light "dawn" design (22 Nov 2026 redesign).
    No pure #FFF / #000. Zone colours carry meaning: use them only for their zone. */
 :root {
-  --paper: #edf0f4;
-  --surface: #f8f9fb;
-  --surface-2: #e2e7ee;
-  --ink: #131b2c;
-  --ink-2: #4a5468;
-  --line: #d3dae4;
+  --paper: #faf6f0;
+  --surface: #fdfbf7;
+  --surface-2: #f1ebe2;
+  --ink: #1b2333;
+  --ink-2: #566175;
+  --line: #e6ded2;
   --scenario: #5b3fd6;
-  --scenario-soft: #e9e5fb;
+  --scenario-soft: #ece8fc;
   --action: #b93d0a;
-  --action-soft: #f8e6dd;
+  --action-soft: #fbe9df;
   --acceptation: #0b7065;
-  --acceptation-soft: #ddf0ec;
+  --acceptation-soft: #dff2ee;
   --focus: #2d6cdf;
   --danger: #c81d25;
-  --danger-soft: #f9e1e2;
-  --nav-h: 4rem;
+  --danger-soft: #fbe3e4;
+  --dawn: #f6d9c4;
+  --dusk: #d9cdf0;
+  --glass: rgba(253, 251, 247, 0.72);
+  --glass-line: rgba(27, 35, 51, 0.08);
+  --shadow-soft: 0 1px 0 rgba(253, 251, 247, 0.9) inset, 0 18px 40px -26px rgba(27, 35, 51, 0.35);
+  --nav-h: 4.25rem;
   color-scheme: light;
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --paper: #0e1420;
-    --surface: #172033;
-    --surface-2: #222d45;
-    --ink: #e7ebf2;
-    --ink-2: #a3adbf;
-    --line: #2b3752;
-    --scenario: #a193f2;
-    --scenario-soft: #251f45;
-    --action: #f2915e;
-    --action-soft: #3a2116;
-    --acceptation: #4fc3b4;
-    --acceptation-soft: #12332f;
-    --focus: #7aa5f2;
-    --danger: #f0767b;
-    --danger-soft: #3b1a1d;
-    color-scheme: dark;
-  }
 }
 
 @theme inline {
@@ -59,8 +43,11 @@
   --color-focus: var(--focus);
   --color-danger: var(--danger);
   --color-danger-soft: var(--danger-soft);
-  --font-display: var(--font-bricolage), var(--font-plex-arabic), system-ui, sans-serif;
+  --color-dawn: var(--dawn);
+  --color-dusk: var(--dusk);
+  --font-display: var(--font-inter-tight), var(--font-plex-arabic), system-ui, sans-serif;
   --font-sans: var(--font-atkinson), var(--font-plex-arabic), system-ui, sans-serif;
+  --font-serif: var(--font-instrument-serif), Georgia, serif;
   --ease-out-soft: cubic-bezier(0.22, 1, 0.36, 1);
 }
 
@@ -69,15 +56,61 @@ html {
 }
 
 body {
-  background: var(--paper);
+  background:
+    radial-gradient(120% 60% at 50% -10%, rgba(246, 217, 196, 0.55), transparent 60%),
+    radial-gradient(80% 50% at 100% 0%, rgba(217, 205, 240, 0.45), transparent 60%),
+    var(--paper);
+  background-attachment: fixed;
   color: var(--ink);
   font-family: var(--font-sans);
   -webkit-tap-highlight-color: transparent;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Headlines: Inter Tight, light weight, tight tracking. */
+.font-display {
+  letter-spacing: -0.025em;
+}
+
+/* One serif italic accent word inside a headline. */
+.accent-serif {
+  font-family: var(--font-serif);
+  font-style: italic;
+  font-weight: 400;
+  letter-spacing: 0;
 }
 
 :focus-visible {
   outline: 2px solid var(--focus);
   outline-offset: 2px;
+}
+
+/* In the base layer so any Tailwind utility on an element still wins. */
+@layer base {
+  /* Every card surface of the app gets the same soft depth (exact class bg-surface, not bg-surface-2). */
+  [class~="bg-surface"][class*="rounded-2xl"],
+  [class~="bg-surface"][class*="rounded-xl"][class*="border"] {
+    box-shadow: var(--shadow-soft);
+  }
+
+  /* Press feedback on everything clickable (180 ms). */
+  button:not(:disabled),
+  a[href] {
+    transition-property: transform, translate, scale, background-color, color, border-color, box-shadow, opacity;
+    transition-duration: 180ms;
+    transition-timing-function: var(--ease-out-soft);
+  }
+  button:not(:disabled):active,
+  a[href][class*="rounded"]:active {
+    transform: scale(0.97);
+  }
+}
+
+.glass {
+  background: var(--glass);
+  border: 1px solid var(--glass-line);
+  backdrop-filter: blur(18px) saturate(1.3);
+  -webkit-backdrop-filter: blur(18px) saturate(1.3);
 }
 
 /* Entry motion: fade + slight rise, 220 ms ease-out. */
@@ -94,6 +127,26 @@ body {
 
 .enter {
   animation: enter 220ms var(--ease-out-soft) both;
+}
+
+@keyframes bob {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(5px);
+  }
+}
+
+@keyframes float-orb {
+  0%,
+  100% {
+    transform: translate3d(0, 0, 0);
+  }
+  50% {
+    transform: translate3d(0, -10px, 0);
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {

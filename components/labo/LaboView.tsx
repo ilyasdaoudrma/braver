@@ -125,7 +125,7 @@ export function LaboView({ metrics }: { metrics: LaboMetrics | null }) {
   return (
     <section className="enter space-y-8" aria-labelledby="labo-title">
       <div className="space-y-2">
-        <h1 id="labo-title" className="font-display text-3xl font-bold tracking-tight">
+        <h1 id="labo-title" className="font-display text-4xl font-light tracking-tight">
           Labo
         </h1>
         <p className="text-ink-2">
@@ -162,7 +162,7 @@ export function LaboView({ metrics }: { metrics: LaboMetrics | null }) {
           ) : null}
           {Object.entries(metrics.sets).map(([key, s]) => (
             <article key={key} className="space-y-4 rounded-2xl border border-line bg-surface p-4">
-              <h2 className="font-display text-xl font-bold">
+              <h2 className="font-display text-xl font-semibold">
                 {s.name} <span className="text-ink-2">· n = {s.n}</span>
               </h2>
               {Boolean(s.llm_missing) && (
@@ -176,7 +176,7 @@ export function LaboView({ metrics }: { metrics: LaboMetrics | null }) {
           ))}
           {metrics.models && (
             <article className="space-y-2 rounded-2xl border border-line bg-surface p-4 text-sm">
-              <h2 className="font-display text-xl font-bold">Données d&apos;entraînement</h2>
+              <h2 className="font-display text-xl font-semibold">Données d&apos;entraînement</h2>
               <ul className="list-disc space-y-1 pl-5">
                 {Object.entries(metrics.models).map(([k, m]) => (
                   <li key={k}>

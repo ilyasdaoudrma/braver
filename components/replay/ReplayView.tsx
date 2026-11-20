@@ -39,7 +39,7 @@ export function ReplayView() {
       <div className="space-y-2">
         <h1
           id="replay-title"
-          className="font-display text-3xl font-bold tracking-tight"
+          className="font-display text-4xl font-light tracking-tight"
         >
           Replay
         </h1>
@@ -70,7 +70,7 @@ export function ReplayView() {
         <>
           {groups.due.length > 0 && (
             <div className="space-y-3">
-              <h2 className="font-display text-xl font-bold">
+              <h2 className="font-display text-xl font-semibold">
                 À vérifier{" "}
                 <span className="text-ink-2">· {groups.due.length}</span>
               </h2>
@@ -80,12 +80,12 @@ export function ReplayView() {
             </div>
           )}
           <div className="space-y-3">
-            <h2 className="font-display text-xl font-bold">Ta calibration</h2>
+            <h2 className="font-display text-xl font-semibold">Ta calibration</h2>
             <CalibrationChart data={calib} />
           </div>
           {groups.later.length > 0 && (
             <div className="space-y-3">
-              <h2 className="font-display text-xl font-bold">
+              <h2 className="font-display text-xl font-semibold">
                 Plus tard{" "}
                 <span className="text-ink-2">· {groups.later.length}</span>
               </h2>
@@ -96,7 +96,7 @@ export function ReplayView() {
           )}
           {groups.done.length > 0 && (
             <div className="space-y-3">
-              <h2 className="font-display text-xl font-bold">
+              <h2 className="font-display text-xl font-semibold">
                 Déjà vérifiées{" "}
                 <span className="text-ink-2">· {groups.done.length}</span>
               </h2>
