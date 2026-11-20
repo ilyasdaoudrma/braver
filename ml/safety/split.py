@@ -35,9 +35,23 @@ def load() -> pd.DataFrame:
         if path.exists():
             parts.append(pd.read_csv(path))
     df = pd.concat(parts, ignore_index=True)
+    df = df[~df["group"].isin(rejected_groups(english))]
     # Drop normalised duplicates across sources (keep the first, i.e. the original English).
     df = df.assign(norm=df["text"].map(normalize)).drop_duplicates("norm").drop(columns="norm")
     return df[COLUMNS]
+
+
+def rejected_groups(english: pd.DataFrame) -> set[str]:
+    """Post-filters (review of PR #27), applied per group so translations go too:
+    - Aegis danger prompts that qwen/qwen3.8-27b judged harmless on their own (check_aegis.py)
+    - rows where the `filler` padding of the Reddit source survived clean.py."""
+    bad: set[str] = set()
+    check = INTERIM / "aegis_check.csv"
+    if check.exists():
+        c = pd.read_csv(check)
+        bad |= set(c.loc[~c["keep"], "id"])
+    bad |= set(english.loc[english["text"].str.contains("filler", case=False, regex=True), "id"])
+    return bad
 
 
 def assign_splits(df: pd.DataFrame) -> pd.Series:

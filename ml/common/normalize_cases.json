@@ -78,5 +78,17 @@
  {
   "input": "naïve café crème",
   "expected": " naive cafe creme "
+ },
+ {
+  "input": "﻿début avec BOM",
+  "expected": " debut avec bom "
+ },
+ {
+  "input": "sep\u001caration\u001fbizarre",
+  "expected": " sep aration bizarre "
+ },
+ {
+  "input": " espace insécable em",
+  "expected": " espace insecable em "
  }
 ]

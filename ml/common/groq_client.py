@@ -110,7 +110,8 @@ class GroqJSON:
                 wait = float(res.headers.get("retry-after") or 0) or _parse_seconds(
                     res.headers.get("x-ratelimit-reset-tokens")
                 ) or 20
-                if "requests per day" in res.text.lower() or "rpd" in res.text.lower():
+                low = res.text.lower()
+                if "per day" in low or "rpd" in low or "tpd" in low:
                     raise SystemExit(f"daily request limit reached on {model}: {res.text[:200]}")
                 self._say(f"  429 on {model}, sleeping {wait:.1f}s")
                 time.sleep(wait + 1)
@@ -127,12 +128,15 @@ class GroqJSON:
             except json.JSONDecodeError:
                 self._say("  invalid JSON, retry")
                 continue
-            path.write_text(json.dumps(data, ensure_ascii=False), encoding="utf-8")
-            # The token bucket refills continuously (8k/min): wait only for the share we are missing.
-            remaining = int(res.headers.get("x-ratelimit-remaining-tokens") or 0)
+            tmp = path.with_suffix(".tmp")
+            tmp.write_text(json.dumps(data, ensure_ascii=False), encoding="utf-8")
+            tmp.replace(path)  # atomic: a killed run never leaves a truncated cache file
+            # The token bucket refills continuously: wait only for the share we are missing.
+            remaining = res.headers.get("x-ratelimit-remaining-tokens")
+            per_minute = int(res.headers.get("x-ratelimit-limit-tokens") or 8000)
             need = max_tokens + 1000
-            if remaining < need:
-                time.sleep((need - remaining) / 8000 * 60)
+            if remaining is not None and int(remaining) < need:
+                time.sleep((need - int(remaining)) / per_minute * 60)
             return data
         return None
 

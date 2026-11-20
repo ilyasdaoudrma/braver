@@ -8,14 +8,15 @@ Used to train the on-device safety classifier (M1). The keyword layer and the LL
 
 | Source | Licence (dataset card) | What we take | Rows in final set |
 |---|---|---|---|
-| [`vibhorag101/suicide_prediction_dataset_phr`](https://huggingface.co/datasets/vibhorag101/suicide_prediction_dataset_phr) | MIT | 1,200 random rows per class (5–400 chars), English Reddit, label from the subreddit | 3,207 (incl. translations) |
-| [`nvidia/Aegis-AI-Content-Safety-Dataset-2.0`](https://huggingface.co/datasets/nvidia/Aegis-AI-Content-Safety-Dataset-2.0) | CC-BY-4.0 | unsafe prompts in the "Suicide and Self Harm" category (all), 300 random safe prompts with no violated category | 1,238 (incl. translations) |
-| Translations (`source=translated`) | derived from the two sources above | 500 short English rows sent, 499 came back → `fr`, `darija_latn`, `darija_arab` by `openai/gpt-oss-120b` on Groq; normalised duplicates dropped | 1,495 |
+| [`vibhorag101/suicide_prediction_dataset_phr`](https://huggingface.co/datasets/vibhorag101/suicide_prediction_dataset_phr) | MIT | 1,200 random rows per class (5–400 chars), English Reddit, label from the subreddit | 3,190 (incl. translations) |
+| [`nvidia/Aegis-AI-Content-Safety-Dataset-2.0`](https://huggingface.co/datasets/nvidia/Aegis-AI-Content-Safety-Dataset-2.0) | CC-BY-4.0 | unsafe prompts in the "Suicide and Self Harm" category that a second model confirms as danger on their own (168 of 250, see step 5), 300 random safe prompts with no violated category | 1,043 (incl. translations) |
+| Translations (`source=translated`) | derived from the two sources above | 500 short English rows sent, 499 came back → `fr`, `darija_latn`, `darija_arab` by `openai/gpt-oss-120b` on Groq; normalised duplicates and rejected groups dropped | 1,373 |
 | Synthetic (`source=synthetic`) | generated for BRAVER | 358 short messages × 3 languages by `openai/gpt-oss-120b` (8 categories, see below) | 1,074 |
 
 Not used: `jquiros/suicide` (no licence on the card); Arabic suicidality tweets (Abdulsalam et al. 2023) and AraDepSu
-(no public download link checked within the time box). Both licences above allow redistribution with attribution, so
-the processed splits are committed (`data/processed/all.csv`, `data/splits/*.csv`). Raw downloads stay in
+(no public download link checked within the time box). The processed splits are committed (`data/processed/all.csv`, `data/splits/*.csv`) under the licences declared on
+the dataset cards (MIT by the dataset author vibhorag101; CC-BY-4.0 by NVIDIA, attribution above). The Reddit texts are
+third-party posts: if their redistribution is a concern, delete those two folders and rebuild locally with the scripts. Raw downloads stay in
 `data/raw/` (git-ignored).
 
 Synthetic categories (45 groups each, 3 languages): `hyperbole` (0, figurative "kill / die" about exams, heat,
@@ -27,20 +28,20 @@ football…; 43 groups after de-duplication), `daily_worry` (0), `sad_not_danger
 
 | Language | no danger | danger | total |
 |---|---|---|---|
-| en | 1,500 | 1,450 | 2,950 |
-| fr | 382 | 474 | 856 |
-| darija_latn | 382 | 474 | 856 |
-| darija_arab | 382 | 475 | 857 |
-| **all** | **2,646** | **2,873** | **5,519** |
+| en | 1,492 | 1,368 | 2,860 |
+| fr | 379 | 436 | 815 |
+| darija_latn | 379 | 437 | 816 |
+| darija_arab | 379 | 437 | 816 |
+| **all** | **2,629** | **2,678** | **5,307** |
 
-Splits: train 3,851 rows (2,316 groups) · val 839 rows (497 groups) · **test 829 rows (495 groups)**.
+Splits: train 3,726 rows (2,253 groups) · val 774 rows (483 groups) · **test 807 rows (482 groups)**.
 
 | Split × language | no danger | danger |
 |---|---|---|
-| test en | 225 | 217 |
-| test fr | 57 | 72 |
-| test darija_latn | 57 | 72 |
-| test darija_arab | 57 | 72 |
+| test en | 224 | 205 |
+| test fr | 59 | 67 |
+| test darija_latn | 59 | 67 |
+| test darija_arab | 59 | 67 |
 
 ## Pipeline (all scripts in `ml/safety/`, run with `ml/.venv/Scripts/python -I`)
 
@@ -50,13 +51,16 @@ Splits: train 3,851 rows (2,316 groups) · val 839 rows (497 groups) · **test 8
 3. `translate.py` — 500 short English rows (≤ 220 chars, 250 per class) → 3 languages, batches of 10, strict JSON
    schema, cached in `data/cache/translate/`. 1 sentence came back without a translation and was dropped.
 4. `synth.py` — synthetic hard cases (above), cached in `data/cache/synth/`.
-5. `split.py` — merges everything, drops normalised duplicates across sources, splits **by group** 70/15/15,
+5. `check_aegis.py` — Aegis categories describe the whole conversation, so some "danger" prompts are harmless on their own
+   ("Okay, I can respect that."). `qwen/qwen3.8-27b` re-reads each Aegis danger prompt with the BRAVER danger definition;
+   the 82 it rejects are dropped (with their translations), never flipped to "no danger".
+6. `split.py` — merges everything, drops the rejected groups and rows where the `filler` padding survived, drops normalised duplicates across sources, splits **by group** 70/15/15,
    stratified by label × source, seed 42. A group = one source sentence and all its translations, so the same
    sentence never appears in train in one language and in test in another.
 
 ## Held-out test set
 
-`data/splits/test.csv` — sha256 `9ae7be74b76e948469c865809457ecadb2dab59ea6616dc6e8f5f3bd20b1274e`.
+`data/splits/test.csv` — sha256 `f262e5c7dcbcf001a61718c483a3e81d452709582310640912b635113e158a73`.
 Never used for training, for choosing C or for the thresholds (those use `val.csv`). Metrics must be reported
 per language and per source, with n.
 
@@ -70,6 +74,7 @@ per language and per source, with n.
 - **Machine translation / generation**: all French and Darija rows are produced by one LLM (gpt-oss-120b). Darija
   spelling is more regular than real texting; real Darija from Moroccan students is not in this set. The Darija
   numbers in the M1 report measure the model on **machine-written Darija**, not on real users.
+- Synthetic rows carry the label of the category they were generated for; they were read in samples, not one by one.
 - Aegis "safe" prompts are general requests to an assistant (recipes, code…), easier negatives than real worries.
-- English dominates (53 % of rows). Violence suffered and immediate danger come only from synthetic data.
+- English dominates (54 % of rows). Violence suffered and immediate danger come only from synthetic data.
 - No personal data: public posts were already anonymised by their authors; we remove URLs and usernames again.
