@@ -12,7 +12,7 @@ export function BottomNav() {
   return (
     <nav
       aria-label={pick(lang, "Navigation principale", "Main navigation")}
-      className="fixed inset-x-0 bottom-0 z-30 px-3 pb-[calc(env(safe-area-inset-bottom)+0.75rem)]"
+      className="fixed inset-x-0 bottom-0 z-30 px-3 pb-[calc(env(safe-area-inset-bottom)+0.75rem)] lg:hidden"
     >
       <ul className="glass mx-auto grid h-(--nav-h) max-w-md grid-cols-5 rounded-[1.4rem] px-1.5 shadow-[0_18px_40px_-20px_rgba(27,35,51,0.35)]">
         {NAV_TABS.map((tab) => {

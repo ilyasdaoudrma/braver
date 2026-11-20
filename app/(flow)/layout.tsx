@@ -6,7 +6,7 @@ export default function FlowLayout({ children }: { children: ReactNode }) {
   return (
     <>
       <TopBar />
-      <main className="mx-auto max-w-md px-4 pt-6 pb-10">{children}</main>
+      <main className="mx-auto max-w-md px-4 pt-6 pb-10 lg:max-w-3xl lg:pt-12">{children}</main>
     </>
   );
 }
