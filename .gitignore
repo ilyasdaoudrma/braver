@@ -26,3 +26,5 @@ next-env.d.ts
 .DS_Store
 *.pem
 npm-debug.log*
+ml/eval/data/cache/
+ml/eval/data/cache_synth.log

@@ -1,0 +1,141 @@
+id,keep,reason
+t1-scenario-001-darija_latn,1,
+t1-scenario-001-darija_arab,0,"this script version unclear, or the ""Arabic"" text was in Latin letters"
+t1-scenario-002-darija_latn,0,"this script version unclear, or the ""Arabic"" text was in Latin letters"
+t1-scenario-002-darija_arab,1,
+t1-scenario-003-darija_latn,0,"""nfal"" is odd for ""fail"" — review of #36"
+t1-scenario-003-darija_arab,0,"""نفل"" is odd for ""fail"" — review of #36"
+t1-scenario-004-darija_latn,0,"dropped item: unclear or wrong Darija, or not the intended meaning"
+t1-scenario-004-darija_arab,0,"dropped item: unclear or wrong Darija, or not the intended meaning"
+t1-scenario-005-darija_latn,0,"dropped item: unclear or wrong Darija, or not the intended meaning"
+t1-scenario-005-darija_arab,0,"dropped item: unclear or wrong Darija, or not the intended meaning"
+t1-scenario-006-darija_latn,0,"this script version unclear, or the ""Arabic"" text was in Latin letters"
+t1-scenario-006-darija_arab,1,
+t1-scenario-007-darija_latn,0,"unclear word (""kaybghiz"") — review of #36"
+t1-scenario-007-darija_arab,0,"this script version unclear, or the ""Arabic"" text was in Latin letters"
+t1-scenario-008-darija_latn,0,"dropped item: unclear or wrong Darija, or not the intended meaning"
+t1-scenario-008-darija_arab,0,"dropped item: unclear or wrong Darija, or not the intended meaning"
+t1-scenario-009-darija_latn,0,"dropped item: unclear or wrong Darija, or not the intended meaning"
+t1-scenario-009-darija_arab,0,"dropped item: unclear or wrong Darija, or not the intended meaning"
+t1-scenario-010-darija_latn,0,"dropped item: unclear or wrong Darija, or not the intended meaning"
+t1-scenario-010-darija_arab,0,"dropped item: unclear or wrong Darija, or not the intended meaning"
+t1-scenario-011-darija_latn,0,"dropped item: unclear or wrong Darija, or not the intended meaning"
+t1-scenario-011-darija_arab,0,"dropped item: unclear or wrong Darija, or not the intended meaning"
+t1-scenario-012-darija_latn,0,"dropped item: unclear or wrong Darija, or not the intended meaning"
+t1-scenario-012-darija_arab,0,"dropped item: unclear or wrong Darija, or not the intended meaning"
+t1-scenario-013-darija_latn,0,"dropped item: unclear or wrong Darija, or not the intended meaning"
+t1-scenario-013-darija_arab,0,"dropped item: unclear or wrong Darija, or not the intended meaning"
+t1-scenario-014-darija_latn,0,"dropped item: unclear or wrong Darija, or not the intended meaning"
+t1-scenario-014-darija_arab,0,"dropped item: unclear or wrong Darija, or not the intended meaning"
+t1-scenario-015-darija_latn,0,"dropped item: unclear or wrong Darija, or not the intended meaning"
+t1-scenario-015-darija_arab,0,"dropped item: unclear or wrong Darija, or not the intended meaning"
+t1-action-016-darija_latn,1,
+t1-action-016-darija_arab,0,"this script version unclear, or the ""Arabic"" text was in Latin letters"
+t1-action-017-darija_latn,0,"""nrawajj"" is not a Darija word for revising — review of #36"
+t1-action-017-darija_arab,0,"this script version unclear, or the ""Arabic"" text was in Latin letters"
+t1-action-018-darija_latn,0,"dropped item: unclear or wrong Darija, or not the intended meaning"
+t1-action-018-darija_arab,0,"dropped item: unclear or wrong Darija, or not the intended meaning"
+t1-action-019-darija_latn,1,
+t1-action-019-darija_arab,0,"this script version unclear, or the ""Arabic"" text was in Latin letters"
+t1-action-020-darija_latn,1,
+t1-action-020-darija_arab,0,"this script version unclear, or the ""Arabic"" text was in Latin letters"
+t1-action-021-darija_latn,1,
+t1-action-021-darija_arab,0,"this script version unclear, or the ""Arabic"" text was in Latin letters"
+t1-action-022-darija_latn,1,
+t1-action-022-darija_arab,0,"this script version unclear, or the ""Arabic"" text was in Latin letters"
+t1-action-023-darija_latn,1,
+t1-action-023-darija_arab,0,"this script version unclear, or the ""Arabic"" text was in Latin letters"
+t1-action-024-darija_latn,0,"dropped item: unclear or wrong Darija, or not the intended meaning"
+t1-action-024-darija_arab,0,"dropped item: unclear or wrong Darija, or not the intended meaning"
+t1-action-025-darija_latn,1,
+t1-action-025-darija_arab,0,"this script version unclear, or the ""Arabic"" text was in Latin letters"
+t1-action-026-darija_latn,1,
+t1-action-026-darija_arab,1,
+t1-action-027-darija_latn,0,"dropped item: unclear or wrong Darija, or not the intended meaning"
+t1-action-027-darija_arab,0,"dropped item: unclear or wrong Darija, or not the intended meaning"
+t1-action-028-darija_latn,0,"dropped item: unclear or wrong Darija, or not the intended meaning"
+t1-action-028-darija_arab,0,"dropped item: unclear or wrong Darija, or not the intended meaning"
+t1-action-029-darija_latn,0,"dropped item: unclear or wrong Darija, or not the intended meaning"
+t1-action-029-darija_arab,0,"dropped item: unclear or wrong Darija, or not the intended meaning"
+t1-action-030-darija_latn,0,"this script version unclear, or the ""Arabic"" text was in Latin letters"
+t1-action-030-darija_arab,0,closer to MSA than Darija — review of #36
+t1-acceptation-031-darija_latn,0,"dropped item: unclear or wrong Darija, or not the intended meaning"
+t1-acceptation-031-darija_arab,0,"dropped item: unclear or wrong Darija, or not the intended meaning"
+t1-acceptation-032-darija_latn,1,
+t1-acceptation-032-darija_arab,1,
+t1-acceptation-033-darija_latn,0,"this script version unclear, or the ""Arabic"" text was in Latin letters"
+t1-acceptation-033-darija_arab,0,"""طلبتي"" ambiguous (my students / my application) — review of #36"
+t1-acceptation-034-darija_latn,0,"this script version unclear, or the ""Arabic"" text was in Latin letters"
+t1-acceptation-034-darija_arab,1,
+t1-acceptation-035-darija_latn,0,"dropped item: unclear or wrong Darija, or not the intended meaning"
+t1-acceptation-035-darija_arab,0,"dropped item: unclear or wrong Darija, or not the intended meaning"
+t1-acceptation-036-darija_latn,1,
+t1-acceptation-036-darija_arab,1,
+t1-acceptation-037-darija_latn,0,"dropped item: unclear or wrong Darija, or not the intended meaning"
+t1-acceptation-037-darija_arab,0,"dropped item: unclear or wrong Darija, or not the intended meaning"
+t1-acceptation-038-darija_latn,0,"""l'talbat"" ambiguous — review of #36"
+t1-acceptation-038-darija_arab,0,"""طلبتي"" ambiguous — review of #36"
+t1-acceptation-039-darija_latn,1,
+t1-acceptation-039-darija_arab,1,
+t1-acceptation-040-darija_latn,0,"dropped item: unclear or wrong Darija, or not the intended meaning"
+t1-acceptation-040-darija_arab,0,"dropped item: unclear or wrong Darija, or not the intended meaning"
+t1-acceptation-041-darija_latn,0,"dropped item: unclear or wrong Darija, or not the intended meaning"
+t1-acceptation-041-darija_arab,0,"dropped item: unclear or wrong Darija, or not the intended meaning"
+t1-acceptation-042-darija_latn,0,"dropped item: unclear or wrong Darija, or not the intended meaning"
+t1-acceptation-042-darija_arab,0,"dropped item: unclear or wrong Darija, or not the intended meaning"
+t1-acceptation-043-darija_latn,0,"dropped item: unclear or wrong Darija, or not the intended meaning"
+t1-acceptation-043-darija_arab,0,"dropped item: unclear or wrong Darija, or not the intended meaning"
+t1-acceptation-044-darija_latn,0,"""bahi"" is Tunisian — review of #36"
+t1-acceptation-044-darija_arab,0,"this script version unclear, or the ""Arabic"" text was in Latin letters"
+t1-acceptation-045-darija_latn,0,"dropped item: unclear or wrong Darija, or not the intended meaning"
+t1-acceptation-045-darija_arab,0,"dropped item: unclear or wrong Darija, or not the intended meaning"
+t1-hyperbole-046-darija_latn,0,"this script version unclear, or the ""Arabic"" text was in Latin letters"
+t1-hyperbole-046-darija_arab,1,
+t1-hyperbole-047-darija_latn,1,
+t1-hyperbole-047-darija_arab,1,
+t1-hyperbole-048-darija_latn,1,
+t1-hyperbole-048-darija_arab,1,
+t1-hyperbole-049-darija_latn,1,
+t1-hyperbole-049-darija_arab,1,
+t1-hyperbole-050-darija_latn,1,
+t1-hyperbole-050-darija_arab,1,
+t1-hyperbole-051-darija_latn,1,
+t1-hyperbole-051-darija_arab,1,
+t1-hyperbole-052-darija_latn,1,
+t1-hyperbole-052-darija_arab,1,
+t1-hyperbole-053-darija_latn,1,
+t1-hyperbole-053-darija_arab,1,
+t1-hyperbole-054-darija_latn,0,"this script version unclear, or the ""Arabic"" text was in Latin letters"
+t1-hyperbole-054-darija_arab,1,
+t1-hyperbole-055-darija_latn,1,
+t1-hyperbole-055-darija_arab,1,
+t1-danger-056-darija_latn,1,
+t1-danger-056-darija_arab,0,"this script version unclear, or the ""Arabic"" text was in Latin letters"
+t1-danger-057-darija_latn,0,"dropped item: unclear or wrong Darija, or not the intended meaning"
+t1-danger-057-darija_arab,0,"dropped item: unclear or wrong Darija, or not the intended meaning"
+t1-danger-058-darija_latn,0,"dropped item: unclear or wrong Darija, or not the intended meaning"
+t1-danger-058-darija_arab,0,"dropped item: unclear or wrong Darija, or not the intended meaning"
+t1-danger-059-darija_latn,1,
+t1-danger-059-darija_arab,0,"this script version unclear, or the ""Arabic"" text was in Latin letters"
+t1-danger-060-darija_latn,0,"dropped item: unclear or wrong Darija, or not the intended meaning"
+t1-danger-060-darija_arab,0,"dropped item: unclear or wrong Darija, or not the intended meaning"
+t1-danger-061-darija_latn,0,"dropped item: unclear or wrong Darija, or not the intended meaning"
+t1-danger-061-darija_arab,0,"dropped item: unclear or wrong Darija, or not the intended meaning"
+t1-danger-062-darija_latn,1,
+t1-danger-062-darija_arab,1,
+t1-danger-063-darija_latn,0,"this script version unclear, or the ""Arabic"" text was in Latin letters"
+t1-danger-063-darija_arab,1,
+t1-danger-064-darija_latn,0,"dropped item: unclear or wrong Darija, or not the intended meaning"
+t1-danger-064-darija_arab,0,"dropped item: unclear or wrong Darija, or not the intended meaning"
+t1-danger-065-darija_latn,1,
+t1-danger-065-darija_arab,1,
+t1-danger-066-darija_latn,0,"dropped item: unclear or wrong Darija, or not the intended meaning"
+t1-danger-066-darija_arab,0,"dropped item: unclear or wrong Darija, or not the intended meaning"
+t1-danger-067-darija_latn,0,"dropped item: unclear or wrong Darija, or not the intended meaning"
+t1-danger-067-darija_arab,0,"dropped item: unclear or wrong Darija, or not the intended meaning"
+t1-danger-068-darija_latn,0,"dropped item: unclear or wrong Darija, or not the intended meaning"
+t1-danger-068-darija_arab,0,"dropped item: unclear or wrong Darija, or not the intended meaning"
+t1-danger-069-darija_latn,0,"dropped item: unclear or wrong Darija, or not the intended meaning"
+t1-danger-069-darija_arab,0,"dropped item: unclear or wrong Darija, or not the intended meaning"
+t1-danger-070-darija_latn,1,
+t1-danger-070-darija_arab,1,
