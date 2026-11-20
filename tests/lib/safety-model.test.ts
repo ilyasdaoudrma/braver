@@ -36,8 +36,14 @@ describe("safety pipeline (keywords → model → LLM band)", () => {
   });
 
   it("an ambiguous word is cleared only when the score is far below the threshold, otherwise the LLM decides", () => {
-    // "had l exam ghadi yqtelni" scores between threshold × 0.5 and the threshold: online the LLM clears it.
-    expect(level("had l exam ghadi yqtelni")).toBe("check");
+    const t = "had l exam ghadi yqtelni";
+    const score = predictProba(model, t)[1];
+    // threshold = 1.5 × score puts the score between threshold × 0.5 and the threshold: the LLM must decide.
+    const between = { ...model, model: { ...model.model, threshold: score * 1.5, high: 0.999 } };
+    expect(checkSafety(t, between)).toMatchObject({ level: "check", by: "keywords+model" });
+    // far below the threshold: cleared on the device
+    const far = { ...model, model: { ...model.model, threshold: Math.min(0.99, score * 2.5), high: 0.999 } };
+    expect(checkSafety(t, far).level).toBe("none");
   });
 
   it("a broken model (NaN weights) never clears an ambiguous word", () => {
