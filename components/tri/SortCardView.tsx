@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { Cpu, Loader2, Sparkles, Wind } from "lucide-react";
+import { BookOpen, Cpu, Loader2, Sparkles, Wind } from "lucide-react";
 import type { SortCard } from "@/lib/sort/engine";
 import { HelpButton } from "@/components/nav/HelpButton";
 import { ActionPanel } from "./ActionPanel";
@@ -8,6 +8,13 @@ import { ScenarioPanel } from "./ScenarioPanel";
 import { ZONE_LABEL, ZONE_STYLE } from "./zones";
 
 export { ZONE_LABEL } from "./zones";
+
+/** Reading card for each zone (content/cartes/<zone>.md). */
+const CARD_TITLE = {
+  scenario: "Une prédiction n'est pas un fait",
+  action: "La plus petite étape",
+  acceptation: "Ce qui ne dépend pas de toi",
+} as const;
 
 /** "1,4 s" — one decimal, rounded down. */
 export function formatSeconds(ms: number): string {
@@ -138,6 +145,10 @@ export function SortCardView({ card, upgrading, worryId }: SortCardViewProps) {
       <div className="mt-4">
         <ZonePanel card={card} worryId={worryId} />
       </div>
+      <Link href={`/cartes#${card.zone}`} className="mt-3 inline-flex min-h-11 items-center gap-2 text-sm font-bold text-ink-2 underline-offset-4 hover:underline">
+        <BookOpen aria-hidden size={14} />
+        À lire : {CARD_TITLE[card.zone]}
+      </Link>
       <MoveCard index={card.index} zone={card.zone} disabled={!worryId} />
       {card.distress && (
         <div className="mt-4 space-y-3 rounded-xl bg-surface-2 p-3">
