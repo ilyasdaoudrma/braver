@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { BookOpen, ChevronRight, ClipboardList, FlaskConical, Wind, type LucideIcon } from "lucide-react";
+import { PlusSettings } from "@/components/plus/PlusSettings";
 
 export const metadata: Metadata = { title: "Plus" };
 
@@ -38,7 +39,8 @@ export default function PlusPage() {
           </li>
         ))}
       </ul>
-      <p className="text-sm text-ink-2">Réglages et « Effacer mes données » arrivent ici (issue #22).</p>
+      <h2 className="font-display text-xl font-bold">Réglages</h2>
+      <PlusSettings />
     </section>
   );
 }
