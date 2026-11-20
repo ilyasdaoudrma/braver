@@ -1,7 +1,8 @@
 // Builds docs/pitch/BRAVER-Pitch-2026-11-21.pptx from MEASURED files only:
 //   public/labo/metrics.json (E1, written by ml/eval/report.py), ml/zones/results/agreement.json,
 //   docs/measurements/sort-latency-*.json (I1), charts in ml/eval/results/<date>/*.png, screenshots in docs/pitch/build/shots/.
-// No number is typed here: every figure is read from those files (truncated, never rounded up).
+// Every measured figure is read from those files (truncated, never rounded up). Typed exceptions: the demo story
+// ("1 fois sur 7", "60–90 %": lib/demo.ts, fictional, labelled), the parity bound (10⁻⁶, tested in CI).
 // Usage (pptxgenjs installed outside the app): NODE_PATH=<dir with node_modules> node docs/pitch/build/build-deck.cjs
 const fs = require("node:fs");
 const path = require("node:path");
@@ -18,7 +19,7 @@ const CHARTS = `ml/eval/results/${M.date}`;
 const OUT = path.join(ROOT, "docs/pitch/BRAVER-Pitch-2026-11-21.pptx");
 
 // Never round up: truncate.
-const pct = (x) => `${(Math.floor(x * 1000) / 10).toFixed(1).replace(".", ",")} %`;
+const pct = (x) => `${(Math.floor(x * 1000 + 1e-9) / 10).toFixed(1).replace(".", ",")} %`;
 const dec = (x, d = 2) => (Math.floor(x * 10 ** d) / 10 ** d).toFixed(d).replace(".", ",");
 
 const C = { ink: "131B2C", ink2: "4A5468", paper: "EDF0F4", surface: "F7F8FA", line: "C9D0DA", scen: "5B3FD6", act: "B93D0A", acc: "0B7065", focus: "2D6CDF", danger: "C0392B" };
@@ -101,8 +102,8 @@ function stat(s, x, y, w, value, label, color) {
   const t = M.sets.safety_test;
   const pipe = t?.safety_pipeline?.all;
   const dev = t?.safety_device?.all;
-  if (pipe) stat(s, 0.5, 1.3, 3, pct(pipe.danger.recall), `des messages en danger détectés\napp en ligne · n = ${pipe.n} (échantillon stratifié)`, C.acc);
-  if (dev) stat(s, 0.5, 2.9, 3, pct(dev.danger.recall), `détectés sur le téléphone, sans réseau\nn = ${dev.n} · précision ${pct(dev.danger.precision)}`, C.focus);
+  if (pipe) stat(s, 0.5, 1.3, 3.6, pct(pipe.danger.recall), `des messages en danger détectés, app en ligne\néchantillon : ${pipe.confusion[1][0] + pipe.confusion[1][1]} en danger sur n = ${pipe.n}`, C.acc);
+  if (dev) stat(s, 0.5, 2.9, 3.6, pct(dev.danger.recall), `détectés sur le téléphone, sans réseau\n${dev.confusion[1][0] + dev.confusion[1][1]} en danger sur n = ${dev.n} · fausses alertes ${dev.confusion[0][1]} sur ${dev.confusion[0][0] + dev.confusion[0][1]}`, C.focus);
   const img = `${CHARTS}/safety_pipeline_confusion.png`;
   if (exists(img)) s.addImage({ path: path.join(ROOT, img), x: 4.4, y: 1.15, w: 4.4, h: 3.77 });
   foot(s, "Test : données publiques (Reddit, NVIDIA Aegis) + traductions FR/darija et phrases synthétiques générées par IA. Détail par langue : page Labo.");
@@ -116,10 +117,10 @@ function stat(s, x, y, w, value, label, color) {
   const pipe = z?.zones_pipeline?.all;
   const dev = z?.zones_device?.all;
   if (dev) stat(s, 0.5, 1.3, 3.6, pct(dev.accuracy), `bonne zone sur le téléphone (modèle entraîné)\nmacro-F1 ${dec(dev.macro_f1)} · n = ${dev.n}`, C.focus);
-  if (pipe) stat(s, 0.5, 2.9, 3.6, pct(pipe.accuracy), `bonne zone par l'IA en ligne (gpt-oss-20b)\nmacro-F1 ${dec(pipe.macro_f1)} · n = ${pipe.n}`, C.scen);
+  if (pipe) stat(s, 0.5, 2.9, 3.6, pct(pipe.accuracy), `bonne zone par l'IA en ligne (gpt-oss-20b)\nmacro-F1 ${dec(pipe.macro_f1)} · sous-échantillon n = ${pipe.n}`, C.scen);
   const img = `${CHARTS}/zones_device_confusion.png`;
   if (exists(img)) s.addImage({ path: path.join(ROOT, img), x: 4.4, y: 1.15, w: 4.4, h: 3.77 });
-  const ag = AG ? `Étiquettes : deux IA différentes (accord ${pct(AG.agreement_qwen_safeguard)}, kappa ${dec(AG.cohen_kappa_qwen_safeguard)}, n = ${AG.n_groups}). Phrases synthétiques ; vérification humaine en cours.` : "";
+  const ag = AG ? `Étiquettes de tout le jeu (${AG.n_groups} inquiétudes) par deux IA : accord ${pct(AG.agreement_qwen_safeguard)}, kappa ${dec(AG.cohen_kappa_qwen_safeguard)}. Phrases synthétiques ; aucune vérification humaine pour l'instant.` : "";
   foot(s, ag);
 }
 
@@ -137,7 +138,7 @@ function stat(s, x, y, w, value, label, color) {
   if (pipe) stat(s, 3.6, 1.3, 2.9, caught(pipe), `détectées avec l'IA en ligne\n(échantillon, n = ${pipe.n})`, C.danger);
   if (zd) stat(s, 6.7, 1.3, 2.8, `${zd.confusion.reduce((a, r, i) => a + r[i], 0)} sur ${zd.n}`, "bonnes zones sur le téléphone", C.scen);
   s.addText(
-    "Ce que ça dit : en darija, l'IA en ligne efface parfois une alerte juste. Le téléphone garde la main sur les messages explicites.",
+    "Ce que ça dit : en darija, l'IA en ligne a parfois effacé une alerte que le téléphone jugeait ambiguë. Les messages explicites, eux, sont arrêtés sur le téléphone avant tout réseau.",
     { x: 0.5, y: 3.1, w: 9, h: 0.6, fontFace: BODY, fontSize: 14, color: C.ink, margin: 0 },
   );
   s.addText(
@@ -169,7 +170,7 @@ function stat(s, x, y, w, value, label, color) {
     ["Suivi 24 h · 7 j · 30 j", "humeur, zones, étapes faites, prédictions", C.scen],
     ["Respirer", "le soupir cyclique a amélioré l'humeur et ralenti la respiration (Stanford, 2023)", C.acc],
     ["Questionnaire de la semaine", "GAD-7 : score et tendance, jamais d'étiquette", C.act],
-    ["Cartes à lire", "une idée par carte, à relire par un·e psychologue", C.ink2],
+    ["Cartes à lire", "une idée par carte, brouillons à relire par un·e psychologue", C.ink2],
     ["Tes données restent à toi", "sur le téléphone, sans compte ; seul le texte à trier part vers l'IA", C.ink],
   ];
   items.forEach(([h, b, c], i) => {
@@ -195,7 +196,7 @@ function stat(s, x, y, w, value, label, color) {
     { x: 0.5, y: 1.2, w: 5.2, h: 3, fontFace: BODY, fontSize: 14, color: C.ink, paraSpaceAfter: 8, valign: "top", margin: 0 },
   );
   const lat = M.latency;
-  if (lat) stat(s, 6.2, 1.2, 3.3, `${(Math.floor(lat.client_ms_p50 / 100) / 10).toFixed(1).replace(".", ",")} s`, `temps médian de l'IA pour trier 12 lignes\n(${lat.requests} requêtes, app déployée)`, C.focus);
+  if (lat) stat(s, 6.2, 1.2, 3.3, `${(Math.floor(lat.client_ms_p50 / 100) / 10).toFixed(1).replace(".", ",")} s`, `temps médian de l'IA par tri de jusqu'à 12 lignes\n(${lat.requests} requêtes, app déployée)`, C.focus);
   else if (LAT) stat(s, 6.2, 1.2, 3.3, "mesuré", "voir docs/measurements", C.focus);
   foot(s, "Code : github.com/ilyasdaoudrma/braver (privé) · mesures : page Labo de l'app.");
 }
