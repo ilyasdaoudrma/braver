@@ -13,7 +13,7 @@ const LEVEL: Record<SafetyCheck["level"], string> = {
   none: "Pas de danger détecté",
 };
 
-const pct = (x: number) => `${(x * 100).toFixed(1).replace(".", ",")} %`;
+const pct = (x: number) => `${(Math.floor(x * 1000) / 10).toFixed(1).replace(".", ",")} %`; // truncated
 
 /** "Tester une phrase": each layer's decision, on the device, then (on demand) the LLM. */
 export function TryPhrase() {
