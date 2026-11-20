@@ -40,10 +40,13 @@ describe("zoneOnDevice", () => {
     expect(zoneOnDevice("Je dois envoyer mon CV.", broken).by).toBe("rules");
   });
 
-  it("the on-device sort uses the loaded zone model", async () => {
-    setZonesModelForTests(raw);
+  it("the on-device sort uses the loaded zone model (not the rules)", async () => {
+    // A model biased to "acceptation" on a line the keyword rules call "action": the card must follow the model.
+    const biased = { ...raw, intercept: raw.classes.map((c) => (c === "acceptation" ? 100 : -100)) };
     const line = "Mazal ma siftsh dossier dyal la bourse.";
+    expect(zoneOnDevice(line, null).zone).toBe("action");
+    setZonesModelForTests(biased);
     const out = await runSort([line], { tone: "doux", confirmedSafe: false, forceLocal: true }, [], () => undefined, vi.fn<typeof fetch>());
-    expect(out.cards[0].zone).toBe(zoneOnDevice(line, model).zone);
+    expect(out.cards[0].zone).toBe("acceptation");
   });
 });

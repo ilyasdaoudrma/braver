@@ -64,8 +64,13 @@ export interface ZoneGuess {
 /** Zone on the device: the trained model when loaded, else the prototype's keyword rules. */
 export function zoneOnDevice(text: string, model: LoadedModel | null = loaded): ZoneGuess {
   if (model) {
-    const p = predictProba(model, text);
-    if (p.every(Number.isFinite)) {
+    let p: number[] = [];
+    try {
+      p = predictProba(model, text);
+    } catch {
+      p = []; // malformed model: fall back to the rules
+    }
+    if (p.length === ZONES.length && p.every(Number.isFinite)) {
       const proba = Object.fromEntries(model.model.classes.map((c, i) => [c, p[i]])) as Record<Zone, number>;
       const zone = ZONES.reduce<Zone>((best, z) => (proba[z] > proba[best] ? z : best), ZONES[0]);
       return { zone, proba, by: "model" };
