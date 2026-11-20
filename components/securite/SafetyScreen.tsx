@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { Check, Copy, MessageCircle, Phone } from "lucide-react";
 import { HELPLINES, TRUSTED_MESSAGE } from "@/lib/helplines";
-import { acknowledgeAlert } from "@/lib/sort/session";
+import { acknowledgeAlert, resortConfirmed } from "@/lib/sort/session";
 
 /** Calm full screen: no jokes, no diagnosis. Moroccan numbers, a ready message, and a way back. */
 export function SafetyScreen() {
@@ -24,7 +24,10 @@ export function SafetyScreen() {
   }
 
   function handleBack() {
-    if (window.history.length > 1) router.back();
+    // After a sort alert: the same lines are sorted again with confirmedSafe (keywords no longer stop it,
+    // the LLM still checks ambiguous lines). Opened from the help button: just go back.
+    if (resortConfirmed()) router.replace("/tri");
+    else if (window.history.length > 1) router.back();
     else router.push("/accueil");
   }
 

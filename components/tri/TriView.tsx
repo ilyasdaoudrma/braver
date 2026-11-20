@@ -61,7 +61,7 @@ export function TriView() {
               {ZONE_LABEL[zone]} <span className="text-ink-2">· {cards.length}</span>
             </h2>
             {cards.map((card) => (
-              <SortCardView key={card.index} card={card} upgrading={upgrading} />
+              <SortCardView key={card.index} card={card} upgrading={upgrading} worryId={session.saved ? session.worryIds[card.index] : null} />
             ))}
           </div>
         );

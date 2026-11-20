@@ -1,15 +1,13 @@
-import { Cpu, Loader2, Sparkles } from "lucide-react";
+import Link from "next/link";
+import { Cpu, Loader2, Sparkles, Wind } from "lucide-react";
 import type { SortCard } from "@/lib/sort/engine";
-import type { Zone } from "@/lib/types";
 import { HelpButton } from "@/components/nav/HelpButton";
+import { ActionPanel } from "./ActionPanel";
+import { MoveCard } from "./MoveCard";
+import { ScenarioPanel } from "./ScenarioPanel";
+import { ZONE_LABEL, ZONE_STYLE } from "./zones";
 
-export const ZONE_LABEL: Record<Zone, string> = { scenario: "Scénario", action: "Action", acceptation: "Acceptation" };
-
-const ZONE_STYLE: Record<Zone, { bar: string; chip: string }> = {
-  scenario: { bar: "bg-scenario", chip: "bg-scenario-soft text-scenario" },
-  action: { bar: "bg-action", chip: "bg-action-soft text-action" },
-  acceptation: { bar: "bg-acceptation", chip: "bg-acceptation-soft text-acceptation" },
-};
+export { ZONE_LABEL } from "./zones";
 
 /** "1,4 s" — one decimal, rounded down. */
 export function formatSeconds(ms: number): string {
@@ -48,7 +46,31 @@ function Field({ label, value }: { label: string; value: string | null }) {
   );
 }
 
-export function SortCardView({ card, upgrading }: { card: SortCard; upgrading: boolean }) {
+interface SortCardViewProps {
+  card: SortCard;
+  upgrading: boolean;
+  /** Store id of the saved worry; null until the sort is final and saved. */
+  worryId: string | null;
+}
+
+function ZonePanel({ card, worryId }: { card: SortCard; worryId: string | null }) {
+  if (!worryId) {
+    return <p className="rounded-xl bg-surface-2 p-3 text-sm text-ink-2">L&apos;IA affine ta carte, encore un instant…</p>;
+  }
+  if (card.zone === "scenario") return <ScenarioPanel card={card} worryId={worryId} />;
+  if (card.zone === "action") return <ActionPanel worryId={worryId} />;
+  return (
+    <Link
+      href="/respirer"
+      className="inline-flex min-h-11 items-center gap-2 rounded-full bg-acceptation px-5 font-bold text-paper transition-transform duration-200 ease-out active:scale-[0.98]"
+    >
+      <Wind aria-hidden size={16} />
+      Respirer 2 minutes
+    </Link>
+  );
+}
+
+export function SortCardView({ card, upgrading, worryId }: SortCardViewProps) {
   const style = ZONE_STYLE[card.zone];
   return (
     <article className="enter relative overflow-hidden rounded-2xl border border-line bg-surface p-4 pl-5" aria-label={`${ZONE_LABEL[card.zone]} : ${card.text}`}>
@@ -69,6 +91,10 @@ export function SortCardView({ card, upgrading }: { card: SortCard; upgrading: b
         <Field label="Ce que tu vis" value={card.validation} />
         <Field label="Ce qui reste à toi" value={card.control} />
       </div>
+      <div className="mt-4">
+        <ZonePanel card={card} worryId={worryId} />
+      </div>
+      <MoveCard index={card.index} zone={card.zone} disabled={!worryId} />
       {card.distress && (
         <div className="mt-4 space-y-3 rounded-xl bg-surface-2 p-3">
           <p className="font-bold">Ça a l&apos;air lourd. Tu veux en parler à quelqu&apos;un ?</p>
