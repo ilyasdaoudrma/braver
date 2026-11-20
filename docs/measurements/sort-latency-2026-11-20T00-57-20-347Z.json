@@ -1,0 +1,311 @@
+{
+  "base": "https://braver-git-feat-i1-groq-engine-ilyasdaoudrmas-projects.vercel.app",
+  "at": "2026-11-20T00:57:20.351Z",
+  "runs": 30,
+  "gapSeconds": 20,
+  "linesPerSort": 3,
+  "results": [
+    {
+      "i": 1,
+      "lines": 3,
+      "status": 200,
+      "ms": 1259,
+      "serverMs": 697,
+      "answeredBy": "openai/gpt-oss-20b",
+      "fallbackFrom": [],
+      "error": null
+    },
+    {
+      "i": 2,
+      "lines": 3,
+      "status": 200,
+      "ms": 1053,
+      "serverMs": 592,
+      "answeredBy": "openai/gpt-oss-20b",
+      "fallbackFrom": [],
+      "error": null
+    },
+    {
+      "i": 3,
+      "lines": 3,
+      "status": 200,
+      "ms": 2738,
+      "serverMs": 2328,
+      "answeredBy": "openai/gpt-oss-120b",
+      "fallbackFrom": [
+        "openai/gpt-oss-20b:http:400"
+      ],
+      "error": null
+    },
+    {
+      "i": 4,
+      "lines": 3,
+      "status": 200,
+      "ms": 1124,
+      "serverMs": 687,
+      "answeredBy": "openai/gpt-oss-20b",
+      "fallbackFrom": [],
+      "error": null
+    },
+    {
+      "i": 5,
+      "lines": 3,
+      "status": 200,
+      "ms": 1230,
+      "serverMs": 879,
+      "answeredBy": "openai/gpt-oss-20b",
+      "fallbackFrom": [],
+      "error": null
+    },
+    {
+      "i": 6,
+      "lines": 3,
+      "status": 200,
+      "ms": 1193,
+      "serverMs": 896,
+      "answeredBy": "openai/gpt-oss-20b",
+      "fallbackFrom": [],
+      "error": null
+    },
+    {
+      "i": 7,
+      "lines": 3,
+      "status": 200,
+      "ms": 1061,
+      "serverMs": 760,
+      "answeredBy": "openai/gpt-oss-20b",
+      "fallbackFrom": [],
+      "error": null
+    },
+    {
+      "i": 8,
+      "lines": 3,
+      "status": 200,
+      "ms": 1047,
+      "serverMs": 690,
+      "answeredBy": "openai/gpt-oss-20b",
+      "fallbackFrom": [],
+      "error": null
+    },
+    {
+      "i": 9,
+      "lines": 3,
+      "status": 200,
+      "ms": 1487,
+      "serverMs": 1055,
+      "answeredBy": "openai/gpt-oss-20b",
+      "fallbackFrom": [],
+      "error": null
+    },
+    {
+      "i": 10,
+      "lines": 3,
+      "status": 200,
+      "ms": 1253,
+      "serverMs": 903,
+      "answeredBy": "openai/gpt-oss-20b",
+      "fallbackFrom": [],
+      "error": null
+    },
+    {
+      "i": 11,
+      "lines": 3,
+      "status": 200,
+      "ms": 1232,
+      "serverMs": 906,
+      "answeredBy": "openai/gpt-oss-20b",
+      "fallbackFrom": [],
+      "error": null
+    },
+    {
+      "i": 12,
+      "lines": 3,
+      "status": 200,
+      "ms": 1148,
+      "serverMs": 755,
+      "answeredBy": "openai/gpt-oss-20b",
+      "fallbackFrom": [],
+      "error": null
+    },
+    {
+      "i": 13,
+      "lines": 3,
+      "status": 200,
+      "ms": 1397,
+      "serverMs": 992,
+      "answeredBy": "openai/gpt-oss-20b",
+      "fallbackFrom": [],
+      "error": null
+    },
+    {
+      "i": 14,
+      "lines": 3,
+      "status": 200,
+      "ms": 1180,
+      "serverMs": 841,
+      "answeredBy": "openai/gpt-oss-20b",
+      "fallbackFrom": [],
+      "error": null
+    },
+    {
+      "i": 15,
+      "lines": 3,
+      "status": 200,
+      "ms": 1185,
+      "serverMs": 689,
+      "answeredBy": "openai/gpt-oss-20b",
+      "fallbackFrom": [],
+      "error": null
+    },
+    {
+      "i": 16,
+      "lines": 3,
+      "status": 200,
+      "ms": 978,
+      "serverMs": 566,
+      "answeredBy": "openai/gpt-oss-20b",
+      "fallbackFrom": [],
+      "error": null
+    },
+    {
+      "i": 17,
+      "lines": 3,
+      "status": 200,
+      "ms": 1195,
+      "serverMs": 810,
+      "answeredBy": "openai/gpt-oss-20b",
+      "fallbackFrom": [],
+      "error": null
+    },
+    {
+      "i": 18,
+      "lines": 3,
+      "status": 200,
+      "ms": 921,
+      "serverMs": 587,
+      "answeredBy": "openai/gpt-oss-20b",
+      "fallbackFrom": [],
+      "error": null
+    },
+    {
+      "i": 19,
+      "lines": 3,
+      "status": 200,
+      "ms": 1273,
+      "serverMs": 973,
+      "answeredBy": "openai/gpt-oss-20b",
+      "fallbackFrom": [],
+      "error": null
+    },
+    {
+      "i": 20,
+      "lines": 3,
+      "status": 200,
+      "ms": 1263,
+      "serverMs": 925,
+      "answeredBy": "openai/gpt-oss-20b",
+      "fallbackFrom": [],
+      "error": null
+    },
+    {
+      "i": 21,
+      "lines": 3,
+      "status": 200,
+      "ms": 902,
+      "serverMs": 597,
+      "answeredBy": "openai/gpt-oss-20b",
+      "fallbackFrom": [],
+      "error": null
+    },
+    {
+      "i": 22,
+      "lines": 3,
+      "status": 200,
+      "ms": 1155,
+      "serverMs": 752,
+      "answeredBy": "openai/gpt-oss-20b",
+      "fallbackFrom": [],
+      "error": null
+    },
+    {
+      "i": 23,
+      "lines": 3,
+      "status": 200,
+      "ms": 1193,
+      "serverMs": 841,
+      "answeredBy": "openai/gpt-oss-20b",
+      "fallbackFrom": [],
+      "error": null
+    },
+    {
+      "i": 24,
+      "lines": 3,
+      "status": 200,
+      "ms": 985,
+      "serverMs": 665,
+      "answeredBy": "openai/gpt-oss-20b",
+      "fallbackFrom": [],
+      "error": null
+    },
+    {
+      "i": 25,
+      "lines": 3,
+      "status": 200,
+      "ms": 998,
+      "serverMs": 635,
+      "answeredBy": "openai/gpt-oss-20b",
+      "fallbackFrom": [],
+      "error": null
+    },
+    {
+      "i": 26,
+      "lines": 3,
+      "status": 200,
+      "ms": 1265,
+      "serverMs": 956,
+      "answeredBy": "openai/gpt-oss-20b",
+      "fallbackFrom": [],
+      "error": null
+    },
+    {
+      "i": 27,
+      "lines": 3,
+      "status": 200,
+      "ms": 1083,
+      "serverMs": 773,
+      "answeredBy": "openai/gpt-oss-20b",
+      "fallbackFrom": [],
+      "error": null
+    },
+    {
+      "i": 28,
+      "lines": 3,
+      "status": 200,
+      "ms": 1267,
+      "serverMs": 962,
+      "answeredBy": "openai/gpt-oss-20b",
+      "fallbackFrom": [],
+      "error": null
+    },
+    {
+      "i": 29,
+      "lines": 3,
+      "status": 200,
+      "ms": 1110,
+      "serverMs": 698,
+      "answeredBy": "openai/gpt-oss-20b",
+      "fallbackFrom": [],
+      "error": null
+    },
+    {
+      "i": 30,
+      "lines": 3,
+      "status": 200,
+      "ms": 1211,
+      "serverMs": 522,
+      "answeredBy": "openai/gpt-oss-20b",
+      "fallbackFrom": [],
+      "error": null
+    }
+  ]
+}
