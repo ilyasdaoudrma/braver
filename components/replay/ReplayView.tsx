@@ -1,8 +1,8 @@
 "use client";
 import Link from "next/link";
 import { PenLine } from "lucide-react";
-import { calibration, groupEntries } from "@/lib/replay";
-import { useHydrated } from "@/lib/use-hydrated";
+import { calibration, groupEntries, todayKey } from "@/lib/replay";
+import { useNow } from "@/lib/use-now";
 import { useStoreValue } from "@/lib/use-store";
 import { CalibrationChart } from "./CalibrationChart";
 import { ReplayEntryCard } from "./ReplayEntryCard";
@@ -18,9 +18,10 @@ function Skeleton() {
 }
 
 export function ReplayView() {
-  const hydrated = useHydrated();
+  const now = useNow();
+  const hydrated = now !== null;
   const [replays] = useStoreValue("replays");
-  const groups = groupEntries(replays);
+  const groups = groupEntries(replays, now === null ? "" : todayKey(new Date(now)));
   const calib = calibration(replays);
 
   return (
