@@ -42,6 +42,7 @@ SET_NAMES = {
     "zones_test": "Test zones (synthétique)",
     "darija_synthetic": "Darija synthétique (généré par IA)",
     "darija_handwritten": "Darija écrit à la main",
+    "darija_claude": "Darija écrit par Claude (IA, sans autre modèle)",
 }
 
 
@@ -92,11 +93,15 @@ def load() -> pd.DataFrame:
             dev[col] = np.nan
     ok = dev["llm_ok"] == 1
     stopped = dev["safety_level"] == "danger"
-    # "pipeline" view = rows the app really decided online: stopped on the device, or answered by the LLM.
-    # Rows the LLM skipped (request failed or line missing in its answer) are counted, then left out of it.
+    # Rows the LLM skipped (request failed or line missing in its answer) are scored exactly as the app handles them:
+    # an ambiguous ("check") line becomes an alert, any other line keeps its on-device card. Their count is reported.
     dev["llm_missing"] = dev["sampled"] & ~stopped & ~ok
-    dev["sampled"] = dev["sampled"] & ~dev["llm_missing"]
-    dev["pipeline_alert"] = np.where(stopped, 1, np.where(ok, dev["llm_danger"].fillna(0), dev["device_alert"])).astype(int)
+    # Option B (20 Nov): an ambiguous line at or above the model's `keep` score stays an alert even if the LLM says no.
+    model = json.loads((ROOT / "public" / "models" / "safety.json").read_text(encoding="utf-8"))
+    keep = model.get("keep", float("inf"))
+    firm = (dev["safety_level"] == "check") & (pd.to_numeric(dev["safety_score"], errors="coerce").fillna(0) >= keep)
+    llm_says = dev["llm_danger"].fillna(0).astype(int) | firm.astype(int)
+    dev["pipeline_alert"] = np.where(stopped, 1, np.where(ok, llm_says, dev["device_alert"])).astype(int)
     dev["pipeline_zone"] = np.where(ok, dev["llm_zone"].fillna(""), dev["zone_device"])
     return dev
 
@@ -226,7 +231,7 @@ def write_markdown(r: dict) -> None:
     for key, e in r["sets"].items():
         L += [f"## {e['name']} (`{key}`, n = {e['n']})", ""]
         if e.get("llm_missing"):
-            L += [f"{e['llm_missing']} sampled line(s) got no LLM answer (line missing in the answer or request failed): left out of the pipeline view.", ""]
+            L += [f"{e['llm_missing']} sampled line(s) got no LLM answer (line missing in the answer or request failed): scored as the app does (ambiguous line → alert, otherwise the on-device card).", ""]
         for view in ("safety_device", "safety_pipeline"):
             if view in e:
                 L += [f"**Safety — {view.split('_')[1]}**", "", "| Lang | n | Acc. | Danger P | Danger R | Danger F1 | No-danger P | No-danger R | Macro F1 |", "|---|---|---|---|---|---|---|---|---|"]

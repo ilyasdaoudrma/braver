@@ -157,7 +157,7 @@ export function LaboView({ metrics }: { metrics: LaboMetrics | null }) {
                 {s.name} <span className="text-ink-2">· n = {s.n}</span>
               </h2>
               {Boolean(s.llm_missing) && (
-                <p className="text-sm text-ink-2">{s.llm_missing} phrase(s) de l&apos;échantillon sans réponse de l&apos;IA : exclues de la vue « en ligne ».</p>
+                <p className="text-sm text-ink-2">{s.llm_missing} phrase(s) de l&apos;échantillon sans réponse de l&apos;IA : comptées comme l&apos;app les traite (phrase ambiguë → aide, sinon la carte du téléphone).</p>
               )}
               {s.safety_pipeline && <SafetyBlock title="Sécurité — app en ligne" data={s.safety_pipeline} />}
               {s.safety_device && <SafetyBlock title="Sécurité — sur le téléphone" data={s.safety_device} />}

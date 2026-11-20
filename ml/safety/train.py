@@ -35,6 +35,9 @@ MODEL_OUT = ROOT / "public" / "models" / "safety.json"
 PARITY_OUT = HERE / "parity_cases.json"
 MAX_FEATURES = 20000
 RECALL_TARGET = 0.95
+# Option B (Ilyas, 20 Nov): in the ambiguous band, at or above `keep` the alert stays even if the LLM says
+# "no danger". keep = lowest score where at least 60 % of the val lines between keep and high are danger.
+KEEP_PRECISION = 0.60
 PRECISION_TARGET = 0.95
 SEED = 42
 
@@ -59,6 +62,15 @@ def threshold_for_recall(y: np.ndarray, p: np.ndarray, target: float) -> float:
     pos = np.sort(p[y == 1])[::-1]
     k = int(np.ceil(target * len(pos)))
     return float(pos[k - 1]) if k else 0.5
+
+
+def threshold_for_band_precision(y: np.ndarray, p: np.ndarray, target: float, low: float, high: float) -> float:
+    """Lowest t in [low, high) such that, among val lines with t <= score < high, the share of danger >= target."""
+    for t in np.unique(p[(p >= low) & (p < high)]):
+        sel = (p >= t) & (p < high)
+        if sel.sum() and (y[sel] == 1).mean() >= target:
+            return float(t)
+    return high
 
 
 def threshold_for_precision(y: np.ndarray, p: np.ndarray, target: float, floor: float) -> float:
@@ -107,10 +119,11 @@ def main() -> None:
     yv = val["label"].to_numpy()
     low = threshold_for_recall(yv, pv, RECALL_TARGET)
     high = max(low, threshold_for_precision(yv, pv, PRECISION_TARGET, low))
+    keep = threshold_for_band_precision(yv, pv, KEEP_PRECISION, low, high)
     print(f"chosen C={c}, threshold={low:.4f}, high={high:.4f}")
 
     version = f"safety-{date.today().isoformat()}"
-    model = export(vec, clf, ["no_danger", "danger"], {"version": version, "threshold": low, "high": high})
+    model = export(vec, clf, ["no_danger", "danger"], {"version": version, "threshold": low, "keep": keep, "high": high})
     save_json(model, MODEL_OUT)
 
     # Report on TEST (held out), overall, per language and per source.
@@ -120,6 +133,7 @@ def main() -> None:
         "model": version,
         "C": c,
         "threshold": low,
+        "keep": keep,
         "high": high,
         "train_n": int(len(train)),
         "val_n": int(len(val)),

@@ -2,7 +2,57 @@
 
 Held-out sets only. **device** = the app with no network (all rows; an ambiguous line alerts). **pipeline** = the app online on a stratified sample sent to the deployed `/api/sort` (gpt-oss-20b, fallback 120b). n is given for every row; numbers are truncated, never rounded up. The pipeline sample is stratified (12 rows per set × language × label), so its precision does not reflect real prevalence. Zones (pipeline) are scored only on lines the app did not stop for safety (a stopped line shows no zone).
 
-Latency of `/api/sort` per request of up to 12 lines (client round trip, 16 requests): p50 2342 ms, p90 2892 ms. Answered by: openai/gpt-oss-20b 16.
+Latency of `/api/sort` per request of up to 12 lines (client round trip, 20 requests): p50 2456 ms, p90 2943 ms. Answered by: openai/gpt-oss-20b 20.
+
+## Darija écrit par Claude (IA, sans autre modèle) (`darija_claude`, n = 56)
+
+2 sampled line(s) got no LLM answer (line missing in the answer or request failed): scored as the app does (ambiguous line → alert, otherwise the on-device card).
+
+**Safety — device**
+
+| Lang | n | Acc. | Danger P | Danger R | Danger F1 | No-danger P | No-danger R | Macro F1 |
+|---|---|---|---|---|---|---|---|---|
+| all | 56 | 0.8928 | 0.7777 | 0.8750 | 0.8235 | 0.9473 | 0.9000 | 0.8733 |
+| darija_arab | 26 | 0.8846 | 0.7500 | 0.8571 | 0.8000 | 0.9444 | 0.8947 | 0.8594 |
+| darija_latn | 30 | 0.9000 | 0.8000 | 0.8888 | 0.8421 | 0.9500 | 0.9047 | 0.8844 |
+
+Confusion (rows true, cols predicted): no_danger [36, 4] · danger [2, 14]
+
+**Safety — pipeline**
+
+| Lang | n | Acc. | Danger P | Danger R | Danger F1 | No-danger P | No-danger R | Macro F1 |
+|---|---|---|---|---|---|---|---|---|
+| all | 56 | 0.9107 | 0.8666 | 0.8125 | 0.8387 | 0.9268 | 0.9500 | 0.8884 |
+| darija_arab | 26 | 0.9615 | 1.0000 | 0.8571 | 0.9230 | 0.9500 | 1.0000 | 0.9487 |
+| darija_latn | 30 | 0.8666 | 0.7777 | 0.7777 | 0.7777 | 0.9047 | 0.9047 | 0.8412 |
+
+Confusion (rows true, cols predicted): no_danger [38, 2] · danger [3, 13]
+
+**Zones — device**
+
+| Lang | n | Acc. | Macro F1 | scenario F1 | action F1 | acceptation F1 |
+|---|---|---|---|---|---|---|
+| all | 31 | 0.7419 | 0.7424 | 0.7500 | 0.7500 | 0.7272 |
+| darija_arab | 15 | 0.8000 | 0.8027 | 0.7500 | 0.8888 | 0.7692 |
+| darija_latn | 16 | 0.6875 | 0.6944 | 0.7500 | 0.6666 | 0.6666 |
+
+Confusion (rows true, cols predicted; scenario, action, acceptation): [[6, 2, 2], [0, 9, 2], [0, 2, 8]]
+
+**Zones — pipeline**
+
+| Lang | n | Acc. | Macro F1 | scenario F1 | action F1 | acceptation F1 |
+|---|---|---|---|---|---|---|
+| all | 30 | 0.9000 | 0.9019 | 0.8888 | 0.8695 | 0.9473 |
+| darija_arab | 15 | 0.8666 | 0.8659 | 0.9090 | 0.8000 | 0.8888 |
+| darija_latn | 15 | 0.9333 | 0.9267 | 0.8571 | 0.9230 | 1.0000 |
+
+Confusion (rows true, cols predicted; scenario, action, acceptation): [[8, 1, 0], [1, 10, 0], [0, 1, 9]]
+
+Missed danger lines (pipeline):
+
+- `darija_latn` kolchi ghadi ykoun mzyan ila ma b9itch hna
+- `darija_arab` حسن ليهم إلا مشيت وما رجعتش
+- `darija_latn` safi, ghadi nmchi w ma ghadich trjaw tchoufoni
 
 ## Darija synthétique (généré par IA) (`darija_synthetic`, n = 46)
 
@@ -20,11 +70,11 @@ Confusion (rows true, cols predicted): no_danger [37, 0] · danger [1, 8]
 
 | Lang | n | Acc. | Danger P | Danger R | Danger F1 | No-danger P | No-danger R | Macro F1 |
 |---|---|---|---|---|---|---|---|---|
-| all | 33 | 0.8484 | 0.7500 | 0.6666 | 0.7058 | 0.8800 | 0.9166 | 0.8019 |
+| all | 33 | 0.8787 | 0.7777 | 0.7777 | 0.7777 | 0.9166 | 0.9166 | 0.8472 |
 | darija_arab | 16 | 0.8125 | 0.6000 | 0.7500 | 0.6666 | 0.9090 | 0.8333 | 0.7681 |
-| darija_latn | 17 | 0.8823 | 1.0000 | 0.6000 | 0.7500 | 0.8571 | 1.0000 | 0.8365 |
+| darija_latn | 17 | 0.9411 | 1.0000 | 0.8000 | 0.8888 | 0.9230 | 1.0000 | 0.9244 |
 
-Confusion (rows true, cols predicted): no_danger [22, 2] · danger [3, 6]
+Confusion (rows true, cols predicted): no_danger [22, 2] · danger [2, 7]
 
 **Zones — device**
 
@@ -50,11 +100,10 @@ Missed danger lines (pipeline):
 
 - `darija_arab` ما بغيتش نصحى الصباح
 - `darija_latn` q3edine ydribouni f dar
-- `darija_latn` khayef meno ydarni f dar
 
 ## Test sécurité (public + traduit + synthétique) (`safety_test`, n = 807)
 
-8 sampled line(s) got no LLM answer (line missing in the answer or request failed): left out of the pipeline view.
+8 sampled line(s) got no LLM answer (line missing in the answer or request failed): scored as the app does (ambiguous line → alert, otherwise the on-device card).
 
 **Safety — device**
 
@@ -72,25 +121,22 @@ Confusion (rows true, cols predicted): no_danger [281, 120] · danger [17, 389]
 
 | Lang | n | Acc. | Danger P | Danger R | Danger F1 | No-danger P | No-danger R | Macro F1 |
 |---|---|---|---|---|---|---|---|---|
-| all | 88 | 0.8977 | 0.9130 | 0.8936 | 0.9032 | 0.8809 | 0.9024 | 0.8973 |
-| darija_arab | 21 | 0.8571 | 0.8333 | 0.9090 | 0.8695 | 0.8888 | 0.8000 | 0.8558 |
-| darija_latn | 19 | 0.6842 | 0.8000 | 0.6666 | 0.7272 | 0.5555 | 0.7142 | 0.6761 |
+| all | 96 | 0.8645 | 0.8070 | 0.9583 | 0.8761 | 0.9487 | 0.7708 | 0.8633 |
+| darija_arab | 24 | 0.8333 | 0.7857 | 0.9166 | 0.8461 | 0.9000 | 0.7500 | 0.8321 |
+| darija_latn | 24 | 0.7083 | 0.6470 | 0.9166 | 0.7586 | 0.8571 | 0.5000 | 0.6950 |
 | en | 24 | 1.0000 | 1.0000 | 1.0000 | 1.0000 | 1.0000 | 1.0000 | 1.0000 |
-| fr | 24 | 1.0000 | 1.0000 | 1.0000 | 1.0000 | 1.0000 | 1.0000 | 1.0000 |
+| fr | 24 | 0.9166 | 0.8571 | 1.0000 | 0.9230 | 1.0000 | 0.8333 | 0.9160 |
 
-Confusion (rows true, cols predicted): no_danger [37, 4] · danger [5, 42]
+Confusion (rows true, cols predicted): no_danger [37, 11] · danger [2, 46]
 
 Missed danger lines (pipeline):
 
 - `darija_arab` ما بقى غير شوية لي كاين، السبب لي ريدت ما ماتش، هي تورط و ليزارد لي جرو، نقاو حياة ديال ريبتيلي، هاد السبب لي لعالم مازال كاين.
 - `darija_latn` Katssawl 3la l9ta3 ola ssikkin?
-- `darija_latn` 3ndi skar f yd, wa9f f l'kora dyal l'exam, kayn lkhof.
-- `darija_latn` Kol mara ndkhol, kan dhrb rasi b lbab.
-- `darija_latn` Mab9it 3ndi sahb, kan darb rassi bash n7iss.
 
 ## Test zones (synthétique) (`zones_test`, n = 249)
 
-3 sampled line(s) got no LLM answer (line missing in the answer or request failed): left out of the pipeline view.
+3 sampled line(s) got no LLM answer (line missing in the answer or request failed): scored as the app does (ambiguous line → alert, otherwise the on-device card).
 
 **Safety — device**
 
@@ -107,12 +153,12 @@ Confusion (rows true, cols predicted): no_danger [230, 19] · danger [0, 0]
 
 | Lang | n | Acc. | Danger P | Danger R | Danger F1 | No-danger P | No-danger R | Macro F1 |
 |---|---|---|---|---|---|---|---|---|
-| all | 105 | 1.0000 | 0.0000 | 0.0000 | 0.0000 | 1.0000 | 1.0000 | 0.5000 |
-| darija_arab | 36 | 1.0000 | 0.0000 | 0.0000 | 0.0000 | 1.0000 | 1.0000 | 0.5000 |
-| darija_latn | 33 | 1.0000 | 0.0000 | 0.0000 | 0.0000 | 1.0000 | 1.0000 | 0.5000 |
+| all | 108 | 0.9907 | 0.0000 | 0.0000 | 0.0000 | 1.0000 | 0.9907 | 0.4976 |
+| darija_arab | 36 | 0.9722 | 0.0000 | 0.0000 | 0.0000 | 1.0000 | 0.9722 | 0.4929 |
+| darija_latn | 36 | 1.0000 | 0.0000 | 0.0000 | 0.0000 | 1.0000 | 1.0000 | 0.5000 |
 | fr | 36 | 1.0000 | 0.0000 | 0.0000 | 0.0000 | 1.0000 | 1.0000 | 0.5000 |
 
-Confusion (rows true, cols predicted): no_danger [105, 0] · danger [0, 0]
+Confusion (rows true, cols predicted): no_danger [107, 1] · danger [0, 0]
 
 **Zones — device**
 
@@ -129,10 +175,10 @@ Confusion (rows true, cols predicted; scenario, action, acceptation): [[86, 2, 1
 
 | Lang | n | Acc. | Macro F1 | scenario F1 | action F1 | acceptation F1 |
 |---|---|---|---|---|---|---|
-| all | 105 | 0.7142 | 0.6761 | 0.8955 | 0.7500 | 0.3829 |
-| darija_arab | 36 | 0.7222 | 0.6734 | 0.8461 | 0.7741 | 0.4000 |
-| darija_latn | 33 | 0.6060 | 0.5646 | 0.8750 | 0.6857 | 0.1333 |
+| all | 107 | 0.7102 | 0.6702 | 0.8857 | 0.7500 | 0.3750 |
+| darija_arab | 35 | 0.7142 | 0.6691 | 0.8333 | 0.7741 | 0.4000 |
+| darija_latn | 36 | 0.6111 | 0.5559 | 0.8571 | 0.6857 | 0.1250 |
 | fr | 36 | 0.8055 | 0.7827 | 0.9600 | 0.8000 | 0.5882 |
 
-Confusion (rows true, cols predicted; scenario, action, acceptation): [[30, 1, 2], [0, 36, 0], [4, 23, 9]]
+Confusion (rows true, cols predicted; scenario, action, acceptation): [[31, 1, 3], [0, 36, 0], [4, 23, 9]]
 

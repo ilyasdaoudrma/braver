@@ -30,7 +30,8 @@ export function isSafetyModel(x: unknown): x is SafetyModel {
     typeof m.threshold === "number" &&
     typeof m.high === "number" &&
     m.threshold > 0 &&
-    m.threshold <= m.high
+    m.threshold <= m.high &&
+    (m.keep === undefined || (typeof m.keep === "number" && m.keep >= m.threshold && m.keep <= m.high))
   );
 }
 
