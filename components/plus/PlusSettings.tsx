@@ -6,6 +6,7 @@ import { clearDemo, loadDemo } from "@/lib/demo";
 import { store } from "@/lib/store";
 import type { Tone } from "@/lib/types";
 import { useStoreValue } from "@/lib/use-store";
+import { MemorySetting } from "./MemorySetting";
 
 const TONES: { value: Tone; label: string; hint: string }[] = [
   { value: "doux", label: "Doux", hint: "Calme et chaleureux" },
@@ -72,6 +73,8 @@ export function PlusSettings() {
           className="size-6 accent-ink"
         />
       </label>
+
+      <MemorySetting />
 
       <div className="space-y-2 rounded-2xl border border-line bg-surface p-4">
         <p className="flex items-center gap-2 font-bold">

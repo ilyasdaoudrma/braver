@@ -33,6 +33,7 @@ export const DEFAULT_SETTINGS: Readonly<Settings> = Object.freeze({
   tone: "doux",
   forceLocal: false,
   demo: false,
+  memory: false,
 });
 
 export function defaults(): StoreData {

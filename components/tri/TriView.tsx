@@ -2,6 +2,7 @@
 import Link from "next/link";
 import { CloudOff, Cpu, PenLine, Sparkles } from "lucide-react";
 import { useSortSession } from "@/lib/sort/session";
+import { useMemoryLines } from "@/lib/memory/use-memory";
 import type { SortOutcome } from "@/lib/sort/engine";
 import { ZONES } from "@/lib/types";
 import {
@@ -42,6 +43,7 @@ function EngineFooter({
 
 export function TriView() {
   const session = useSortSession();
+  const memory = useMemoryLines(session?.saved ? session.worryIds : []);
   const alert = session?.outcome.alert;
 
   // An alert is handled by SortAlertWatcher (it opens the safety screen); no cards are shown.
@@ -88,6 +90,7 @@ export function TriView() {
                 card={card}
                 upgrading={upgrading}
                 worryId={session.saved ? session.worryIds[card.index] : null}
+                memory={session.saved ? memory[session.worryIds[card.index]] : undefined}
               />
             ))}
           </div>

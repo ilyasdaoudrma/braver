@@ -115,4 +115,6 @@ export interface Settings {
   forceLocal: boolean;
   /** Demo data loaded ("Charger la démo de Yassine"). */
   demo: boolean;
+  /** I3: remember similar worries with on-device embeddings (downloads a ~118 MB model once). Off by default. */
+  memory: boolean;
 }
