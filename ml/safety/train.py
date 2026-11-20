@@ -14,6 +14,7 @@ from __future__ import annotations
 
 import hashlib
 import json
+import math
 import sys
 from datetime import date
 from pathlib import Path
@@ -36,6 +37,17 @@ MAX_FEATURES = 20000
 RECALL_TARGET = 0.95
 PRECISION_TARGET = 0.95
 SEED = 42
+
+
+ZONE_SPLITS = ROOT / "ml" / "zones" / "data" / "splits"
+
+
+def zone_negatives(name: str) -> pd.DataFrame:
+    path = ZONE_SPLITS / f"{name}.csv"
+    if not path.exists():
+        return pd.DataFrame(columns=["id", "group", "text", "label", "lang", "source", "origin"])
+    z = pd.read_csv(path)
+    return z.assign(label=0, source="synthetic", origin="zones_d2")[["id", "group", "text", "label", "lang", "source", "origin"]]
 
 
 def load(name: str) -> pd.DataFrame:
@@ -75,6 +87,12 @@ def metrics(y: np.ndarray, pred: np.ndarray) -> dict:
 
 def main() -> None:
     train, val, test = load("train"), load("val"), load("test")
+    # Extra "no danger" examples: the D2 zone worries (everyday worries in fr / darija latn / darija arab).
+    # Only their TRAIN and VAL splits are used (train → train, val → val for the thresholds); the D2 TEST split
+    # stays held out (E1 measures false alarms on it). Without them the model over-alerted on Darija worries
+    # ("kolchi ghadi yd7ek 3liya ghda" scored 0.528 → offline false alarm).
+    train = pd.concat([train, zone_negatives("train")], ignore_index=True)
+    val = pd.concat([val, zone_negatives("val")], ignore_index=True)
     best = None
     for c in (0.5, 1.0, 2.0, 4.0, 8.0, 16.0, 32.0):
         vec = make_vectorizer(MAX_FEATURES)
@@ -135,7 +153,8 @@ def main() -> None:
 
 
 def fmt(x: float | None) -> str:
-    return "-" if x is None else f"{x:.4f}"
+    # Truncated, never rounded up (CLAUDE.md): 0.94088 -> "0.9408".
+    return "-" if x is None else f"{math.floor(x * 10000) / 10000:.4f}"
 
 
 def write_markdown(r: dict) -> None:
