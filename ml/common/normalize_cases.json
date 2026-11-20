@@ -1,0 +1,82 @@
+[
+ {
+  "input": "Je veux mourir.",
+  "expected": " je veux mourir "
+ },
+ {
+  "input": "bghit nmout",
+  "expected": " bghit nmout "
+ },
+ {
+  "input": "ما بقيتش بغيت نعيش",
+  "expected": " ما بقيتش بغيت نعيش "
+ },
+ {
+  "input": "Ce partiel va me tuer !!",
+  "expected": " ce partiel va me tuer "
+ },
+ {
+  "input": "J'ai l’impression qu`il m´en veut",
+  "expected": " j ai l impression qu il m en veut "
+ },
+ {
+  "input": "ÉLÈVE Ça Où Noël",
+  "expected": " eleve ca ou noel "
+ },
+ {
+  "input": "أنا مُتَأكِّد إنّ الامتحان صعيب",
+  "expected": " ا نا متا كد ا ن الامتحان صعيب "
+ },
+ {
+  "input": "مدرسة ـــ كبيرة ى ؤ ئ ة آ إ ٱ",
+  "expected": " مدرسه كبيره ي و ي ه ا ا ا "
+ },
+ {
+  "input": "ma b9itch baghi nfi9 sbah",
+  "expected": " ma b9itch baghi nfi9 sbah "
+ },
+ {
+  "input": "Mon père m'a frappé hier",
+  "expected": " mon pere m a frappe hier "
+ },
+ {
+  "input": "  espaces\tet\nretours  ",
+  "expected": " espaces et retours "
+ },
+ {
+  "input": "3ndi exam ghda w ana 7ma9",
+  "expected": " 3ndi exam ghda w ana 7ma9 "
+ },
+ {
+  "input": "100% sûr... ou pas ?",
+  "expected": " 100 sur ou pas "
+ },
+ {
+  "input": "",
+  "expected": "  "
+ },
+ {
+  "input": "émoji 🙂 et symboles #@$",
+  "expected": " emoji et symboles "
+ },
+ {
+  "input": "kayderbni bba",
+  "expected": " kayderbni bba "
+ },
+ {
+  "input": "خاصني نسلم الرابور ديال الستاج نهار الاثنين",
+  "expected": " خاصني نسلم الرابور ديال الستاج نهار الاثنين "
+ },
+ {
+  "input": "İstanbul ß ﬁ",
+  "expected": " istanbul "
+ },
+ {
+  "input": "Ⅻ ½ ²",
+  "expected": "  "
+ },
+ {
+  "input": "naïve café crème",
+  "expected": " naive cafe creme "
+ }
+]
