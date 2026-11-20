@@ -1,9 +1,10 @@
 "use client";
-import { useId, useState } from "react";
+import { useEffect, useId, useState } from "react";
 import { useRouter } from "next/navigation";
 import { ArrowRight, Sparkles } from "lucide-react";
 import { MAX_CHARS, MAX_LINES } from "@/lib/sort/api";
 import { isSorting, startSort } from "@/lib/sort/session";
+import { loadSafetyModel } from "@/lib/safety/model";
 import { useStoreValue } from "@/lib/use-store";
 
 const EXAMPLE = [
@@ -12,6 +13,9 @@ const EXAMPLE = [
   "ما بقيتش قادر نقرا، كنأجل كلشي",
   "Bba khrjouh mn lkhedma.",
 ].join("\n");
+
+/** The on-device safety model must be in memory before the sort; never wait more than this for it. */
+const MODEL_WAIT_MS = 1500;
 
 function validate(raw: string): string | null {
   const lines = raw.split(/\r?\n/).map((l) => l.trim()).filter(Boolean);
@@ -32,11 +36,17 @@ export function ViderForm() {
   const count = text.split(/\r?\n/).filter((l) => l.trim()).length;
   const canSort = count > 0 && !error;
 
-  function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
+  useEffect(() => {
+    void loadSafetyModel();
+  }, []);
+
+  async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
     setTouched(true);
     if (!canSort || submitting || isSorting()) return;
     setSubmitting(true);
+    // Usually already loaded on mount. If it is still missing, keywords + LLM decide (offline → alert).
+    await Promise.race([loadSafetyModel(), new Promise((r) => setTimeout(r, MODEL_WAIT_MS))]);
     const lines = text.split(/\r?\n/).map((l) => l.trim()).filter(Boolean);
     const outcome = startSort(lines, { tone: settings.tone, confirmedSafe: false, forceLocal: settings.forceLocal });
     // An alert opens the safety screen through SortAlertWatcher; otherwise go to the cards.
