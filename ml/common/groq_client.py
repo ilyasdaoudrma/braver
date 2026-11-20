@@ -19,7 +19,7 @@ import requests
 
 ROOT = Path(__file__).resolve().parents[2]
 URL = "https://api.groq.com/openai/v1/chat/completions"
-SCRIPT_MODELS = ("openai/gpt-oss-120b", "qwen/qwen3.8-27b")
+SCRIPT_MODELS = ("openai/gpt-oss-120b", "qwen/qwen3.8-27b", "openai/gpt-oss-safeguard-20b")
 
 
 def load_key() -> str:
@@ -68,7 +68,7 @@ class GroqJSON:
         digest = hashlib.sha256(json.dumps(payload, sort_keys=True, ensure_ascii=False).encode()).hexdigest()
         return self.cache_dir / f"{digest[:32]}.json"
 
-    def ask(
+    def from_cache(
         self,
         model: str,
         system: str,
@@ -78,8 +78,13 @@ class GroqJSON:
         max_tokens: int = 2000,
         temperature: float = 0.2,
     ) -> dict[str, Any] | None:
-        if model not in SCRIPT_MODELS:
-            raise ValueError(f"scripts must not use {model} (keep the 20b quota for the app)")
+        """The cached answer of exactly this request, without calling the API."""
+        path = self._cache_path(self._payload(model, system, user, schema, name, max_tokens, temperature))
+        return json.loads(path.read_text(encoding="utf-8")) if path.exists() else None
+
+    def _payload(
+        self, model: str, system: str, user: str, schema: dict[str, Any], name: str, max_tokens: int, temperature: float
+    ) -> dict[str, Any]:
         payload: dict[str, Any] = {
             "model": model,
             "messages": [{"role": "system", "content": system}, {"role": "user", "content": user}],
@@ -92,12 +97,30 @@ class GroqJSON:
             payload["include_reasoning"] = False
         else:
             payload["reasoning_effort"] = "none"
+        return payload
+
+    def ask(
+        self,
+        model: str,
+        system: str,
+        user: str,
+        schema: dict[str, Any],
+        name: str,
+        max_tokens: int = 2000,
+        temperature: float = 0.2,
+    ) -> dict[str, Any] | None:
+        if model not in SCRIPT_MODELS:
+            raise ValueError(f"scripts must not use {model} (keep the 20b quota for the app)")
+        payload = self._payload(model, system, user, schema, name, max_tokens, temperature)
         path = self._cache_path(payload)
         if path.exists():
             self.cached += 1
             return json.loads(path.read_text(encoding="utf-8"))
 
-        for attempt in range(6):
+        attempt = 0
+        waits = 0
+        while attempt < 6 and waits < 60:
+            attempt += 1
             try:
                 res = requests.post(
                     URL, headers={"Authorization": f"Bearer {self.key}"}, json=payload, timeout=90
@@ -113,8 +136,10 @@ class GroqJSON:
                 low = res.text.lower()
                 if "per day" in low or "rpd" in low or "tpd" in low:
                     raise SystemExit(f"daily request limit reached on {model}: {res.text[:200]}")
-                self._say(f"  429 on {model}, sleeping {wait:.1f}s")
-                time.sleep(wait + 1)
+                self._say(f"  429 on {model}, sleeping {wait:.1f}s: {res.text[:220]}")
+                time.sleep(min(wait, 120) + 1)  # never trust a huge retry-after blindly
+                attempt -= 1  # a rate-limit wait is not a failed attempt
+                waits += 1
                 continue
             if res.status_code >= 400:
                 self._say(f"  HTTP {res.status_code} on {model}: {res.text[:160]}")
