@@ -21,6 +21,7 @@ export function MemorySetting() {
       if (!(await indexWorries())) throw new Error("index");
       setState({ kind: "idle" });
     } catch {
+      updateSettings((s) => ({ ...s, memory: false }));
       setState({ kind: "error" });
     }
   }
