@@ -15,6 +15,7 @@ Usage: ml/.venv/Scripts/python -I ml/eval/report.py
 
 from __future__ import annotations
 
+import hashlib
 import json
 import math
 import shutil
@@ -81,7 +82,9 @@ def load() -> pd.DataFrame:
     if llm_path.exists():
         llm = pd.read_csv(llm_path)
         sample = pd.read_csv(DATA / "sample_ids.csv")
-        dev = dev.merge(llm, on=["set", "id"], how="left")
+        # Join on set + id + text hash: an id reused with edited text (T1 was filtered after the run) never matches.
+        dev["text_sha"] = dev["text"].map(lambda t: hashlib.sha256(str(t).encode("utf-8")).hexdigest()[:16])
+        dev = dev.merge(llm, on=["set", "id", "text_sha"], how="left")
         dev["sampled"] = dev.set_index(["set", "id"]).index.isin(sample.set_index(["set", "id"]).index)
     else:
         dev["sampled"] = False
@@ -89,6 +92,10 @@ def load() -> pd.DataFrame:
             dev[col] = np.nan
     ok = dev["llm_ok"] == 1
     stopped = dev["safety_level"] == "danger"
+    # "pipeline" view = rows the app really decided online: stopped on the device, or answered by the LLM.
+    # Rows the LLM skipped (request failed or line missing in its answer) are counted, then left out of it.
+    dev["llm_missing"] = dev["sampled"] & ~stopped & ~ok
+    dev["sampled"] = dev["sampled"] & ~dev["llm_missing"]
     dev["pipeline_alert"] = np.where(stopped, 1, np.where(ok, dev["llm_danger"].fillna(0), dev["device_alert"])).astype(int)
     dev["pipeline_zone"] = np.where(ok, dev["llm_zone"].fillna(""), dev["zone_device"])
     return dev
@@ -162,7 +169,8 @@ def main() -> None:
     OUT.mkdir(parents=True, exist_ok=True)
     report: dict = {"date": date.today().isoformat(), "sets": {}, "latency": latency(df), "models": model_reports()}
     for set_name, g in df.groupby("set"):
-        entry: dict = {"name": SET_NAMES.get(str(set_name), str(set_name)), "n": int(len(g)), "by_source": g["source"].value_counts().to_dict()}
+        entry: dict = {"name": SET_NAMES.get(str(set_name), str(set_name)), "n": int(len(g)), "by_source": g["source"].value_counts().to_dict(),
+                       "llm_missing": int(g["llm_missing"].sum())}
         sd = g[g["label_danger"].isin(["0", "1"])].assign(y=lambda d: d["label_danger"].astype(int))
         if len(sd):
             entry["safety_device"] = by_lang(sd, safety_metrics, "y", "device_alert")
@@ -201,20 +209,24 @@ def main() -> None:
 
 def f4(x: float | None) -> str:
     # Truncated, never rounded up (CLAUDE.md): 0.94088 -> "0.9408".
-    return "-" if x is None else f"{math.floor(x * 10000) / 10000:.4f}"
+    return "-" if x is None else f"{math.floor(x * 10000 + 1e-9) / 10000:.4f}"
 
 
 def write_markdown(r: dict) -> None:
     L = [f"# BRAVER — evaluation of the full pipeline ({r['date']})", "",
          "Held-out sets only. **device** = the app with no network (all rows; an ambiguous line alerts). "
          "**pipeline** = the app online on a stratified sample sent to the deployed `/api/sort` (gpt-oss-20b, fallback 120b). "
-         "n is given for every row; numbers are not rounded up.", ""]
+         "n is given for every row; numbers are truncated, never rounded up. The pipeline sample is stratified (12 rows per "
+         "set × language × label), so its precision does not reflect real prevalence. Zones (pipeline) are scored only on lines "
+         "the app did not stop for safety (a stopped line shows no zone).", ""]
     lat = r.get("latency")
     if lat:
-        L += [f"Latency of `/api/sort` (client round trip, {lat['requests']} requests of up to 12 lines): p50 {lat['client_ms_p50']:.0f} ms, p90 {lat['client_ms_p90']:.0f} ms. "
+        L += [f"Latency of `/api/sort` per request of up to 12 lines (client round trip, {lat['requests']} requests): p50 {lat['client_ms_p50']:.0f} ms, p90 {lat['client_ms_p90']:.0f} ms. "
               f"Answered by: " + ", ".join(f"{k} {v}" for k, v in lat["answered_by"].items()) + ".", ""]
     for key, e in r["sets"].items():
         L += [f"## {e['name']} (`{key}`, n = {e['n']})", ""]
+        if e.get("llm_missing"):
+            L += [f"{e['llm_missing']} sampled line(s) got no LLM answer (line missing in the answer or request failed): left out of the pipeline view.", ""]
         for view in ("safety_device", "safety_pipeline"):
             if view in e:
                 L += [f"**Safety — {view.split('_')[1]}**", "", "| Lang | n | Acc. | Danger P | Danger R | Danger F1 | No-danger P | No-danger R | Macro F1 |", "|---|---|---|---|---|---|---|---|---|"]

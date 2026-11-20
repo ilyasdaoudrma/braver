@@ -80,13 +80,13 @@ for (let i = 0; i < toSend.length; i += 12) {
   const items = new Map((res.body?.ok ? res.body.items : []).map((it) => [it.n, it]));
   batch.forEach((r, j) => {
     const it = items.get(j + 1);
-    out.push({ set: r.set, id: r.id, llm_ok: it ? 1 : 0, llm_danger: it ? (it.danger ? 1 : 0) : "", llm_distress: it ? (it.distress ? 1 : 0) : "", llm_zone: it?.zone ?? "", model: res.body?.ok ? res.body.model : "", server_ms: res.body?.ok ? res.body.ms : "", client_ms: res.clientMs, failure: res.body?.ok ? "" : res.body?.error ?? "unknown" });
+    out.push({ set: r.set, id: r.id, text_sha: h(r.text).slice(0, 16), llm_ok: it ? 1 : 0, llm_danger: it ? (it.danger ? 1 : 0) : "", llm_distress: it ? (it.distress ? 1 : 0) : "", llm_zone: it?.zone ?? "", model: res.body?.ok ? res.body.model : "", server_ms: res.body?.ok ? res.body.ms : "", client_ms: res.clientMs, failure: res.body?.ok ? "" : res.body?.error ?? "unknown" });
   });
   console.log(`${Math.min(i + 12, toSend.length)}/${toSend.length} ${res.body?.ok ? res.body.model : res.body?.error} ${res.clientMs} ms`);
 }
 
 const sampled = new Set(sample.map((r) => `${r.set}|${r.id}`));
 writeFileSync("ml/eval/data/sample_ids.csv", ["set,id", ...[...sampled].map((k) => k.split("|").map(cell).join(","))].join("\n") + "\n", "utf-8");
-const cols = ["set", "id", "llm_ok", "llm_danger", "llm_distress", "llm_zone", "model", "server_ms", "client_ms", "failure"];
+const cols = ["set", "id", "text_sha", "llm_ok", "llm_danger", "llm_distress", "llm_zone", "model", "server_ms", "client_ms", "failure"];
 writeFileSync("ml/eval/data/llm_predictions.csv", [cols.join(","), ...out.map((r) => cols.map((c) => cell(r[c])).join(","))].join("\n") + "\n", "utf-8");
 console.log(`saved ${out.length} LLM rows`);

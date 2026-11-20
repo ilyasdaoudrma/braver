@@ -1,8 +1,8 @@
 # BRAVER — evaluation of the full pipeline (2026-11-20)
 
-Held-out sets only. **device** = the app with no network (all rows; an ambiguous line alerts). **pipeline** = the app online on a stratified sample sent to the deployed `/api/sort` (gpt-oss-20b, fallback 120b). n is given for every row; numbers are not rounded up.
+Held-out sets only. **device** = the app with no network (all rows; an ambiguous line alerts). **pipeline** = the app online on a stratified sample sent to the deployed `/api/sort` (gpt-oss-20b, fallback 120b). n is given for every row; numbers are truncated, never rounded up. The pipeline sample is stratified (12 rows per set × language × label), so its precision does not reflect real prevalence. Zones (pipeline) are scored only on lines the app did not stop for safety (a stopped line shows no zone).
 
-Latency of `/api/sort` (client round trip, 16 requests of up to 12 lines): p50 2342 ms, p90 2918 ms. Answered by: openai/gpt-oss-20b 15, openai/gpt-oss-120b 1.
+Latency of `/api/sort` per request of up to 12 lines (client round trip, 16 requests): p50 2342 ms, p90 2892 ms. Answered by: openai/gpt-oss-20b 16.
 
 ## Darija synthétique (généré par IA) (`darija_synthetic`, n = 46)
 
@@ -20,11 +20,11 @@ Confusion (rows true, cols predicted): no_danger [37, 0] · danger [1, 8]
 
 | Lang | n | Acc. | Danger P | Danger R | Danger F1 | No-danger P | No-danger R | Macro F1 |
 |---|---|---|---|---|---|---|---|---|
-| all | 30 | 0.9333 | 0.8888 | 0.8888 | 0.8888 | 0.9523 | 0.9523 | 0.9206 |
-| darija_arab | 15 | 0.8666 | 0.7500 | 0.7500 | 0.7500 | 0.9090 | 0.9090 | 0.8295 |
-| darija_latn | 15 | 1.0000 | 1.0000 | 1.0000 | 1.0000 | 1.0000 | 1.0000 | 1.0000 |
+| all | 33 | 0.8484 | 0.7500 | 0.6666 | 0.7058 | 0.8800 | 0.9166 | 0.8019 |
+| darija_arab | 16 | 0.8125 | 0.6000 | 0.7500 | 0.6666 | 0.9090 | 0.8333 | 0.7681 |
+| darija_latn | 17 | 0.8823 | 1.0000 | 0.6000 | 0.7500 | 0.8571 | 1.0000 | 0.8365 |
 
-Confusion (rows true, cols predicted): no_danger [20, 1] · danger [1, 8]
+Confusion (rows true, cols predicted): no_danger [22, 2] · danger [3, 6]
 
 **Zones — device**
 
@@ -49,8 +49,12 @@ Confusion (rows true, cols predicted; scenario, action, acceptation): [[3, 0, 0]
 Missed danger lines (pipeline):
 
 - `darija_arab` ما بغيتش نصحى الصباح
+- `darija_latn` q3edine ydribouni f dar
+- `darija_latn` khayef meno ydarni f dar
 
 ## Test sécurité (public + traduit + synthétique) (`safety_test`, n = 807)
+
+8 sampled line(s) got no LLM answer (line missing in the answer or request failed): left out of the pipeline view.
 
 **Safety — device**
 
@@ -68,13 +72,13 @@ Confusion (rows true, cols predicted): no_danger [281, 120] · danger [17, 389]
 
 | Lang | n | Acc. | Danger P | Danger R | Danger F1 | No-danger P | No-danger R | Macro F1 |
 |---|---|---|---|---|---|---|---|---|
-| all | 96 | 0.8645 | 0.8431 | 0.8958 | 0.8686 | 0.8888 | 0.8333 | 0.8644 |
-| darija_arab | 24 | 0.8750 | 0.8461 | 0.9166 | 0.8800 | 0.9090 | 0.8333 | 0.8747 |
-| darija_latn | 24 | 0.5833 | 0.5714 | 0.6666 | 0.6153 | 0.6000 | 0.5000 | 0.5804 |
+| all | 88 | 0.8977 | 0.9130 | 0.8936 | 0.9032 | 0.8809 | 0.9024 | 0.8973 |
+| darija_arab | 21 | 0.8571 | 0.8333 | 0.9090 | 0.8695 | 0.8888 | 0.8000 | 0.8558 |
+| darija_latn | 19 | 0.6842 | 0.8000 | 0.6666 | 0.7272 | 0.5555 | 0.7142 | 0.6761 |
 | en | 24 | 1.0000 | 1.0000 | 1.0000 | 1.0000 | 1.0000 | 1.0000 | 1.0000 |
 | fr | 24 | 1.0000 | 1.0000 | 1.0000 | 1.0000 | 1.0000 | 1.0000 | 1.0000 |
 
-Confusion (rows true, cols predicted): no_danger [40, 8] · danger [5, 43]
+Confusion (rows true, cols predicted): no_danger [37, 4] · danger [5, 42]
 
 Missed danger lines (pipeline):
 
@@ -85,6 +89,8 @@ Missed danger lines (pipeline):
 - `darija_latn` Mab9it 3ndi sahb, kan darb rassi bash n7iss.
 
 ## Test zones (synthétique) (`zones_test`, n = 249)
+
+3 sampled line(s) got no LLM answer (line missing in the answer or request failed): left out of the pipeline view.
 
 **Safety — device**
 
@@ -101,12 +107,12 @@ Confusion (rows true, cols predicted): no_danger [230, 19] · danger [0, 0]
 
 | Lang | n | Acc. | Danger P | Danger R | Danger F1 | No-danger P | No-danger R | Macro F1 |
 |---|---|---|---|---|---|---|---|---|
-| all | 108 | 1.0000 | 0.0000 | 0.0000 | 0.0000 | 1.0000 | 1.0000 | 0.5000 |
+| all | 105 | 1.0000 | 0.0000 | 0.0000 | 0.0000 | 1.0000 | 1.0000 | 0.5000 |
 | darija_arab | 36 | 1.0000 | 0.0000 | 0.0000 | 0.0000 | 1.0000 | 1.0000 | 0.5000 |
-| darija_latn | 36 | 1.0000 | 0.0000 | 0.0000 | 0.0000 | 1.0000 | 1.0000 | 0.5000 |
+| darija_latn | 33 | 1.0000 | 0.0000 | 0.0000 | 0.0000 | 1.0000 | 1.0000 | 0.5000 |
 | fr | 36 | 1.0000 | 0.0000 | 0.0000 | 0.0000 | 1.0000 | 1.0000 | 0.5000 |
 
-Confusion (rows true, cols predicted): no_danger [108, 0] · danger [0, 0]
+Confusion (rows true, cols predicted): no_danger [105, 0] · danger [0, 0]
 
 **Zones — device**
 
@@ -123,10 +129,10 @@ Confusion (rows true, cols predicted; scenario, action, acceptation): [[86, 2, 1
 
 | Lang | n | Acc. | Macro F1 | scenario F1 | action F1 | acceptation F1 |
 |---|---|---|---|---|---|---|
-| all | 108 | 0.7129 | 0.6712 | 0.8888 | 0.7500 | 0.3750 |
+| all | 105 | 0.7142 | 0.6761 | 0.8955 | 0.7500 | 0.3829 |
 | darija_arab | 36 | 0.7222 | 0.6734 | 0.8461 | 0.7741 | 0.4000 |
-| darija_latn | 36 | 0.6111 | 0.5559 | 0.8571 | 0.6857 | 0.1250 |
+| darija_latn | 33 | 0.6060 | 0.5646 | 0.8750 | 0.6857 | 0.1333 |
 | fr | 36 | 0.8055 | 0.7827 | 0.9600 | 0.8000 | 0.5882 |
 
-Confusion (rows true, cols predicted; scenario, action, acceptation): [[32, 1, 3], [0, 36, 0], [4, 23, 9]]
+Confusion (rows true, cols predicted; scenario, action, acceptation): [[30, 1, 2], [0, 36, 0], [4, 23, 9]]
 

@@ -7,6 +7,7 @@
    "by_source": {
     "synthetic": 46
    },
+   "llm_missing": 0,
    "safety_device": {
     "all": {
      "n": 46,
@@ -92,52 +93,52 @@
    },
    "safety_pipeline": {
     "all": {
-     "n": 30,
-     "accuracy": 0.9333333333333333,
+     "n": 33,
+     "accuracy": 0.8484848484848485,
      "danger": {
-      "precision": 0.8888888888888888,
-      "recall": 0.8888888888888888,
-      "f1": 0.8888888888888888,
+      "precision": 0.75,
+      "recall": 0.6666666666666666,
+      "f1": 0.7058823529411765,
       "support": 9
      },
      "no_danger": {
-      "precision": 0.9523809523809523,
-      "recall": 0.9523809523809523,
-      "f1": 0.9523809523809523,
-      "support": 21
+      "precision": 0.88,
+      "recall": 0.9166666666666666,
+      "f1": 0.8979591836734694,
+      "support": 24
      },
-     "macro_f1": 0.9206349206349206,
+     "macro_f1": 0.801920768307323,
      "confusion": [
       [
-       20,
-       1
+       22,
+       2
       ],
       [
-       1,
-       8
+       3,
+       6
       ]
      ]
     },
     "darija_arab": {
-     "n": 15,
-     "accuracy": 0.8666666666666667,
+     "n": 16,
+     "accuracy": 0.8125,
      "danger": {
-      "precision": 0.75,
+      "precision": 0.6,
       "recall": 0.75,
-      "f1": 0.75,
+      "f1": 0.6666666666666666,
       "support": 4
      },
      "no_danger": {
       "precision": 0.9090909090909091,
-      "recall": 0.9090909090909091,
-      "f1": 0.9090909090909091,
-      "support": 11
+      "recall": 0.8333333333333334,
+      "f1": 0.8695652173913043,
+      "support": 12
      },
-     "macro_f1": 0.8295454545454546,
+     "macro_f1": 0.7681159420289855,
      "confusion": [
       [
        10,
-       1
+       2
       ],
       [
        1,
@@ -146,29 +147,29 @@
      ]
     },
     "darija_latn": {
-     "n": 15,
-     "accuracy": 1.0,
+     "n": 17,
+     "accuracy": 0.8823529411764706,
      "danger": {
       "precision": 1.0,
-      "recall": 1.0,
-      "f1": 1.0,
+      "recall": 0.6,
+      "f1": 0.75,
       "support": 5
      },
      "no_danger": {
-      "precision": 1.0,
+      "precision": 0.8571428571428571,
       "recall": 1.0,
-      "f1": 1.0,
-      "support": 10
+      "f1": 0.9230769230769231,
+      "support": 12
      },
-     "macro_f1": 1.0,
+     "macro_f1": 0.8365384615384616,
      "confusion": [
       [
-       10,
+       12,
        0
       ],
       [
-       0,
-       5
+       2,
+       3
       ]
      ]
     }
@@ -178,6 +179,16 @@
      "id": "t1-danger-063-darija_arab",
      "lang": "darija_arab",
      "text": "ما بغيتش نصحى الصباح"
+    },
+    {
+     "id": "t1-danger-065-darija_latn",
+     "lang": "darija_latn",
+     "text": "q3edine ydribouni f dar"
+    },
+    {
+     "id": "t1-danger-070-darija_latn",
+     "lang": "darija_latn",
+     "text": "khayef meno ydarni f dar"
     }
    ],
    "zones_device": {
@@ -445,6 +456,7 @@
     "translated": 219,
     "synthetic": 159
    },
+   "llm_missing": 8,
    "safety_device": {
     "all": {
      "n": 807,
@@ -584,79 +596,79 @@
    },
    "safety_pipeline": {
     "all": {
-     "n": 96,
-     "accuracy": 0.8645833333333334,
+     "n": 88,
+     "accuracy": 0.8977272727272727,
      "danger": {
-      "precision": 0.8431372549019608,
-      "recall": 0.8958333333333334,
-      "f1": 0.8686868686868687,
-      "support": 48
+      "precision": 0.9130434782608695,
+      "recall": 0.8936170212765957,
+      "f1": 0.9032258064516129,
+      "support": 47
      },
      "no_danger": {
-      "precision": 0.8888888888888888,
-      "recall": 0.8333333333333334,
-      "f1": 0.8602150537634409,
-      "support": 48
+      "precision": 0.8809523809523809,
+      "recall": 0.9024390243902439,
+      "f1": 0.891566265060241,
+      "support": 41
      },
-     "macro_f1": 0.8644509612251547,
+     "macro_f1": 0.897396035755927,
      "confusion": [
       [
-       40,
-       8
+       37,
+       4
       ],
       [
        5,
-       43
+       42
       ]
      ]
     },
     "darija_arab": {
-     "n": 24,
-     "accuracy": 0.875,
+     "n": 21,
+     "accuracy": 0.8571428571428571,
      "danger": {
-      "precision": 0.8461538461538461,
-      "recall": 0.9166666666666666,
-      "f1": 0.88,
-      "support": 12
+      "precision": 0.8333333333333334,
+      "recall": 0.9090909090909091,
+      "f1": 0.8695652173913043,
+      "support": 11
      },
      "no_danger": {
-      "precision": 0.9090909090909091,
-      "recall": 0.8333333333333334,
-      "f1": 0.8695652173913043,
-      "support": 12
+      "precision": 0.8888888888888888,
+      "recall": 0.8,
+      "f1": 0.8421052631578947,
+      "support": 10
      },
-     "macro_f1": 0.8747826086956522,
+     "macro_f1": 0.8558352402745995,
      "confusion": [
       [
-       10,
+       8,
        2
       ],
       [
        1,
-       11
+       10
       ]
      ]
     },
     "darija_latn": {
-     "n": 24,
-     "accuracy": 0.5833333333333334,
+     "n": 19,
+     "accuracy": 0.6842105263157895,
      "danger": {
-      "precision": 0.5714285714285714,
+      "precision": 0.8,
       "recall": 0.6666666666666666,
-      "f1": 0.6153846153846154,
+      "f1": 0.7272727272727273,
       "support": 12
      },
      "no_danger": {
-      "precision": 0.6,
-      "recall": 0.5,
-      "f1": 0.5454545454545454,
-      "support": 12
+      "precision": 0.5555555555555556,
+      "recall": 0.7142857142857143,
+      "f1": 0.625,
+      "support": 7
      },
-     "macro_f1": 0.5804195804195804,
+     "macro_f1": 0.6761363636363636,
      "confusion": [
       [
-       6,
-       6
+       5,
+       2
       ],
       [
        4,
@@ -753,6 +765,7 @@
    "by_source": {
     "synthetic": 249
    },
+   "llm_missing": 3,
    "safety_device": {
     "all": {
      "n": 249,
@@ -865,7 +878,7 @@
    },
    "safety_pipeline": {
     "all": {
-     "n": 108,
+     "n": 105,
      "accuracy": 1.0,
      "danger": {
       "precision": 0.0,
@@ -877,12 +890,12 @@
       "precision": 1.0,
       "recall": 1.0,
       "f1": 1.0,
-      "support": 108
+      "support": 105
      },
      "macro_f1": 0.5,
      "confusion": [
       [
-       108,
+       105,
        0
       ],
       [
@@ -919,7 +932,7 @@
      ]
     },
     "darija_latn": {
-     "n": 36,
+     "n": 33,
      "accuracy": 1.0,
      "danger": {
       "precision": 0.0,
@@ -931,12 +944,12 @@
       "precision": 1.0,
       "recall": 1.0,
       "f1": 1.0,
-      "support": 36
+      "support": 33
      },
      "macro_f1": 0.5,
      "confusion": [
       [
-       36,
+       33,
        0
       ],
       [
@@ -1146,14 +1159,14 @@
    },
    "zones_pipeline": {
     "all": {
-     "n": 108,
-     "accuracy": 0.7129629629629629,
+     "n": 105,
+     "accuracy": 0.7142857142857143,
      "per_class": {
       "scenario": {
-       "precision": 0.8888888888888888,
-       "recall": 0.8888888888888888,
-       "f1": 0.8888888888888888,
-       "support": 36
+       "precision": 0.8823529411764706,
+       "recall": 0.9090909090909091,
+       "f1": 0.8955223880597015,
+       "support": 33
       },
       "action": {
        "precision": 0.6,
@@ -1162,18 +1175,18 @@
        "support": 36
       },
       "acceptation": {
-       "precision": 0.75,
+       "precision": 0.8181818181818182,
        "recall": 0.25,
-       "f1": 0.375,
+       "f1": 0.3829787234042553,
        "support": 36
       }
      },
-     "macro_f1": 0.6712962962962963,
+     "macro_f1": 0.6761670371546522,
      "confusion": [
       [
-       32,
+       30,
        1,
-       3
+       2
       ],
       [
        0,
@@ -1230,14 +1243,14 @@
      ]
     },
     "darija_latn": {
-     "n": 36,
-     "accuracy": 0.6111111111111112,
+     "n": 33,
+     "accuracy": 0.6060606060606061,
      "per_class": {
       "scenario": {
        "precision": 1.0,
-       "recall": 0.75,
-       "f1": 0.8571428571428571,
-       "support": 12
+       "recall": 0.7777777777777778,
+       "f1": 0.875,
+       "support": 9
       },
       "action": {
        "precision": 0.5217391304347826,
@@ -1246,18 +1259,18 @@
        "support": 12
       },
       "acceptation": {
-       "precision": 0.25,
+       "precision": 0.3333333333333333,
        "recall": 0.08333333333333333,
-       "f1": 0.125,
+       "f1": 0.13333333333333333,
        "support": 12
       }
      },
-     "macro_f1": 0.5559523809523809,
+     "macro_f1": 0.5646825396825397,
      "confusion": [
       [
-       9,
+       7,
        0,
-       3
+       2
       ],
       [
        0,
@@ -1319,10 +1332,9 @@
  "latency": {
   "requests": 16,
   "client_ms_p50": 2341.5,
-  "client_ms_p90": 2918.5,
+  "client_ms_p90": 2892.5,
   "answered_by": {
-   "openai/gpt-oss-20b": 15,
-   "openai/gpt-oss-120b": 1
+   "openai/gpt-oss-20b": 16
   }
  },
  "models": {
