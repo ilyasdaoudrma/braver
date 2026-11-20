@@ -1,9 +1,9 @@
 "use client";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { Check, Copy, MessageCircle, Phone } from "lucide-react";
 import { HELPLINES, TRUSTED_MESSAGE } from "@/lib/helplines";
-import { acknowledgeAlert } from "@/lib/sort/session";
+import { acknowledgeAlert, resortConfirmed } from "@/lib/sort/session";
 
 /** Calm full screen: no jokes, no diagnosis. Moroccan numbers, a ready message, and a way back. */
 export function SafetyScreen() {
@@ -23,8 +23,15 @@ export function SafetyScreen() {
     }
   }
 
+  const leaving = useRef(false);
+
   function handleBack() {
-    if (window.history.length > 1) router.back();
+    if (leaving.current) return; // a fast double tap must not navigate twice
+    leaving.current = true;
+    // After a sort alert: the same lines are sorted again with confirmedSafe (keywords no longer stop it,
+    // the LLM still checks ambiguous lines). Opened from the help button: just go back.
+    if (resortConfirmed()) router.replace("/tri");
+    else if (window.history.length > 1) router.back();
     else router.push("/accueil");
   }
 
@@ -32,15 +39,21 @@ export function SafetyScreen() {
     <main className="mx-auto min-h-dvh max-w-md px-4 pt-[calc(env(safe-area-inset-top)+2rem)] pb-[calc(env(safe-area-inset-bottom)+2rem)]">
       <div className="enter space-y-8">
         <header className="space-y-3">
-          <h1 className="font-display text-3xl font-bold tracking-tight">Parlons-en à quelqu&apos;un, maintenant.</h1>
+          <h1 className="font-display text-3xl font-bold tracking-tight">
+            Parlons-en à quelqu&apos;un, maintenant.
+          </h1>
           <p className="text-ink-2">
-            Ce que tu traverses compte. Une personne peut t&apos;écouter tout de suite. Si tu es en danger, appelle le 19 ou le 112.
+            Ce que tu traverses compte. Une personne peut t&apos;écouter tout de
+            suite. Si tu es en danger, appelle le 19 ou le 112.
           </p>
         </header>
 
         <ul className="space-y-3" aria-label="Numéros d'aide au Maroc">
           {HELPLINES.map((h) => (
-            <li key={h.name} className="flex items-center gap-3 rounded-2xl border border-line bg-surface p-4">
+            <li
+              key={h.name}
+              className="flex items-center gap-3 rounded-2xl border border-line bg-surface p-4"
+            >
               <div className="flex-1 space-y-0.5">
                 <p className="font-bold">{h.name}</p>
                 <p className="text-sm text-ink-2">{h.who}</p>
@@ -60,7 +73,10 @@ export function SafetyScreen() {
           ))}
         </ul>
 
-        <section className="space-y-3 rounded-2xl border border-line bg-surface p-4" aria-labelledby="msg-title">
+        <section
+          className="space-y-3 rounded-2xl border border-line bg-surface p-4"
+          aria-labelledby="msg-title"
+        >
           <h2 id="msg-title" className="font-bold">
             Message prêt pour une personne de confiance
           </h2>
@@ -78,14 +94,27 @@ export function SafetyScreen() {
               onClick={handleCopy}
               className="inline-flex min-h-11 items-center gap-2 rounded-full border border-ink/20 px-4 font-bold"
             >
-              {copied === "done" ? <Check aria-hidden size={16} /> : <Copy aria-hidden size={16} />}
+              {copied === "done" ? (
+                <Check aria-hidden size={16} />
+              ) : (
+                <Copy aria-hidden size={16} />
+              )}
               {copied === "done" ? "Copié" : "Copier le message"}
             </button>
           </div>
-          {copied === "failed" && <p className="text-sm text-ink-2">La copie n&apos;a pas marché : appuie longuement sur le message pour le copier.</p>}
+          {copied === "failed" && (
+            <p className="text-sm text-ink-2">
+              La copie n&apos;a pas marché : appuie longuement sur le message
+              pour le copier.
+            </p>
+          )}
         </section>
 
-        <button type="button" onClick={handleBack} className="min-h-11 w-full rounded-full px-4 font-bold text-ink-2 underline underline-offset-4">
+        <button
+          type="button"
+          onClick={handleBack}
+          className="min-h-11 w-full rounded-full px-4 font-bold text-ink-2 underline underline-offset-4"
+        >
           On s&apos;est mal compris
         </button>
       </div>
