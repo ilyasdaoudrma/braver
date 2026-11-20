@@ -1,5 +1,5 @@
 "use client";
-import { useEffect, type RefObject } from "react";
+import { useEffect, useRef, type RefObject } from "react";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 
@@ -30,6 +30,10 @@ function fmt(v: number, lang: string): string {
 
 /** GSAP ScrollTrigger choreography of the landing page. Reduced motion: nothing moves, everything is visible. */
 export function useLandingMotion(root: RefObject<HTMLElement | null>, lang: string): void {
+  const langRef = useRef(lang);
+  useEffect(() => {
+    langRef.current = lang;
+  }, [lang]);
   useEffect(() => {
     const el = root.current;
     if (!el) return;
@@ -38,7 +42,7 @@ export function useLandingMotion(root: RefObject<HTMLElement | null>, lang: stri
     const mm = gsap.matchMedia();
 
     mm.add(
-      { motion: "(prefers-reduced-motion: no-preference)", desktop: "(min-width: 900px)" },
+      { motion: "(prefers-reduced-motion: no-preference)", desktop: "(min-width: 768px)" },
       (ctx) => {
         const { motion, desktop } = ctx.conditions as { motion: boolean; desktop: boolean };
         const scrub = motion ? 0.8 : true;
@@ -81,19 +85,17 @@ export function useLandingMotion(root: RefObject<HTMLElement | null>, lang: stri
         if (!motion) return;
 
         // 3. Reveal on scroll, batched with a 60 ms stagger.
-        const reveals = q("[data-reveal]");
-        gsap.set(reveals, { opacity: 0, y: 28 });
-        ScrollTrigger.batch(reveals, {
-          start: "top 88%",
-          once: true,
-          onEnter: (batch) => gsap.to(batch, { opacity: 1, y: 0, duration: 0.9, ease: "power3.out", stagger: 0.06 }),
+        // One trigger per element: it also plays when the section is reached by a jump (nav link, language switch).
+        q("[data-reveal]").forEach((node) => {
+          gsap.from(node, { opacity: 0, y: 28, duration: 0.9, ease: "power3.out", scrollTrigger: { trigger: node, start: "top 92%", toggleActions: "play none none none" } });
         });
 
         // 4. Zone cards (phone): one by one as they enter. The desktop pin is created first, above.
         const cards = q("[data-zone-card]");
         if (!desktop) {
-          gsap.set(cards, { opacity: 0, y: 40 });
-          ScrollTrigger.batch(cards, { start: "top 90%", once: true, onEnter: (b) => gsap.to(b, { opacity: 1, y: 0, duration: 0.8, ease: "power3.out", stagger: 0.08 }) });
+          cards.forEach((card) => {
+            gsap.from(card, { opacity: 0, y: 40, duration: 0.8, ease: "power3.out", scrollTrigger: { trigger: card, start: "top 92%", toggleActions: "play none none none" } });
+          });
         }
 
         // 5. Proof numbers count up once (truncated, like the final value).
@@ -102,7 +104,7 @@ export function useLandingMotion(root: RefObject<HTMLElement | null>, lang: stri
           const obj = { v: 0 };
           ScrollTrigger.create({
             trigger: node, start: "top 85%", once: true,
-            onEnter: () => gsap.to(obj, { v: target, duration: 1.6, ease: "power2.out", onUpdate: () => { node.textContent = fmt(Math.min(obj.v, target), lang); } }),
+            onEnter: () => gsap.to(obj, { v: target, duration: 1.6, ease: "power2.out", onUpdate: () => { node.textContent = fmt(Math.min(obj.v, target), langRef.current); } }),
           });
         });
       },
@@ -117,5 +119,5 @@ export function useLandingMotion(root: RefObject<HTMLElement | null>, lang: stri
       window.removeEventListener("load", onLoad);
       mm.revert();
     };
-  }, [root, lang]);
+  }, [root]);
 }

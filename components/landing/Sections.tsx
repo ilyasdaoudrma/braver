@@ -165,10 +165,10 @@ export function Safety({ t }: { t: LandingCopy }) {
 
 export function Proof({ t, lang, m }: { t: LandingCopy; lang: Lang; m: ProofNumbers }) {
   const stats = [
-    m.safetyRecall !== null && { big: pct(m.safetyRecall, lang), value: m.safetyRecall, label: t.proof.safetyDevice, n: m.safetyN },
+    m.safetyRecall !== null && { big: pct(m.safetyRecall, lang), value: m.safetyRecall, label: t.proof.safetyDevice, n: m.safetyN, nNote: t.proof.nDanger },
     m.onlineCaught !== null && { big: `${m.onlineCaught} / ${m.onlineDanger}`, value: null, label: t.proof.safetyOnline, n: m.onlineN },
     m.zonesAcc !== null && { big: pct(m.zonesAcc, lang), value: m.zonesAcc, label: t.proof.zones, n: m.zonesN },
-  ].filter(Boolean) as { big: string; value: number | null; label: string; n: number | null }[];
+  ].filter(Boolean) as { big: string; value: number | null; label: string; n: number | null; nNote?: string }[];
   return (
     <section id="proof" className="relative px-5 py-24 md:px-12 md:py-40">
       <div className="mx-auto max-w-6xl">
@@ -184,11 +184,11 @@ export function Proof({ t, lang, m }: { t: LandingCopy; lang: Lang; m: ProofNumb
             <div key={i} data-reveal className={`py-7 md:px-7 ${i > 0 ? "border-t border-ink/10 md:border-t-0 md:border-l" : ""}`}>
               <dt className="sr-only">{s.label}</dt>
               <dd>
-                <span data-count={s.value ?? undefined} data-lang={lang} className="block font-display text-5xl font-light tracking-tight tabular-nums md:text-6xl">
+                <span key={lang} data-count={s.value ?? undefined} className="block font-display text-5xl font-light tracking-tight tabular-nums md:text-6xl">
                   {s.big}
                 </span>
                 <span className="mt-3 block leading-snug text-ink-2">{s.label}</span>
-                {s.n !== null && <span className="mt-2 block font-mono text-xs text-ink-2">n = {s.n}</span>}
+                {s.n !== null && <span className="mt-2 block font-mono text-xs text-ink-2">n = {s.n}{s.nNote ? ` ${s.nNote}` : ""}</span>}
               </dd>
             </div>
           ))}

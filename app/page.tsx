@@ -18,7 +18,7 @@ function loadProof(): ProofNumbers {
     const zones = m.sets?.zones_test?.zones_device?.all;
     return {
       safetyRecall: dev?.danger?.recall ?? null,
-      safetyN: dev?.n ?? null,
+      safetyN: dev ? dev.confusion[1][0] + dev.confusion[1][1] : null, // recall denominator: danger messages only
       onlineCaught: pipe ? pipe.confusion[1][1] : null,
       onlineDanger: pipe ? pipe.confusion[1][0] + pipe.confusion[1][1] : null,
       onlineN: pipe?.n ?? null,

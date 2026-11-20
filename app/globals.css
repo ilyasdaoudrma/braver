@@ -85,22 +85,25 @@ body {
   outline-offset: 2px;
 }
 
-/* Every card surface of the app gets the same soft depth. */
-[class*="bg-surface"][class*="rounded-2xl"],
-[class*="bg-surface"][class*="rounded-xl"][class*="border"] {
-  box-shadow: var(--shadow-soft);
-}
+/* In the base layer so any Tailwind utility on an element still wins. */
+@layer base {
+  /* Every card surface of the app gets the same soft depth (exact class bg-surface, not bg-surface-2). */
+  [class~="bg-surface"][class*="rounded-2xl"],
+  [class~="bg-surface"][class*="rounded-xl"][class*="border"] {
+    box-shadow: var(--shadow-soft);
+  }
 
-/* Press feedback on everything clickable (150 ms). */
-button:not(:disabled),
-a[href] {
-  transition-property: transform, background-color, color, border-color, box-shadow, opacity;
-  transition-duration: 180ms;
-  transition-timing-function: var(--ease-out-soft);
-}
-button:not(:disabled):active,
-a[href][class*="rounded"]:active {
-  transform: scale(0.97);
+  /* Press feedback on everything clickable (180 ms). */
+  button:not(:disabled),
+  a[href] {
+    transition-property: transform, translate, scale, background-color, color, border-color, box-shadow, opacity;
+    transition-duration: 180ms;
+    transition-timing-function: var(--ease-out-soft);
+  }
+  button:not(:disabled):active,
+  a[href][class*="rounded"]:active {
+    transform: scale(0.97);
+  }
 }
 
 .glass {
