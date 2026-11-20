@@ -198,7 +198,7 @@ export function SuiviView() {
     <section className="space-y-5" aria-labelledby="suivi-title">
       <h1
         id="suivi-title"
-        className="font-display text-3xl font-bold tracking-tight"
+        className="font-display text-4xl font-light tracking-tight"
       >
         Suivi
       </h1>
@@ -250,7 +250,7 @@ export function SuiviView() {
           <Card title="Petites étapes faites">
             {d.actions || d.stepsDone ? (
               <p>
-                <span className="font-display text-3xl font-bold tabular-nums">
+                <span className="font-display text-4xl font-light tabular-nums">
                   {d.stepsDone}
                 </span>{" "}
                 <span className="text-ink-2">

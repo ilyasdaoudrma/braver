@@ -1,6 +1,7 @@
 "use client";
 import Link from "next/link";
 import { ArrowRight, ClipboardList, History, PenLine } from "lucide-react";
+import { pick, useLang } from "@/lib/i18n";
 import { groupEntries, todayKey } from "@/lib/replay";
 import { useNow } from "@/lib/use-now";
 import { useStoreValue } from "@/lib/use-store";
@@ -9,6 +10,7 @@ import { MoodCheckIn } from "./MoodCheckIn";
 const WEEK = 7 * 86_400_000;
 
 export function HomeView() {
+  const lang = useLang();
   const now = useNow();
   const hydrated = now !== null;
   const [replays] = useStoreValue("replays");
@@ -27,9 +29,9 @@ export function HomeView() {
     <section className="space-y-6" aria-labelledby="home-title">
       <h1
         id="home-title"
-        className="font-display text-3xl font-bold tracking-tight"
+        className="font-display text-5xl font-light tracking-tight"
       >
-        {hydrated ? hello : "Bonjour"}
+        <span className="accent-serif">{hydrated ? pick(lang, hello, hello === "Bonsoir" ? "Good evening" : "Hello") : pick(lang, "Bonjour", "Hello")}</span>
       </h1>
 
       {hydrated ? (
@@ -43,18 +45,24 @@ export function HomeView() {
 
       <Link
         href="/vider"
-        className="flex min-h-20 items-center gap-4 rounded-2xl bg-ink p-5 text-paper transition-transform duration-200 ease-out active:scale-[0.98]"
+        className="group relative flex min-h-24 items-center gap-4 overflow-hidden rounded-3xl bg-ink p-5 text-paper shadow-[0_22px_44px_-22px_rgba(27,35,51,0.8)] hover:-translate-y-0.5"
       >
-        <PenLine aria-hidden size={24} />
-        <span className="flex-1">
-          <span className="block font-display text-xl font-bold">
-            Vide ta tête
+        <span
+          aria-hidden
+          className="absolute -top-10 -right-8 h-32 w-32 rounded-full opacity-70 blur-[2px]"
+          style={{ background: "conic-gradient(from 200deg, #5b3fd6, #b93d0a, #0b7065, #5b3fd6)" }}
+        />
+        <PenLine aria-hidden size={24} className="relative" />
+        <span className="relative flex-1">
+          <span className="block font-display text-2xl font-light">
+            {pick(lang, "Vide ta ", "Clear your ")}
+            <span className="accent-serif">{pick(lang, "tête", "head")}</span>
           </span>
           <span className="block text-sm opacity-80">
-            Écris ce qui t&apos;inquiète, on trie ensemble.
+            {pick(lang, "Écris ce qui t'inquiète, on trie ensemble.", "Write what worries you, we sort it together.")}
           </span>
         </span>
-        <ArrowRight aria-hidden size={20} />
+        <ArrowRight aria-hidden size={20} className="relative transition-transform duration-300 group-hover:translate-x-1" />
       </Link>
 
       {hydrated && due.length > 0 && (

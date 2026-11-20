@@ -76,7 +76,7 @@ export function Onboarding() {
           <HardDrive aria-hidden size={28} className="text-ink-2" />
           <h1
             id="consent-title"
-            className="font-display text-3xl font-bold tracking-tight"
+            className="font-display text-4xl font-light tracking-tight"
           >
             Tes données restent à toi
           </h1>
@@ -135,7 +135,7 @@ export function Onboarding() {
         <Icon aria-hidden size={36} className="text-scenario" />
         <h1
           id="slide-title"
-          className="font-display text-4xl font-bold tracking-tight"
+          className="font-display text-5xl font-light tracking-tight"
         >
           {slide.title}
         </h1>

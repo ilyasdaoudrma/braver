@@ -1,9 +1,11 @@
 import type { ReactNode } from "react";
 import type { Metadata, Viewport } from "next";
-import { Atkinson_Hyperlegible, Bricolage_Grotesque, IBM_Plex_Sans_Arabic } from "next/font/google";
+import { Atkinson_Hyperlegible, IBM_Plex_Sans_Arabic, Instrument_Serif, Inter_Tight } from "next/font/google";
+import { LangSync } from "@/components/i18n/LangSync";
 import "./globals.css";
 
-const bricolage = Bricolage_Grotesque({ variable: "--font-bricolage", subsets: ["latin", "latin-ext"], display: "swap" });
+const interTight = Inter_Tight({ variable: "--font-inter-tight", subsets: ["latin", "latin-ext"], weight: ["300", "400", "500", "600"], display: "swap" });
+const instrumentSerif = Instrument_Serif({ variable: "--font-instrument-serif", subsets: ["latin"], weight: "400", style: "italic", display: "swap" });
 const atkinson = Atkinson_Hyperlegible({
   variable: "--font-atkinson",
   subsets: ["latin", "latin-ext"],
@@ -28,16 +30,19 @@ export const viewport: Viewport = {
   width: "device-width",
   initialScale: 1,
   viewportFit: "cover",
-  themeColor: [
-    { media: "(prefers-color-scheme: light)", color: "#edf0f4" },
-    { media: "(prefers-color-scheme: dark)", color: "#0e1420" },
-  ],
+  themeColor: "#faf6f0",
 };
 
 export default function RootLayout({ children }: { children: ReactNode }) {
   return (
-    <html lang="fr" className={`${bricolage.variable} ${atkinson.variable} ${plexArabic.variable} h-full antialiased`}>
-      <body className="min-h-full">{children}</body>
+    <html
+      lang="fr"
+      className={`${interTight.variable} ${instrumentSerif.variable} ${atkinson.variable} ${plexArabic.variable} h-full antialiased`}
+    >
+      <body className="min-h-full">
+        <LangSync />
+        {children}
+      </body>
     </html>
   );
 }

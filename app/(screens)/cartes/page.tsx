@@ -26,7 +26,7 @@ export default function CartesPage() {
   return (
     <section className="enter space-y-6" aria-labelledby="cartes-title">
       <div className="space-y-2">
-        <h1 id="cartes-title" className="font-display text-3xl font-bold tracking-tight">
+        <h1 id="cartes-title" className="font-display text-4xl font-light tracking-tight">
           À lire
         </h1>
         <p className="text-ink-2">Des cartes courtes, une idée par carte.</p>
@@ -38,7 +38,7 @@ export default function CartesPage() {
       {cards.map((c) => (
         <article key={c.slug} id={c.slug} className="scroll-mt-20 space-y-3 rounded-2xl border border-line bg-surface p-4">
           <span className={`rounded-full px-2 py-0.5 text-xs font-bold ${ZONE_CHIP[c.zone]}`}>{ZONE_NAME[c.zone]}</span>
-          <h2 className="font-display text-xl font-bold">{c.title}</h2>
+          <h2 className="font-display text-xl font-semibold">{c.title}</h2>
           {c.blocks.map((b, i) =>
             b.kind === "list" ? (
               <ul key={i} className="list-disc space-y-1 pl-5">

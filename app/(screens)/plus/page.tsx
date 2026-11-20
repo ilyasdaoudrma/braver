@@ -22,7 +22,7 @@ const ENTRIES: readonly Entry[] = [
 export default function PlusPage() {
   return (
     <section className="enter space-y-6" aria-labelledby="plus-title">
-      <h1 id="plus-title" className="font-display text-3xl font-bold tracking-tight">
+      <h1 id="plus-title" className="font-display text-4xl font-light tracking-tight">
         Plus
       </h1>
       <ul className="divide-y divide-line overflow-hidden rounded-2xl border border-line bg-surface">
@@ -39,7 +39,7 @@ export default function PlusPage() {
           </li>
         ))}
       </ul>
-      <h2 className="font-display text-xl font-bold">Réglages</h2>
+      <h2 className="font-display text-xl font-semibold">Réglages</h2>
       <PlusSettings />
     </section>
   );

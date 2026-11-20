@@ -39,7 +39,7 @@ export function SafetyScreen() {
     <main className="mx-auto min-h-dvh max-w-md px-4 pt-[calc(env(safe-area-inset-top)+2rem)] pb-[calc(env(safe-area-inset-bottom)+2rem)]">
       <div className="enter space-y-8">
         <header className="space-y-3">
-          <h1 className="font-display text-3xl font-bold tracking-tight">
+          <h1 className="font-display text-4xl font-light tracking-tight">
             Parlons-en à quelqu&apos;un, maintenant.
           </h1>
           <p className="text-ink-2">
