@@ -25,6 +25,7 @@ export function parseCard(slug: string, raw: string): ReadingCard {
   const meta = Object.fromEntries(
     m[1].split("\n").map((l) => {
       const i = l.indexOf(":");
+      if (i < 1) throw new Error(`card ${slug}: bad front matter line "${l}"`);
       return [l.slice(0, i).trim(), l.slice(i + 1).trim()];
     }),
   );

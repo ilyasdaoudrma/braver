@@ -7,6 +7,10 @@ import { uid } from "@/lib/store";
 import type { MoodLevel } from "@/lib/types";
 import { useStoreValue } from "@/lib/use-store";
 import { MOODS } from "@/components/accueil/MoodCheckIn";
+import { useReducedMotion } from "@/lib/use-reduced-motion";
+
+/** Shorter sessions are not saved (a "Passer" right after starting is not a session). */
+const MIN_SAVED_SEC = 10;
 
 type Step = "setup" | "run" | "after" | "saved";
 
@@ -32,15 +36,15 @@ function MoodPicker({ name, value, onChange, legend }: { name: string; value: Mo
   );
 }
 
-function Circle({ state }: { state: BreathState }) {
+function Circle({ state, still }: { state: BreathState; still: boolean }) {
   // Scale grows on the inhales, shrinks on the exhale. Reduced motion: no scale, the words guide the breath.
   const from = state.index === 0 ? 1 : state.index === 1 ? 1.35 : 1.5;
   const scale = from + (state.phase.scale - from) * state.progress;
   return (
     <div className="flex h-72 items-center justify-center" aria-hidden>
       <div
-        className="size-40 rounded-full bg-acceptation-soft ring-4 ring-acceptation/40 motion-reduce:!scale-100"
-        style={{ transform: `scale(${scale.toFixed(3)})`, transition: "transform 80ms linear" }}
+        className="size-40 rounded-full bg-acceptation-soft ring-4 ring-acceptation/40"
+        style={still ? undefined : { transform: `scale(${scale.toFixed(3)})`, transition: "transform 80ms linear" }}
       />
     </div>
   );
@@ -58,6 +62,13 @@ export function BreathingView() {
   const startedAt = useRef(0);
   const lastPhase = useRef(-1);
   const state = breathAt(elapsed, durationSec);
+  const still = useReducedMotion();
+  const heading = useRef<HTMLHeadingElement | null>(null);
+
+  // Move focus to the new screen's heading so keyboard and screen-reader users are not left on <body>.
+  useEffect(() => {
+    if (step !== "setup") heading.current?.focus();
+  }, [step]);
 
   useEffect(() => {
     if (step !== "run") return;
@@ -67,9 +78,12 @@ export function BreathingView() {
       const t = performance.now() - startedAt.current;
       setElapsed(t);
       const s = breathAt(t, durationSec);
+      if (s.done) {
+        setStep("after");
+        return;
+      }
       if (vibrate && s.index !== lastPhase.current && "vibrate" in navigator) navigator.vibrate(s.index === 2 ? [30, 60, 30] : 40);
       lastPhase.current = s.index;
-      if (s.done) setStep("after");
     };
     const timer = window.setInterval(tick, 80);
     return () => window.clearInterval(timer);
@@ -84,6 +98,10 @@ export function BreathingView() {
 
   function save() {
     const done = Math.min(durationSec, Math.round(elapsed / 1000));
+    if (done < MIN_SAVED_SEC) {
+      setStep("saved");
+      return;
+    }
     updateBreathing((list) => [...list, { id: uid(), at: new Date().toISOString(), durationSec: done, moodBefore: before, moodAfter: after }]);
     setStep("saved");
   }
@@ -92,8 +110,8 @@ export function BreathingView() {
     const left = Math.max(0, Math.ceil(durationSec - elapsed / 1000));
     return (
       <section className="enter space-y-4 text-center" aria-labelledby="breath-phase">
-        <Circle state={state} />
-        <p id="breath-phase" className="font-display text-2xl font-bold" aria-live="polite">
+        <Circle state={state} still={still} />
+        <p id="breath-phase" ref={heading} tabIndex={-1} className="font-display text-2xl font-bold focus:outline-none" aria-live="polite">
           {state.phase.label}
         </p>
         <p className="tabular-nums text-ink-2">
@@ -110,7 +128,7 @@ export function BreathingView() {
   if (step === "after") {
     return (
       <section className="enter space-y-6" aria-labelledby="after-title">
-        <h1 id="after-title" className="font-display text-3xl font-bold tracking-tight">
+        <h1 id="after-title" ref={heading} tabIndex={-1} className="font-display text-3xl font-bold tracking-tight focus:outline-none">
           Et maintenant ?
         </h1>
         <MoodPicker name="after" legend="Comment tu te sens après ?" value={after} onChange={setAfter} />
@@ -124,9 +142,9 @@ export function BreathingView() {
   if (step === "saved") {
     return (
       <section className="enter space-y-4 rounded-2xl border border-line bg-surface p-5" role="status">
-        <p className="flex items-center gap-2 font-bold">
+        <p ref={heading} tabIndex={-1} className="flex items-center gap-2 font-bold focus:outline-none">
           <Check aria-hidden size={18} className="text-acceptation" />
-          Séance enregistrée.
+          {elapsed / 1000 < MIN_SAVED_SEC ? "Séance trop courte pour être comptée." : "Séance enregistrée."}
         </p>
         <div className="flex flex-wrap gap-2">
           <button type="button" onClick={() => setStep("setup")} className="min-h-11 rounded-full border border-ink/20 px-4 font-bold">

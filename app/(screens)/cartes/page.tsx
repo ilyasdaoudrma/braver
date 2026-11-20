@@ -42,8 +42,8 @@ export default function CartesPage() {
           {c.blocks.map((b, i) =>
             b.kind === "list" ? (
               <ul key={i} className="list-disc space-y-1 pl-5">
-                {b.items.map((it) => (
-                  <li key={it}>{it}</li>
+                {b.items.map((it, j) => (
+                  <li key={j}>{it}</li>
                 ))}
               </ul>
             ) : (
