@@ -85,12 +85,22 @@ export function sortOnDevice(lines: readonly string[], opts: Pick<SortOptions, "
 }
 
 /** Applies the LLM answer on top of the on-device cards. Missing lines keep their on-device card. */
-export function mergeLLM(device: SortOutcome, res: Extract<ApiSortResponse, { ok: true }>, clientMs: number): SortOutcome {
+export function mergeLLM(
+  device: SortOutcome,
+  res: Extract<ApiSortResponse, { ok: true }>,
+  clientMs: number,
+  confirmedSafe = false,
+): SortOutcome {
   if (device.alert) return device;
   const byN = new Map<number, ApiSortItem>(res.items.map((it) => [it.n, it]));
   const flagged = device.cards.filter((c) => byN.get(c.index + 1)?.danger);
   if (flagged.length) {
     return { ...device, alert: { source: "llm", lines: flagged.map((c) => c.text) }, cards: [], engine: "llm", model: res.model, ms: clientMs };
+  }
+  // A doubt the LLM did not answer for is still unresolved: safety first.
+  const unresolved = device.cards.filter((c) => c.checking && !byN.has(c.index + 1));
+  if (unresolved.length && !confirmedSafe) {
+    return { ...device, alert: { source: "offline_doubt", lines: unresolved.map((c) => c.text) }, cards: [], failure: "missing_line" };
   }
   const cards = device.cards.map((c): SortCard => {
     const it = byN.get(c.index + 1);
@@ -154,12 +164,20 @@ export async function runSort(
   fetchImpl: typeof fetch = fetch,
 ): Promise<SortOutcome> {
   const device = sortOnDevice(lines, opts, history);
-  const skipNetwork = Boolean(device.alert) || opts.forceLocal || device.cards.length === 0;
-  onUpdate(device, skipNetwork);
-  if (skipNetwork) return device;
+  if (device.alert || device.cards.length === 0) {
+    onUpdate(device, true);
+    return device;
+  }
+  if (opts.forceLocal) {
+    // No LLM by choice: same rule as offline, an ambiguous line becomes an alert.
+    const local = onLLMFailure(device, "forced_local", opts);
+    onUpdate({ ...local, failure: null }, true);
+    return { ...local, failure: null };
+  }
+  onUpdate(device, false);
   const started = performance.now();
   const res = await requestSort(device.cards, opts, fetchImpl);
-  const final = res.ok ? mergeLLM(device, res, Math.round(performance.now() - started)) : onLLMFailure(device, res.error, opts);
+  const final = res.ok ? mergeLLM(device, res, Math.round(performance.now() - started), opts.confirmedSafe) : onLLMFailure(device, res.error, opts);
   onUpdate(final, true);
   return final;
 }

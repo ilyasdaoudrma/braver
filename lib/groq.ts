@@ -35,6 +35,8 @@ export interface GroqJSONResult<T> {
   model: string;
   /** Total time since the call started (all tries), in ms. */
   ms: number;
+  /** Tries that failed before this answer (empty when the first model answered). */
+  attempts: GroqAttempt[];
 }
 
 export type GroqFailure = "timeout" | "http" | "invalid_json" | "invalid_schema" | "network";
@@ -151,7 +153,7 @@ export async function groqJSON<T>(opts: GroqJSONOptions<T>): Promise<GroqJSONRes
     const t = performance.now();
     try {
       const data = await tryModel(model, opts, key, jsonSchema);
-      return { data, model, ms: Math.round(performance.now() - start) };
+      return { data, model, ms: Math.round(performance.now() - start), attempts };
     } catch (err) {
       const f = err instanceof TryFailure ? err : new TryFailure("network");
       attempts.push({ model, failure: f.failure, status: f.status, ms: Math.round(performance.now() - t) });

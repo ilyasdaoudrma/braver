@@ -7,7 +7,7 @@ const opts = { tone: "doux" as const, confirmedSafe: false, forceLocal: false };
 function item(n: number, over: Partial<ApiSortItem> = {}): ApiSortItem {
   return { n, zone: "action", why: "w", prediction: null, question: null, step: "Envoie le mail.", validation: null, control: null, danger: false, distress: false, ...over };
 }
-const ok = (items: ApiSortItem[]): Extract<ApiSortResponse, { ok: true }> => ({ ok: true, model: "openai/gpt-oss-20b", ms: 900, items, corrections: [] });
+const ok = (items: ApiSortItem[]): Extract<ApiSortResponse, { ok: true }> => ({ ok: true, model: "openai/gpt-oss-20b", ms: 900, fallbackFrom: [], items, corrections: [] });
 
 describe("splitLines / seenCount", () => {
   it("keeps non-empty trimmed lines, 12 max, 500 chars max", () => {
@@ -72,6 +72,12 @@ describe("mergeLLM / onLLMFailure", () => {
     expect(out.cards).toEqual([]);
   });
 
+  it("a doubt line the LLM did not answer for becomes an alert", () => {
+    const out = mergeLLM(device(), ok([item(1)]), 10);
+    expect(out.alert).toEqual({ source: "offline_doubt", lines: ["ce partiel va me tuer"] });
+    expect(mergeLLM(device(), ok([item(1)]), 10, true).alert).toBeNull();
+  });
+
   it("offline: an unresolved doubt becomes an alert", () => {
     expect(onLLMFailure(device(), "network", opts).alert?.source).toBe("offline_doubt");
   });
@@ -104,6 +110,18 @@ describe("runSort", () => {
     await runSort(["bghit nmout"], opts, [], () => undefined, fetchImpl);
     await runSort(["Mazal ma siftsh dossier."], { ...opts, forceLocal: true }, [], () => undefined, fetchImpl);
     expect(fetchImpl).not.toHaveBeenCalled();
+  });
+
+  it("forced local mode treats an ambiguous line like offline: alert", async () => {
+    const out = await runSort(["ce partiel va me tuer"], { ...opts, forceLocal: true }, [], () => undefined, vi.fn<typeof fetch>());
+    expect(out.alert?.source).toBe("offline_doubt");
+  });
+
+  it("forced local mode without doubt shows device cards with no failure message", async () => {
+    const out = await runSort(["Mazal ma siftsh dossier."], { ...opts, forceLocal: true }, [], () => undefined, vi.fn<typeof fetch>());
+    expect(out.alert).toBeNull();
+    expect(out.failure).toBeNull();
+    expect(out.cards).toHaveLength(1);
   });
 
   it("stays on the device when the API answers with an error", async () => {

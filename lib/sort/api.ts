@@ -40,7 +40,7 @@ export interface ApiSortItem {
 export type ApiError = "invalid_input" | "rate_limited" | "no_key" | "llm_failed";
 
 export type ApiSortResponse =
-  | { ok: true; model: string; ms: number; items: ApiSortItem[]; corrections: string[] }
+  | { ok: true; model: string; ms: number; fallbackFrom: string[]; items: ApiSortItem[]; corrections: string[] }
   | { ok: false; error: ApiError };
 
 export const replayRequestSchema = z.object({

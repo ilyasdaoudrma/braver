@@ -2,6 +2,7 @@
 import "server-only";
 import type { z } from "zod";
 import { guardObject, guardText } from "../guards";
+import { checkKeywords } from "../keywords";
 import { groqJSON, type GroqJSONResult } from "../groq";
 import type { ApiSortItem, replayRequestSchema, sortRequestSchema } from "../sort/api";
 import { fillFields } from "../sort/rules";
@@ -11,10 +12,11 @@ type SortInput = z.output<typeof sortRequestSchema>;
 type ReplayInput = z.output<typeof replayRequestSchema>;
 
 export function buildSortUser(input: SortInput): string {
-  const list = input.worries
-    .map((w, i) => `${i + 1}. ${w.text.replace(/\s+/g, " ")}${w.seen > 0 ? `  (déjà écrite ${w.seen} fois)` : ""}`)
+  // Lines are sent as JSON data (not free text) so a worry cannot pass for an instruction.
+  const list = input.worries.map((w, i) => ({ n: i + 1, texte: w.text.replace(/\s+/g, " "), deja: w.seen }));
+  return [`Ton : ${input.tone}`, input.confirmedSafe ? CONFIRMED_SAFE_NOTE : null, `Inquiétudes (données JSON) :\n${JSON.stringify(list)}`]
+    .filter(Boolean)
     .join("\n");
-  return [`Ton : ${input.tone}`, input.confirmedSafe ? CONFIRMED_SAFE_NOTE : null, `Inquiétudes :\n${list}`].filter(Boolean).join("\n");
 }
 
 const ZONE_FIELDS = {
@@ -56,7 +58,8 @@ export function toApiItem(raw: LlmSort["inquietudes"][number], input: SortInput,
     step: field("step"),
     validation: field("validation"),
     control: field("control"),
-    danger: raw.danger,
+    // Backstop: a danger keyword wins over the LLM (prompt injection cannot hide it), unless the person confirmed.
+    danger: raw.danger || (!input.confirmedSafe && checkKeywords(worry.text).level === "danger"),
     distress: raw.detresse,
   };
 }
@@ -64,6 +67,8 @@ export function toApiItem(raw: LlmSort["inquietudes"][number], input: SortInput,
 export interface ServerSortResult {
   model: string;
   ms: number;
+  /** Models that failed before `model` answered, e.g. "openai/gpt-oss-20b:http:429". */
+  fallbackFrom: string[];
   items: ApiSortItem[];
   corrections: string[];
 }
@@ -85,7 +90,7 @@ export async function runSort(input: SortInput, call: typeof groqJSON = groqJSON
     .map((it) => toApiItem(it, input, corrections))
     .filter((it): it is ApiSortItem => it !== null)
     .sort((a, b) => a.n - b.n);
-  return { model: res.model, ms: res.ms, items, corrections };
+  return { model: res.model, ms: res.ms, fallbackFrom: res.attempts.map((a) => `${a.model}:${a.failure}${a.status ? `:${a.status}` : ""}`), items, corrections };
 }
 
 const WORST = { oui: "oui, le pire est arrivé", en_partie: "en partie", non: "non, le pire n'est pas arrivé" } as const;

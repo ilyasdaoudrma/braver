@@ -53,7 +53,7 @@ for (let i = 0; i < RUNS; i++) {
   }
   const ms = Math.floor(performance.now() - started);
   const answeredBy = body?.ok ? body.model : "on-device (LLM failed)";
-  runs.push({ i: i + 1, lines: lines.length, status, ms, serverMs: body?.ok ? body.ms : null, answeredBy, error: body?.ok ? null : body?.error });
+  runs.push({ i: i + 1, lines: lines.length, status, ms, serverMs: body?.ok ? body.ms : null, answeredBy, fallbackFrom: body?.ok ? body.fallbackFrom : null, error: body?.ok ? null : body?.error });
   console.error(`${i + 1}/${RUNS} ${status} ${ms} ms ${answeredBy}`);
   if (i < RUNS - 1) await sleep(GAP_MS);
 }

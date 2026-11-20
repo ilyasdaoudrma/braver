@@ -1,13 +1,18 @@
 "use client";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { Check, Copy, MessageCircle, Phone } from "lucide-react";
 import { HELPLINES, TRUSTED_MESSAGE } from "@/lib/helplines";
+import { acknowledgeAlert } from "@/lib/sort/session";
 
 /** Calm full screen: no jokes, no diagnosis. Moroccan numbers, a ready message, and a way back. */
 export function SafetyScreen() {
   const router = useRouter();
   const [copied, setCopied] = useState<"idle" | "done" | "failed">("idle");
+
+  useEffect(() => {
+    acknowledgeAlert();
+  }, []);
 
   async function handleCopy() {
     try {

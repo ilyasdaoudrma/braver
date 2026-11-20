@@ -3,7 +3,7 @@ import { useId, useState } from "react";
 import { useRouter } from "next/navigation";
 import { ArrowRight, Sparkles } from "lucide-react";
 import { MAX_CHARS, MAX_LINES } from "@/lib/sort/api";
-import { startSort } from "@/lib/sort/session";
+import { isSorting, startSort } from "@/lib/sort/session";
 import { useStoreValue } from "@/lib/use-store";
 
 const EXAMPLE = [
@@ -27,6 +27,7 @@ export function ViderForm() {
   const [settings] = useStoreValue("settings");
   const [text, setText] = useState("");
   const [touched, setTouched] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
   const error = validate(text);
   const count = text.split(/\r?\n/).filter((l) => l.trim()).length;
   const canSort = count > 0 && !error;
@@ -34,10 +35,18 @@ export function ViderForm() {
   function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
     setTouched(true);
-    if (!canSort) return;
+    if (!canSort || submitting || isSorting()) return;
+    setSubmitting(true);
     const lines = text.split(/\r?\n/).map((l) => l.trim()).filter(Boolean);
     const outcome = startSort(lines, { tone: settings.tone, confirmedSafe: false, forceLocal: settings.forceLocal });
-    router.push(outcome.alert ? "/securite" : "/tri");
+    // An alert opens the safety screen through SortAlertWatcher; otherwise go to the cards.
+    // The text stays after an alert, so "On s'est mal compris" brings the person back to it.
+    if (!outcome.alert) {
+      router.push("/tri");
+      setText("");
+      setTouched(false);
+    }
+    setSubmitting(false);
   }
 
   return (
@@ -81,7 +90,7 @@ export function ViderForm() {
 
       <button
         type="submit"
-        disabled={!canSort}
+        disabled={!canSort || submitting}
         className="inline-flex min-h-12 w-full items-center justify-center gap-2 rounded-full bg-ink px-6 font-bold text-paper transition-[opacity,transform] duration-200 ease-out active:scale-[0.98] disabled:opacity-40"
       >
         Trier mes inquiétudes

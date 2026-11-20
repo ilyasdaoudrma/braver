@@ -18,6 +18,7 @@ export async function POST(request: Request): Promise<Response> {
   if (!parsed.success) return reply({ ok: false, error: "invalid_input" }, 400);
   try {
     const result = await runSort(parsed.data);
+    if (result.fallbackFrom.length) console.warn("[api/sort] fallback", result.fallbackFrom.join(", "), "->", result.model);
     return reply({ ok: true, ...result }, 200);
   } catch (err) {
     if (err instanceof GroqError && err.code === "no_key") return reply({ ok: false, error: "no_key" }, 503);

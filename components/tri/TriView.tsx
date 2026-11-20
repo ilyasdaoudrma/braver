@@ -1,7 +1,5 @@
 "use client";
-import { useEffect } from "react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
 import { CloudOff, Cpu, PenLine, Sparkles } from "lucide-react";
 import { useSortSession } from "@/lib/sort/session";
 import type { SortOutcome } from "@/lib/sort/engine";
@@ -28,14 +26,10 @@ function EngineFooter({ outcome, upgrading }: { outcome: SortOutcome; upgrading:
 }
 
 export function TriView() {
-  const router = useRouter();
   const session = useSortSession();
   const alert = session?.outcome.alert;
 
-  useEffect(() => {
-    if (alert) router.replace("/securite");
-  }, [alert, router]);
-
+  // An alert is handled by SortAlertWatcher (it opens the safety screen); no cards are shown.
   if (!session || alert) {
     return (
       <section className="enter space-y-4 rounded-2xl border border-dashed border-line bg-surface p-6 text-center">
