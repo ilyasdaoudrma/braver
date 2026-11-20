@@ -8,18 +8,29 @@ export const SAFETY_MODEL_URL = "/models/safety.json";
 let loaded: LoadedModel<SafetyModel> | null = null;
 let loading: Promise<LoadedModel<SafetyModel> | null> | null = null;
 
-function isSafetyModel(x: unknown): x is SafetyModel {
+const finite = (xs: unknown): boolean => Array.isArray(xs) && xs.every((v) => typeof v === "number" && Number.isFinite(v));
+
+/** Strict shape check: a truncated or corrupted file must never be used (it could clear real danger). */
+export function isSafetyModel(x: unknown): x is SafetyModel {
   const m = x as Partial<SafetyModel> | null;
-  return Boolean(
-    m &&
-      m.kind === "char_wb_tfidf_logreg" &&
-      Array.isArray(m.terms) &&
-      Array.isArray(m.idf) &&
-      Array.isArray(m.coef) &&
-      m.coef.length === 1 &&
-      m.coef[0].length === m.terms.length &&
-      typeof m.threshold === "number" &&
-      typeof m.high === "number",
+  if (!m || m.kind !== "char_wb_tfidf_logreg" || !Array.isArray(m.terms) || !Array.isArray(m.coef) || m.coef.length !== 1) return false;
+  const n = m.terms.length;
+  return (
+    n > 0 &&
+    Array.isArray(m.classes) &&
+    m.classes.length === 2 &&
+    Array.isArray(m.ngram) &&
+    m.ngram.length === 2 &&
+    finite(m.idf) &&
+    (m.idf as number[]).length === n &&
+    finite(m.coef[0]) &&
+    m.coef[0].length === n &&
+    finite(m.intercept) &&
+    (m.intercept as number[]).length === 1 &&
+    typeof m.threshold === "number" &&
+    typeof m.high === "number" &&
+    m.threshold > 0 &&
+    m.threshold <= m.high
   );
 }
 

@@ -76,7 +76,7 @@ def metrics(y: np.ndarray, pred: np.ndarray) -> dict:
 def main() -> None:
     train, val, test = load("train"), load("val"), load("test")
     best = None
-    for c in (0.5, 1.0, 2.0, 4.0, 8.0):
+    for c in (0.5, 1.0, 2.0, 4.0, 8.0, 16.0, 32.0):
         vec = make_vectorizer(MAX_FEATURES)
         x = vec.fit_transform(train["text"])
         clf = LogisticRegression(C=c, class_weight="balanced", max_iter=4000, random_state=SEED).fit(x, train["label"])
@@ -146,15 +146,18 @@ def write_markdown(r: dict) -> None:
         f"Thresholds tuned on val: no-danger below **{r['threshold']:.4f}**, device alerts alone from **{r['high']:.4f}**, "
         "ambiguous band in between (LLM decides, offline → alert). Metrics below use the low threshold (alert or ask the LLM).",
         "",
-        "| Set | n | Accuracy | Danger precision | Danger recall | Danger F1 | Macro F1 |",
-        "|---|---|---|---|---|---|---|",
+        "| Set | n | Accuracy | Danger P | Danger R | Danger F1 | No-danger P | No-danger R | No-danger F1 | Macro F1 |",
+        "|---|---|---|---|---|---|---|---|---|---|",
     ]
     rows = [("all", r["test"])] + [(f"lang={k}", v) for k, v in r["test_by_lang"].items()] + [
         (f"source={k}", v) for k, v in r["test_by_source"].items()
     ]
     for name, m in rows:
-        d = m["per_class"]["danger"]
-        lines.append(f"| {name} | {m['n']} | {fmt(m['accuracy'])} | {fmt(d['precision'])} | {fmt(d['recall'])} | {fmt(d['f1'])} | {fmt(m['macro_f1'])} |")
+        d, o = m["per_class"]["danger"], m["per_class"]["no_danger"]
+        lines.append(
+            f"| {name} | {m['n']} | {fmt(m['accuracy'])} | {fmt(d['precision'])} | {fmt(d['recall'])} | {fmt(d['f1'])} "
+            f"| {fmt(o['precision'])} | {fmt(o['recall'])} | {fmt(o['f1'])} | {fmt(m['macro_f1'])} |"
+        )
     cm = r["test"]["confusion"]["matrix"]
     lines += [
         "",
@@ -166,7 +169,9 @@ def write_markdown(r: dict) -> None:
         f"| true danger | {cm[1][0]} | {cm[1][1]} |",
         "",
         f"Bands on test: device alone {r['test_band']['alone_alert']}, ambiguous {r['test_band']['ambiguous']}, "
-        f"no danger {r['test_band']['no_danger']}. False negatives listed in `metrics.json`.",
+        f"no danger {r['test_band']['no_danger']}. False negatives listed in `metrics.json`. Offline, every line in the "
+        "ambiguous band alerts (no LLM to decide): the test negatives are dataset rows, not real worries typed in Vider, so "
+        "the real offline false-alert rate is not measured here (E1 measures the full pipeline).",
         "",
         f"At the high threshold alone (device alerts without the LLM): danger precision "
         f"{fmt(r['test_at_high']['per_class']['danger']['precision'])}, recall {fmt(r['test_at_high']['per_class']['danger']['recall'])} "

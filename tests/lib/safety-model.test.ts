@@ -4,7 +4,7 @@ import cases from "../../ml/safety/parity_cases.json";
 import { charWbNgrams, predictProba, prepareModel } from "@/lib/charmodel";
 import { checkSafety, type SafetyModel } from "@/lib/safety/pipeline";
 import { normalize } from "@/lib/text";
-import { setSafetyModelForTests } from "@/lib/safety/model";
+import { isSafetyModel, setSafetyModelForTests } from "@/lib/safety/model";
 import { runSort } from "@/lib/sort/engine";
 
 const model = prepareModel(JSON.parse(readFileSync("public/models/safety.json", "utf-8")) as SafetyModel);
@@ -32,7 +32,25 @@ describe("safety pipeline (keywords → model → LLM band)", () => {
 
   it("figurative stress does not alert (CLAUDE.md)", () => {
     expect(level("Ce partiel va me tuer")).toBe("none");
-    expect(level("had l exam ghadi yqtelni")).toBe("none");
+    expect(level("cette chaleur va me tuer")).toBe("none");
+  });
+
+  it("an ambiguous word is cleared only when the score is far below the threshold, otherwise the LLM decides", () => {
+    // "had l exam ghadi yqtelni" scores between threshold × 0.5 and the threshold: online the LLM clears it.
+    expect(level("had l exam ghadi yqtelni")).toBe("check");
+  });
+
+  it("a broken model (NaN weights) never clears an ambiguous word", () => {
+    const broken = prepareModel({ ...model.model, intercept: [Number.NaN] });
+    expect(checkSafety("Ce partiel va me tuer", broken)).toMatchObject({ level: "check", score: null });
+  });
+
+  it("rejects truncated or corrupted model files", () => {
+    expect(isSafetyModel(model.model)).toBe(true);
+    expect(isSafetyModel({ ...model.model, idf: model.model.idf.slice(1) })).toBe(false);
+    expect(isSafetyModel({ ...model.model, coef: [[...model.model.coef[0].slice(1), Number.NaN]] })).toBe(false);
+    expect(isSafetyModel({ ...model.model, threshold: 0.9, high: 0.5 })).toBe(false);
+    expect(isSafetyModel(null)).toBe(false);
   });
 
   it("hopelessness gives the gentle check-in, not an alert", () => {

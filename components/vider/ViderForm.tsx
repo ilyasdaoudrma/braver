@@ -15,7 +15,7 @@ const EXAMPLE = [
 ].join("\n");
 
 /** The on-device safety model must be in memory before the sort; never wait more than this for it. */
-const MODEL_WAIT_MS = 1500;
+const MODEL_WAIT_MS = 900;
 
 function validate(raw: string): string | null {
   const lines = raw.split(/\r?\n/).map((l) => l.trim()).filter(Boolean);
@@ -45,8 +45,22 @@ export function ViderForm() {
     setTouched(true);
     if (!canSort || submitting || isSorting()) return;
     setSubmitting(true);
-    // Usually already loaded on mount. If it is still missing, keywords + LLM decide (offline → alert).
-    await Promise.race([loadSafetyModel(), new Promise((r) => setTimeout(r, MODEL_WAIT_MS))]);
+    try {
+      await waitForModel();
+      sortNow();
+    } finally {
+      setSubmitting(false);
+    }
+  }
+
+  /** Usually already loaded on mount. If it is still missing, keywords + LLM decide (offline → alert). */
+  async function waitForModel() {
+    let timer: ReturnType<typeof setTimeout> | undefined;
+    await Promise.race([loadSafetyModel(), new Promise((r) => (timer = setTimeout(r, MODEL_WAIT_MS)))]);
+    clearTimeout(timer);
+  }
+
+  function sortNow() {
     const lines = text.split(/\r?\n/).map((l) => l.trim()).filter(Boolean);
     const outcome = startSort(lines, { tone: settings.tone, confirmedSafe: false, forceLocal: settings.forceLocal });
     // An alert opens the safety screen through SortAlertWatcher; otherwise go to the cards.
@@ -56,7 +70,6 @@ export function ViderForm() {
       setText("");
       setTouched(false);
     }
-    setSubmitting(false);
   }
 
   return (
