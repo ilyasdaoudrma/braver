@@ -42,7 +42,7 @@ Computed by `human_check.py` → `results/human_check.json`:
 |---|---|---|---|---|
 | qwen (final label used for train/val/test) | 92 | 0.92 | 0.8744 | 100 |
 | gpt-oss-safeguard-20b | 87 | 0.9560 | 0.9274 | 91 |
-| Claude (AI) | 99 | 0.99 | 0.9841 | 100 |
+| Claude (AI) — anchored: Claude's label was visible | 99 | 0.99 | 0.9841 | 100 |
 
 The 8 disagreements with qwen are 5 in train, 3 in val, **none in test**: the test labels and every reported metric stay
 as they are. The labels in the dataset were not changed (the human label is a check, not a correction).

@@ -10,6 +10,7 @@ Usage: ml/.venv/Scripts/python -I -X utf8 ml/zones/human_check.py
 from __future__ import annotations
 
 import json
+import math
 from pathlib import Path
 
 import pandas as pd
@@ -34,21 +35,26 @@ def compare(df: pd.DataFrame) -> dict:
         ai = df[col].fillna("").str.strip().str.lower()
         both = human.isin(ZONES) & ai.isin(ZONES)
         h, a = human[both], ai[both]
+        kappa = float(cohen_kappa_score(h, a)) if both.any() else None
         out[name] = {
             "n": int(both.sum()),
             "agree": int((h == a).sum()),
             "agreement": float((h == a).mean()) if both.any() else None,
-            "kappa": float(cohen_kappa_score(h, a)) if both.any() else None,
+            "kappa": None if kappa is None or math.isnan(kappa) else kappa,  # NaN is not valid JSON for the Labo
         }
     return out
 
 
-def split_of(groups: set[str]) -> dict[str, str]:
+def split_of(groups: set[str], splits: Path = SPLITS) -> dict[str, str]:
+    """Split (train/val/test) of each group. Raises if a group is in no split: 'not found' must never count as 'not in test'."""
     where: dict[str, str] = {}
     for name in ("train", "val", "test"):
-        s = pd.read_csv(SPLITS / f"{name}.csv", usecols=["group"])
+        s = pd.read_csv(splits / f"{name}.csv", usecols=["group"])
         for g in set(s["group"]) & groups:
             where[g] = name
+    missing = groups - where.keys()
+    if missing:
+        raise ValueError(f"groups in no split (regenerated splits?): {sorted(missing)}")
     return where
 
 
@@ -66,7 +72,7 @@ def main() -> None:
         **result,
         "disagreements_with_qwen": [
             {"group": r.group, "qwen": r.label_qwen, "claude": r.claude_label, "human": r.human_label.strip().lower(),
-             "split": where.get(r.group, "none"), "fr": r.fr}
+             "split": where[r.group], "fr": r.fr}
             for r in dis.itertuples()
         ],
     }
