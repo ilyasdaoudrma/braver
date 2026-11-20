@@ -17,8 +17,8 @@ export function MemorySetting() {
     setState({ kind: "loading", percent: 0 });
     try {
       await loadEmbedder((p) => setState({ kind: "loading", percent: Math.floor(p) }));
-      if (!(await indexWorries())) throw new Error("index");
       updateSettings((s) => ({ ...s, memory: true }));
+      if (!(await indexWorries())) throw new Error("index");
       setState({ kind: "idle" });
     } catch {
       setState({ kind: "error" });
@@ -37,8 +37,8 @@ export function MemorySetting() {
         Mémoire de tes inquiétudes
       </p>
       <p className="text-sm text-ink-2">
-        Reconnaît une inquiétude déjà écrite et rappelle ce que ton Replay en dit. Tout reste sur ce téléphone, mais un modèle de {EMBED_DOWNLOAD_MB} Mo est
-        téléchargé une fois (de préférence en Wi-Fi).
+        Reconnaît une inquiétude déjà écrite et rappelle ce que ton Replay en dit. Tes textes ne quittent jamais ce téléphone. Pour l&apos;activer, un modèle
+        de {EMBED_DOWNLOAD_MB} Mo est téléchargé une fois depuis Hugging Face, et son moteur depuis jsDelivr (de préférence en Wi-Fi).
       </p>
       {settings.memory ? (
         <button type="button" onClick={turnOff} className="min-h-11 rounded-full border border-ink/20 px-4 font-bold">

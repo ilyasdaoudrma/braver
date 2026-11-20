@@ -19,7 +19,8 @@ export function cosine(a: readonly number[], b: readonly number[]): number {
  * Similarity above which two worries count as "the same worry again". multilingual-e5 gives high cosines even to
  * unrelated sentences: in a manual check (20 Nov) "Je vais rater mon examen de compta demain" vs
  * "j'ai peur de rater l'examen de compta demain" = 0.968, but vs "Ma grand-mère est malade" = 0.873 / 0.863.
- * So the bar is 0.92. Chosen on these hand-made examples, not on any test set.
+ * (measured in the app, with the same int8 model). So the bar is 0.92. Chosen on these hand-made examples, not on any
+ * test set; it is a product threshold, not a reported metric.
  */
 export const SIMILAR_FROM = 0.92;
 

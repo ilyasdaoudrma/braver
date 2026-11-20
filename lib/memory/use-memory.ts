@@ -14,6 +14,8 @@ export async function indexWorries(): Promise<boolean> {
   if (!todo.length) return true;
   try {
     const vectors = await embed(todo.map((w) => w.text));
+    // Memory may have been turned off (and its vectors deleted) while the model was running.
+    if (!store.get("settings").memory) return false;
     const fresh: EmbeddingEntry[] = todo.map((w, i) => ({ worryId: w.id, model: EMBED_MODEL, vector: vectors[i].map((x) => Math.round(x * 1e5) / 1e5) }));
     store.update("embeddings", (list) => [...list.filter((e) => !fresh.some((f) => f.worryId === e.worryId)), ...fresh]);
     return true;

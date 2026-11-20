@@ -1,6 +1,8 @@
 "use client";
 // Embeddings in the browser (Groq has no embedding model): Xenova/multilingual-e5-small with transformers.js,
-// downloaded only when the person turns memory on (≈ 118 MB once, then cached by the browser). Nothing is sent anywhere.
+// downloaded only when the person turns memory on (≈ 118 MB once, then cached by the browser).
+// Downloads: the model weights from huggingface.co and the ONNX runtime (.wasm) from cdn.jsdelivr.net — both see the
+// device's IP like any download. The worries themselves are never sent: embeddings are computed and stored on the device.
 
 export const EMBED_MODEL = "Xenova/multilingual-e5-small";
 export const EMBED_DOWNLOAD_MB = 118;
