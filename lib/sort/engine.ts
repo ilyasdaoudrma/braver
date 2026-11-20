@@ -10,7 +10,8 @@ import {
   MAX_CHARS,
   MAX_LINES,
 } from "./api";
-import { deviceZone, fillFields } from "./rules";
+import { fillFields } from "./rules";
+import { zoneOnDevice } from "../zones/model";
 
 export interface SortOptions {
   tone: Tone;
@@ -65,7 +66,7 @@ function deviceCard(
   seen: number,
   level: SafetyLevel,
 ): SortCard {
-  const { zone } = deviceZone(text);
+  const { zone } = zoneOnDevice(text);
   return {
     text,
     index,

@@ -1,5 +1,6 @@
-// Interim on-device sorter: the prototype's keyword rules (legacy/js/engine.js), without irony.
-// M2 (#20) replaces `deviceZone` with the trained zone model; `fillFields` stays as the text fallback.
+// Keyword rules from the prototype (legacy/js/engine.js), without irony. Since M2 (#20) the on-device zone comes
+// from the trained model (lib/zones/model.ts); `deviceZone` is only its fallback while the model is not loaded.
+// `fillFields` gives the on-device card texts for every zone.
 import type { Zone } from "../types";
 import { hasAny, normalize, prep } from "../text";
 

@@ -1,0 +1,254 @@
+{
+ "model": "zones-2026-11-20",
+ "C": 16.0,
+ "train_n": 1284,
+ "val_n": 270,
+ "test_sha256": "299ad024d35935862a85fc4cda0c709a3008d2d8e7820d9a800947748ce00fc1",
+ "val": {
+  "n": 270,
+  "accuracy": 0.8814814814814815,
+  "per_class": {
+   "scenario": {
+    "precision": 0.9010989010989011,
+    "recall": 0.9111111111111111,
+    "f1": 0.9060773480662984,
+    "support": 90
+   },
+   "action": {
+    "precision": 0.9423076923076923,
+    "recall": 0.8828828828828829,
+    "f1": 0.9116279069767442,
+    "support": 111
+   },
+   "acceptation": {
+    "precision": 0.7733333333333333,
+    "recall": 0.8405797101449275,
+    "f1": 0.8055555555555556,
+    "support": 69
+   }
+  },
+  "macro_f1": 0.8744202701995327,
+  "confusion": {
+   "labels": [
+    "scenario",
+    "action",
+    "acceptation"
+   ],
+   "matrix": [
+    [
+     82,
+     2,
+     6
+    ],
+    [
+     2,
+     98,
+     11
+    ],
+    [
+     7,
+     4,
+     58
+    ]
+   ]
+  }
+ },
+ "test": {
+  "n": 249,
+  "accuracy": 0.9076305220883534,
+  "per_class": {
+   "scenario": {
+    "precision": 0.9662921348314607,
+    "recall": 0.8686868686868687,
+    "f1": 0.9148936170212766,
+    "support": 99
+   },
+   "action": {
+    "precision": 0.923728813559322,
+    "recall": 0.9819819819819819,
+    "f1": 0.9519650655021834,
+    "support": 111
+   },
+   "acceptation": {
+    "precision": 0.7380952380952381,
+    "recall": 0.7948717948717948,
+    "f1": 0.7654320987654321,
+    "support": 39
+   }
+  },
+  "macro_f1": 0.8774302604296307,
+  "confusion": {
+   "labels": [
+    "scenario",
+    "action",
+    "acceptation"
+   ],
+   "matrix": [
+    [
+     86,
+     2,
+     11
+    ],
+    [
+     2,
+     109,
+     0
+    ],
+    [
+     1,
+     7,
+     31
+    ]
+   ]
+  }
+ },
+ "test_by_lang": {
+  "darija_arab": {
+   "n": 83,
+   "accuracy": 0.9036144578313253,
+   "per_class": {
+    "scenario": {
+     "precision": 0.9666666666666667,
+     "recall": 0.8787878787878788,
+     "f1": 0.9206349206349206,
+     "support": 33
+    },
+    "action": {
+     "precision": 0.9230769230769231,
+     "recall": 0.972972972972973,
+     "f1": 0.9473684210526315,
+     "support": 37
+    },
+    "acceptation": {
+     "precision": 0.7142857142857143,
+     "recall": 0.7692307692307693,
+     "f1": 0.7407407407407407,
+     "support": 13
+    }
+   },
+   "macro_f1": 0.8695813608094309,
+   "confusion": {
+    "labels": [
+     "scenario",
+     "action",
+     "acceptation"
+    ],
+    "matrix": [
+     [
+      29,
+      0,
+      4
+     ],
+     [
+      1,
+      36,
+      0
+     ],
+     [
+      0,
+      3,
+      10
+     ]
+    ]
+   }
+  },
+  "darija_latn": {
+   "n": 83,
+   "accuracy": 0.8554216867469879,
+   "per_class": {
+    "scenario": {
+     "precision": 0.9310344827586207,
+     "recall": 0.8181818181818182,
+     "f1": 0.8709677419354839,
+     "support": 33
+    },
+    "action": {
+     "precision": 0.8780487804878049,
+     "recall": 0.972972972972973,
+     "f1": 0.9230769230769231,
+     "support": 37
+    },
+    "acceptation": {
+     "precision": 0.6153846153846154,
+     "recall": 0.6153846153846154,
+     "f1": 0.6153846153846154,
+     "support": 13
+    }
+   },
+   "macro_f1": 0.8031430934656741,
+   "confusion": {
+    "labels": [
+     "scenario",
+     "action",
+     "acceptation"
+    ],
+    "matrix": [
+     [
+      27,
+      1,
+      5
+     ],
+     [
+      1,
+      36,
+      0
+     ],
+     [
+      1,
+      4,
+      8
+     ]
+    ]
+   }
+  },
+  "fr": {
+   "n": 83,
+   "accuracy": 0.963855421686747,
+   "per_class": {
+    "scenario": {
+     "precision": 1.0,
+     "recall": 0.9090909090909091,
+     "f1": 0.9523809523809523,
+     "support": 33
+    },
+    "action": {
+     "precision": 0.9736842105263158,
+     "recall": 1.0,
+     "f1": 0.9866666666666667,
+     "support": 37
+    },
+    "acceptation": {
+     "precision": 0.8666666666666667,
+     "recall": 1.0,
+     "f1": 0.9285714285714286,
+     "support": 13
+    }
+   },
+   "macro_f1": 0.9558730158730159,
+   "confusion": {
+    "labels": [
+     "scenario",
+     "action",
+     "acceptation"
+    ],
+    "matrix": [
+     [
+      30,
+      1,
+      2
+     ],
+     [
+      0,
+      37,
+      0
+     ],
+     [
+      0,
+      0,
+      13
+     ]
+    ]
+   }
+  }
+ }
+}
