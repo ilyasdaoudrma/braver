@@ -45,15 +45,15 @@ Ilyas to verify by hand. Until then, **no human has checked these labels**.
 | action | 251 | 753 |
 | acceptation | 144 | 432 |
 
-Splits (rows over the 3 languages): train 1,263 (421 groups) · val 270 (90 groups) · **test 270 (90 groups: 35 scenario, 39 action, 16 acceptation per language)**.
+Splits (rows over the 3 languages): train 1,284 (428 groups) · val 270 (90 groups) · **test 249 (83 groups: 33 scenario, 37 action, 13 acceptation per language)**. 7 test groups that were near-duplicates of a train/val worry (French char n-gram cosine > 0.7) were moved to train.
 516 of 601 groups are "clean" (intent = qwen = safeguard).
 
 ## Splits
 
 70/15/15 by group (one worry and its two translations stay together), seed 42. **Test** groups are drawn only
 from the groups where the generation intent, qwen and the safeguard model all agree (the cleanest labels),
-stratified by label; train/val take the rest.
-`data/splits/test.csv` — sha256 `5cad736134ff6410ead1c515e61a91580930ca9e9b98079b9818ec649a7be7c5`.
+stratified by label; train/val take the rest. Then any test group whose French text is a near-duplicate (char n-gram cosine > 0.7) of a train/val worry moves to train.
+`data/splits/test.csv` — sha256 `299ad024d35935862a85fc4cda0c709a3008d2d8e7820d9a800947748ce00fc1`.
 
 ## Known biases and limits
 
@@ -63,3 +63,9 @@ stratified by label; train/val take the rest.
 - Labels come from an LLM, checked by another LLM; ambiguous worries ("je n'ai pas été prise au master") can
   legitimately belong to two zones.
 - Two generators (120b, qwen) with different styles.
+- Labels are given on the **French** text and copied to the two Darija versions of the same worry; nobody checked
+  that every translation kept the exact meaning (spot-checked by reading samples only).
+- The safeguard model gave no label for 42 worries (33 of them acceptation); they can be in train/val, never in
+  test, so test has fewer acceptation worries (13 per language).
+- The second labeller (gpt-oss-safeguard-20b) is from the same family as the main generator (gpt-oss-120b), so
+  the AI-AI agreement may be optimistic.

@@ -57,6 +57,9 @@ def label_all(client: GroqJSON, model: str, items: list[tuple[str, str]]) -> dic
             if it.get("zone") in ZONES:
                 out[it["id"]] = it["zone"]
         print(f"{model} {min(start + BATCH, len(items))}/{len(items)} calls={client.calls} cached={client.cached}", flush=True)
+    missing = len(items) - len(out)
+    if missing:
+        print(f"WARNING: {model} gave no label for {missing} of {len(items)} worries (they cannot enter the test split)", flush=True)
     return out
 
 

@@ -137,7 +137,7 @@ class GroqJSON:
                 if "per day" in low or "rpd" in low or "tpd" in low:
                     raise SystemExit(f"daily request limit reached on {model}: {res.text[:200]}")
                 self._say(f"  429 on {model}, sleeping {wait:.1f}s: {res.text[:220]}")
-                time.sleep(wait + 1)
+                time.sleep(min(wait, 120) + 1)  # never trust a huge retry-after blindly
                 attempt -= 1  # a rate-limit wait is not a failed attempt
                 waits += 1
                 continue

@@ -11,21 +11,12 @@ z-acc-02-05-fr,z-acc-02-05,"Mon frère a eu un accident et je dois m'occuper de 
 z-acc-02-12-darija_arab,z-acc-02-12,تشخصت عندي مرض كروني، العلاج كيصعب علي التركيز ف الدروس.,acceptation,darija_arab,synthetic,"university, exams and grades"
 z-acc-02-12-darija_latn,z-acc-02-12,"Tchar7t 3ndi marad chronik, l3ilaj kaykhsni ndir focus f l'kours.",acceptation,darija_latn,synthetic,"university, exams and grades"
 z-acc-02-12-fr,z-acc-02-12,"J'ai été diagnostiqué(e) avec une maladie chronique, les traitements rendent difficile la concentration aux cours.",acceptation,fr,synthetic,"university, exams and grades"
-z-acc-10-00-darija_arab,z-acc-10-00,بابا فقد خدمتو وماعرفتش كيفاش غادي نديرو الكراء.,acceptation,darija_arab,synthetic,family and home
-z-acc-10-00-darija_latn,z-acc-10-00,baba f9at khdmtu w ma3raftch kifash ghadi ndiro l'kira.,acceptation,darija_latn,synthetic,family and home
-z-acc-10-00-fr,z-acc-10-00,Mon père a perdu son job et je ne sais pas comment on va payer le loyer.,acceptation,fr,synthetic,family and home
 z-acc-10-05-darija_arab,z-acc-10-05,خويا طلب ليه تشخيص ديال ديابيت، وماعرفتش كيفاش العائلة غادي تتبدل.,acceptation,darija_arab,synthetic,family and home
 z-acc-10-05-darija_latn,z-acc-10-05,"khoya tlab lih tashkhis dyal diabete, w ma3raftch kifash l3a2ila ghadi tbadl.",acceptation,darija_latn,synthetic,family and home
 z-acc-10-05-fr,z-acc-10-05,"Mon frère a reçu un diagnostic de diabète, je ne sais pas comment la famille va s’adapter.",acceptation,fr,synthetic,family and home
-z-acc-10-09-darija_arab,z-acc-10-09,بابا دار ليه أزمة ديال القلب من بعد جوج سيمانات، كاين خوف على العائلة.,acceptation,darija_arab,synthetic,family and home
-z-acc-10-09-darija_latn,z-acc-10-09,"baba dar lih crise dyal l9alb men b3d juj simanat, kayn khof 3la l3a2ila.",acceptation,darija_latn,synthetic,family and home
-z-acc-10-09-fr,z-acc-10-09,"Mon père a eu une crise cardiaque il y a deux semaines, je suis inquiet pour le reste de la famille.",acceptation,fr,synthetic,family and home
 z-acc-10-10-darija_arab,z-acc-10-10,بعد ما مات عمتى، الما ما بغاتش تخدم الماكلة، ما كاينتش طعام ديال دار.,acceptation,darija_arab,synthetic,family and home
 z-acc-10-10-darija_latn,z-acc-10-10,"ba3d ma mat 3amti, lma ma bghatch tkhdem lmakla, ma kaynach tta7a dyal dar.",acceptation,darija_latn,synthetic,family and home
 z-acc-10-10-fr,z-acc-10-10,"Après la perte de ma tante, ma mère ne veut plus cuisiner, on n’a plus de repas faits maison.",acceptation,fr,synthetic,family and home
-z-acc-11-00-darija_arab,z-acc-11-00,مِّي فقدت خدمة ديالها ومَا عَرَفْتْش كِيفاش غادي نديرو الكِرَا.,acceptation,darija_arab,synthetic,family and home
-z-acc-11-00-darija_latn,z-acc-11-00,Mmi f9at khdma dyalha w ma 3raftch kifash ghadi ndirou l'kira.,acceptation,darija_latn,synthetic,family and home
-z-acc-11-00-fr,z-acc-11-00,Ma mère a perdu son travail et je ne sais pas comment on va payer le loyer.,acceptation,fr,synthetic,family and home
 z-acc-11-05-darija_arab,z-acc-11-05,خويا رَفَح ليه الجامعة، دابا العشاء كاين فيه توتر.,acceptation,darija_arab,synthetic,family and home
 z-acc-11-05-darija_latn,z-acc-11-05,"Khoya rfa7 lih l'jam3a, daba l'3cha kayn fih tension.",acceptation,darija_latn,synthetic,family and home
 z-acc-11-05-fr,z-acc-11-05,"Mon frère a été refusé à l'université, ça rend les repas tendus.",acceptation,fr,synthetic,family and home
@@ -53,9 +44,6 @@ z-act-00-00-fr,z-act-00-00,"J'ai encore pas envoyé mon devoir de statistique, j
 z-act-00-02-darija_arab,z-act-00-02,ما رجعتش شابتر 4 ديال الاقتصاد، غادي نبدا نقرا دابا.,action,darija_arab,synthetic,"university, exams and grades"
 z-act-00-02-darija_latn,z-act-00-02,"Ma raja3tch chapitre 4 dyal économie, ghadi nbda n9ra daba.",action,darija_latn,synthetic,"university, exams and grades"
 z-act-00-02-fr,z-act-00-02,"Je n'ai pas encore révisé le chapitre 4 d'économie, je le relis maintenant.",action,fr,synthetic,"university, exams and grades"
-z-act-01-00-darija_arab,z-act-01-00,ما بعتش الواجب ديال الرياضيات، غادي نسيفتو الليلة.,action,darija_arab,synthetic,"university, exams and grades"
-z-act-01-00-darija_latn,z-act-01-00,"Ma ba3tch l'wajib dyal l'riaadi, ghadi nssiftou lila.",action,darija_latn,synthetic,"university, exams and grades"
-z-act-01-00-fr,z-act-01-00,"Je n'ai toujours pas envoyé mon devoir de mathématiques, je vais le soumettre ce soir.",action,fr,synthetic,"university, exams and grades"
 z-act-01-01-darija_arab,z-act-01-01,خاصني نسول البروفسور إذا يقبل تأديت الامتحان، غادي نكتب الإيميل.,action,darija_arab,synthetic,"university, exams and grades"
 z-act-01-01-darija_latn,z-act-01-01,"Khassni nsawl l'prof ila yqbal t3adit l'exam, ghadi nktb l'email.",action,darija_latn,synthetic,"university, exams and grades"
 z-act-01-01-fr,z-act-01-01,"Je dois demander à mon prof s'il accepte une remise de partiel, je prépare le mail.",action,fr,synthetic,"university, exams and grades"
@@ -146,9 +134,6 @@ z-act-40-01-fr,z-act-40-01,"Je dois relancer le recruteur qui m'a promis un reto
 z-act-40-03-darija_arab,z-act-40-03,خاصني نسول البروفسور ديالي واش يقدر يريكومانديني، بس ما عرفتش نقدر.,action,darija_arab,synthetic,"internship, job search and the future"
 z-act-40-03-darija_latn,z-act-40-03,"Khasni nsawl prof dyali wach yqdar yrekomandi, bsah ma 3raft n9dar.",action,darija_latn,synthetic,"internship, job search and the future"
 z-act-40-03-fr,z-act-40-03,"Je dois demander à mon prof s'il accepte de me recommander, mais je n'ai pas osé.",action,fr,synthetic,"internship, job search and the future"
-z-act-40-04-darija_arab,z-act-40-04,مازال ما درتش أپديت للپروفيل لينكدإن ديالي بالمشروع الأخير.,action,darija_arab,synthetic,"internship, job search and the future"
-z-act-40-04-darija_latn,z-act-40-04,Mazal ma dertch update l'profil LinkedIn dyali b'project l'akhar.,action,darija_latn,synthetic,"internship, job search and the future"
-z-act-40-04-fr,z-act-40-04,Je n'ai pas encore mis à jour mon profil LinkedIn avec mon dernier projet.,action,fr,synthetic,"internship, job search and the future"
 z-act-41-00-darija_arab,z-act-41-00,مازال ما سيفطت ملف ديال ستيج، غادي نديرو الليلة.,action,darija_arab,synthetic,"internship, job search and the future"
 z-act-41-00-darija_latn,z-act-41-00,"Mazal ma siftet file dyal stage, ghadi ndirou lila.",action,darija_latn,synthetic,"internship, job search and the future"
 z-act-41-00-fr,z-act-41-00,"J'ai encore pas envoyé mon dossier de stage, je le ferai ce soir.",action,fr,synthetic,"internship, job search and the future"
@@ -245,18 +230,12 @@ z-sce-32-07-fr,z-sce-32-07,Je crois que mon crush croit que je ne suis pas dispo
 z-sce-32-14-darija_arab,z-sce-32-14,متقية بلي الحب ديالي غادي يرفضني حيت ما كانبانش زوين.,scenario,darija_arab,synthetic,"friends, roommates and love"
 z-sce-32-14-darija_latn,z-sce-32-14,Mti9a blli l7ob dyali ghadi yrfddni 7it ma kanbanch zwine.,scenario,darija_latn,synthetic,"friends, roommates and love"
 z-sce-32-14-fr,z-sce-32-14,Je suis persuadée que mon crush va me rejeter parce que je ne suis pas assez beau.,scenario,fr,synthetic,"friends, roommates and love"
-z-sce-40-00-darija_arab,z-sce-40-00,غادي نفقد المقابلة ديال الستاج، غادي يقولولي أنا ما عنديش ما ندير.,scenario,darija_arab,synthetic,"internship, job search and the future"
-z-sce-40-00-darija_latn,z-sce-40-00,"Ghadi nfa9d l-mouqabla dial l-stage, ghadi ygoulou liya ana ma3andich ma ndir.",scenario,darija_latn,synthetic,"internship, job search and the future"
-z-sce-40-00-fr,z-sce-40-00,"Je vais rater mon entretien de stage, ils vont me dire que je suis nul.",scenario,fr,synthetic,"internship, job search and the future"
 z-sce-40-06-darija_arab,z-sce-40-06,كانخاف بلي خوي غادي يقارنيني بصاحبو اللي عندو بوسط مزيان.,scenario,darija_arab,synthetic,"internship, job search and the future"
 z-sce-40-06-darija_latn,z-sce-40-06,Kankhaf blli khoya ghadi yqarnini b sahbo li 3ndo post mzyan.,scenario,darija_latn,synthetic,"internship, job search and the future"
 z-sce-40-06-fr,z-sce-40-06,Je crains que mon frère me compare à son collègue qui a déjà un bon poste.,scenario,fr,synthetic,"internship, job search and the future"
 z-sce-40-12-darija_arab,z-sce-40-12,كانقول راسي غادي نسالي بخدمة صغيرة وما كايناش أي مستقبل.,scenario,darija_arab,synthetic,"internship, job search and the future"
 z-sce-40-12-darija_latn,z-sce-40-12,Kan9oul rassi ghadi nsali b khdma sghira w ma kaynach ay future.,scenario,darija_latn,synthetic,"internship, job search and the future"
 z-sce-40-12-fr,z-sce-40-12,Je me dis que je vais finir à faire du travail précaire sans perspective.,scenario,fr,synthetic,"internship, job search and the future"
-z-sce-41-00-darija_arab,z-sce-41-00,غادي نفقد الانترويف ديالي، غادي يشوفو بلي أنا ما عنديش كيفاش.,scenario,darija_arab,synthetic,"internship, job search and the future"
-z-sce-41-00-darija_latn,z-sce-41-00,"Ghadi nfa9d l'entretien dyali, ghadi ychufu blli ana ma3ndich kifash.",scenario,darija_latn,synthetic,"internship, job search and the future"
-z-sce-41-00-fr,z-sce-41-00,"Je vais rater mon entretien de stage, ils vont penser que je suis nul.",scenario,fr,synthetic,"internship, job search and the future"
 z-sce-41-08-darija_arab,z-sce-41-08,لبروف ديال ستاج كيشوف فيا بلي ما نقدرش ندير.,scenario,darija_arab,synthetic,"internship, job search and the future"
 z-sce-41-08-darija_latn,z-sce-41-08,Lprof dyal stage kaychouf fiyya blli ma n9drch ndir.,scenario,darija_latn,synthetic,"internship, job search and the future"
 z-sce-41-08-fr,z-sce-41-08,Mon professeur de stage me regarde comme si je n'étais pas à la hauteur.,scenario,fr,synthetic,"internship, job search and the future"

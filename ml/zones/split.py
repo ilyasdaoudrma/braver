@@ -15,12 +15,15 @@ from pathlib import Path
 
 import numpy as np
 import pandas as pd
+from sklearn.feature_extraction.text import TfidfVectorizer
+from sklearn.metrics.pairwise import cosine_similarity
 
 HERE = Path(__file__).resolve().parent
 INTERIM = HERE / "data" / "interim"
 SPLITS = HERE / "data" / "splits"
 SEED = 42
 COLUMNS = ["id", "group", "text", "label", "lang", "source", "origin"]
+NEAR_DUP = 0.7  # char n-gram cosine of the French texts; a test group this close to a train/val group goes to train
 
 
 def main() -> None:
@@ -45,6 +48,16 @@ def main() -> None:
         n_val = round(len(ids) * 15 / 85)
         for i, gid in enumerate(ids):
             split[gid] = "val" if i < n_val else "train"
+    # Review of #33: near-duplicate worries (same sentence, one word changed) must not sit on both sides.
+    fr = df[df["lang"] == "fr"].drop_duplicates("group").set_index("group")["text"]
+    test_ids = [g for g, s in split.items() if s == "test"]
+    other_ids = [g for g, s in split.items() if s != "test"]
+    vec = TfidfVectorizer(analyzer="char_wb", ngram_range=(2, 5)).fit(fr)
+    sim = cosine_similarity(vec.transform(fr[test_ids]), vec.transform(fr[other_ids]))
+    moved = [g for g, row in zip(test_ids, sim) if row.max() > NEAR_DUP]
+    for gid in moved:
+        split[gid] = "train"
+    print(f"moved {len(moved)} near-duplicate groups from test to train")
     df = df.assign(split=df["group"].map(split))
     SPLITS.mkdir(parents=True, exist_ok=True)
     for name in ("train", "val", "test"):
