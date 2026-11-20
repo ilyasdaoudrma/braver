@@ -22,6 +22,8 @@ export interface GroqJSONOptions<T> {
   timeoutMs?: number;
   maxTokens?: number;
   reasoningEffort?: ReasoningEffort;
+  /** Lower = more stable answers between runs. Default 0.2. */
+  temperature?: number;
   /** For tests. */
   fetchImpl?: typeof fetch;
   apiKey?: string;
@@ -33,6 +35,8 @@ export interface GroqJSONResult<T> {
   model: string;
   /** Total time since the call started (all tries), in ms. */
   ms: number;
+  /** Tries that failed before this answer (empty when the first model answered). */
+  attempts: GroqAttempt[];
 }
 
 export type GroqFailure = "timeout" | "http" | "invalid_json" | "invalid_schema" | "network";
@@ -111,6 +115,7 @@ async function tryModel<T>(model: string, opts: GroqJSONOptions<T>, key: string,
           response_format: { type: "json_schema", json_schema: { name: opts.name ?? "answer", strict: true, schema: jsonSchema } },
           reasoning_effort: opts.reasoningEffort ?? "low",
           include_reasoning: false,
+          temperature: opts.temperature ?? 0.2,
           max_completion_tokens: opts.maxTokens ?? 1_200,
         }),
       });
@@ -148,7 +153,7 @@ export async function groqJSON<T>(opts: GroqJSONOptions<T>): Promise<GroqJSONRes
     const t = performance.now();
     try {
       const data = await tryModel(model, opts, key, jsonSchema);
-      return { data, model, ms: Math.round(performance.now() - start) };
+      return { data, model, ms: Math.round(performance.now() - start), attempts };
     } catch (err) {
       const f = err instanceof TryFailure ? err : new TryFailure("network");
       attempts.push({ model, failure: f.failure, status: f.status, ms: Math.round(performance.now() - t) });
