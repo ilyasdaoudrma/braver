@@ -32,11 +32,23 @@ scenario [198, 0, 3] · action [5, 227, 15] · acceptation [15, 2, 94].
 
 All labels (both AIs, generator, intent): `data/processed/labelled.csv`.
 
-`data/to_check_100.csv` = 100 random worries (seed 42) with both AI labels and an empty `human_label` column, for
-Ilyas to verify by hand. Until then, **no human has checked these labels**.
+`data/to_check_100.csv` = 100 random worries (seed 42) with both AI labels and a `human_label` column.
 
-**Check by Claude (an AI, 20 Nov, at Ilyas's request — still not a human check):** Claude re-labelled the same 100 worries
-(column `claude_label`; `human_label` stays empty). Agreement with qwen 0.93, Cohen's kappa 0.8902 (n = 100); with the
+**Human check (Ilyas, 20 Nov):** Ilyas filled `human_label` for all 100 worries. The AI labels (qwen, safeguard,
+Claude) were **visible while he labelled**, so this is a human check with the AI labels shown, not a blind annotation.
+Computed by `human_check.py` → `results/human_check.json`:
+
+| Human vs | agree | agreement | Cohen kappa | n |
+|---|---|---|---|---|
+| qwen (final label used for train/val/test) | 92 | 0.92 | 0.8744 | 100 |
+| gpt-oss-safeguard-20b | 87 | 0.9560 | 0.9274 | 91 |
+| Claude (AI) — anchored: Claude's label was visible | 99 | 0.99 | 0.9841 | 100 |
+
+The 8 disagreements with qwen are 5 in train, 3 in val, **none in test**: the test labels and every reported metric stay
+as they are. The labels in the dataset were not changed (the human label is a check, not a correction).
+
+**Check by Claude (an AI, 20 Nov, at Ilyas's request — not a human check):** Claude re-labelled the same 100 worries
+(column `claude_label`). Agreement with qwen 0.93, Cohen's kappa 0.8902 (n = 100); with the
 safeguard model 0.9670, kappa 0.9457 (n = 91). The 7 disagreements (`results/claude_check.json`) are mostly predictions
 labelled as action/acceptation ("je vais devoir vendre mon ordinateur", "je ne recevrai jamais la bourse"); none of them
 is in the test split.

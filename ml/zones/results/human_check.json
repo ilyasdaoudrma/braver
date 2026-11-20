@@ -1,0 +1,91 @@
+{
+ "what": "Zone labels of the 100 worries in to_check_100.csv checked by a person (Ilyas, 20 Nov). The AI labels (qwen, safeguard, Claude) were visible while he labelled: a human check with AI labels shown, not a blind annotation.",
+ "checked_by": "human (Ilyas)",
+ "blind": false,
+ "n_filled": 100,
+ "qwen": {
+  "n": 100,
+  "agree": 92,
+  "agreement": 0.92,
+  "kappa": 0.8744310155391618
+ },
+ "safeguard": {
+  "n": 91,
+  "agree": 87,
+  "agreement": 0.9560439560439561,
+  "kappa": 0.9274755927475593
+ },
+ "claude": {
+  "n": 100,
+  "agree": 99,
+  "agreement": 0.99,
+  "kappa": 0.9841017488076311
+ },
+ "disagreements_with_qwen": [
+  {
+   "group": "z-sce-21-05",
+   "qwen": "action",
+   "claude": "scenario",
+   "human": "scenario",
+   "split": "train",
+   "fr": "Je pense que je vais devoir vendre mon ordinateur pour payer le loyer."
+  },
+  {
+   "group": "z-acc-40-03",
+   "qwen": "acceptation",
+   "claude": "scenario",
+   "human": "scenario",
+   "split": "train",
+   "fr": "mon père a dit que je ne trouverai jamais de travail dans ce domaine"
+  },
+  {
+   "group": "z-act-30-11",
+   "qwen": "action",
+   "claude": "action",
+   "human": "scenario",
+   "split": "val",
+   "fr": "Je n'ai pas encore rappelé à mon ami qu'on doit rendre le projet avant vendredi."
+  },
+  {
+   "group": "z-sce-12-11",
+   "qwen": "acceptation",
+   "claude": "scenario",
+   "human": "scenario",
+   "split": "train",
+   "fr": "Je suis convaincu que ma mère va me dire que je ne suis pas assez responsable."
+  },
+  {
+   "group": "z-acc-12-13",
+   "qwen": "action",
+   "claude": "acceptation",
+   "human": "acceptation",
+   "split": "val",
+   "fr": "Nous avons découvert une infestation de termites dans la maison, les réparations coûteront cher."
+  },
+  {
+   "group": "z-acc-21-04",
+   "qwen": "acceptation",
+   "claude": "action",
+   "human": "action",
+   "split": "train",
+   "fr": "J'ai eu une amende de parking et maintenant je n'ai plus assez pour la carte étudiante."
+  },
+  {
+   "group": "z-acc-42-00",
+   "qwen": "scenario",
+   "claude": "action",
+   "human": "action",
+   "split": "train",
+   "fr": "J'ai vu sur Facebook que mon ami a eu sa formation en grande entreprise et je cherche toujours."
+  },
+  {
+   "group": "z-sce-21-00",
+   "qwen": "acceptation",
+   "claude": "scenario",
+   "human": "scenario",
+   "split": "val",
+   "fr": "Je ne recevrai jamais la bourse, je vais devoir travailler à plein temps."
+  }
+ ],
+ "disagreements_in_test": 0
+}

@@ -131,6 +131,10 @@ def model_reports() -> dict:
             for k in ("threshold", "high"):
                 if k in m:
                     out[name][k] = m[k]
+    human = ROOT / "ml" / "zones" / "results" / "human_check.json"
+    if "zones" in out and human.exists():
+        h = json.loads(human.read_text(encoding="utf-8"))
+        out["zones"]["human_check"] = {"blind": h["blind"], "qwen": h["qwen"], "disagreements_in_test": h["disagreements_in_test"]}
     return out
 
 
