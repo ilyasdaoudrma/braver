@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { BookOpen, Cpu, Loader2, Sparkles, Wind } from "lucide-react";
+import { BookOpen, Cpu, History, Loader2, Sparkles, Wind } from "lucide-react";
 import type { SortCard } from "@/lib/sort/engine";
 import { HelpButton } from "@/components/nav/HelpButton";
 import { ActionPanel } from "./ActionPanel";
@@ -74,6 +74,8 @@ interface SortCardViewProps {
   upgrading: boolean;
   /** Store id of the saved worry; null until the sort is final and saved. */
   worryId: string | null;
+  /** I3: "3ᵉ fois que tu écris quelque chose de proche…" (computed from the person's own data). */
+  memory?: string;
 }
 
 function ZonePanel({
@@ -104,7 +106,7 @@ function ZonePanel({
   );
 }
 
-export function SortCardView({ card, upgrading, worryId }: SortCardViewProps) {
+export function SortCardView({ card, upgrading, worryId, memory }: SortCardViewProps) {
   const style = ZONE_STYLE[card.zone];
   return (
     <article
@@ -150,6 +152,12 @@ export function SortCardView({ card, upgrading, worryId }: SortCardViewProps) {
         À lire : {CARD_TITLE[card.zone]}
       </Link>
       <MoveCard index={card.index} zone={card.zone} disabled={!worryId} />
+      {memory && (
+        <p className="mt-3 flex items-start gap-2 rounded-xl bg-scenario-soft p-3 text-sm text-scenario">
+          <History aria-hidden size={16} className="mt-0.5 shrink-0" />
+          {memory}
+        </p>
+      )}
       {card.distress && (
         <div className="mt-4 space-y-3 rounded-xl bg-surface-2 p-3">
           <p className="font-bold">
