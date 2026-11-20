@@ -46,7 +46,7 @@ for (const r of rows) {
 const sample = [];
 for (const [, list] of [...cells.entries()].sort()) {
   // hand-written rows are all kept (small, and the most valuable)
-  const keepAll = list[0].set === "darija_handwritten";
+  const keepAll = list[0].set === "darija_handwritten" || list[0].set === "darija_claude";
   sample.push(...[...list].sort((a, b) => h(a.id).localeCompare(h(b.id))).slice(0, keepAll ? list.length : PER_CELL));
 }
 const toSend = sample.filter((r) => r.safety_level !== "danger");

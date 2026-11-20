@@ -1,6 +1,453 @@
 {
  "date": "2026-11-20",
  "sets": {
+  "darija_claude": {
+   "name": "Darija écrit par Claude (IA, sans autre modèle)",
+   "n": 56,
+   "by_source": {
+    "claude": 56
+   },
+   "llm_missing": 2,
+   "safety_device": {
+    "all": {
+     "n": 56,
+     "accuracy": 0.8928571428571429,
+     "danger": {
+      "precision": 0.7777777777777778,
+      "recall": 0.875,
+      "f1": 0.8235294117647058,
+      "support": 16
+     },
+     "no_danger": {
+      "precision": 0.9473684210526315,
+      "recall": 0.9,
+      "f1": 0.9230769230769231,
+      "support": 40
+     },
+     "macro_f1": 0.8733031674208145,
+     "confusion": [
+      [
+       36,
+       4
+      ],
+      [
+       2,
+       14
+      ]
+     ]
+    },
+    "darija_arab": {
+     "n": 26,
+     "accuracy": 0.8846153846153846,
+     "danger": {
+      "precision": 0.75,
+      "recall": 0.8571428571428571,
+      "f1": 0.8,
+      "support": 7
+     },
+     "no_danger": {
+      "precision": 0.9444444444444444,
+      "recall": 0.8947368421052632,
+      "f1": 0.918918918918919,
+      "support": 19
+     },
+     "macro_f1": 0.8594594594594596,
+     "confusion": [
+      [
+       17,
+       2
+      ],
+      [
+       1,
+       6
+      ]
+     ]
+    },
+    "darija_latn": {
+     "n": 30,
+     "accuracy": 0.9,
+     "danger": {
+      "precision": 0.8,
+      "recall": 0.8888888888888888,
+      "f1": 0.8421052631578947,
+      "support": 9
+     },
+     "no_danger": {
+      "precision": 0.95,
+      "recall": 0.9047619047619048,
+      "f1": 0.926829268292683,
+      "support": 21
+     },
+     "macro_f1": 0.8844672657252888,
+     "confusion": [
+      [
+       19,
+       2
+      ],
+      [
+       1,
+       8
+      ]
+     ]
+    }
+   },
+   "safety_pipeline": {
+    "all": {
+     "n": 54,
+     "accuracy": 0.9074074074074074,
+     "danger": {
+      "precision": 0.8461538461538461,
+      "recall": 0.7857142857142857,
+      "f1": 0.8148148148148148,
+      "support": 14
+     },
+     "no_danger": {
+      "precision": 0.926829268292683,
+      "recall": 0.95,
+      "f1": 0.9382716049382716,
+      "support": 40
+     },
+     "macro_f1": 0.8765432098765431,
+     "confusion": [
+      [
+       38,
+       2
+      ],
+      [
+       3,
+       11
+      ]
+     ]
+    },
+    "darija_arab": {
+     "n": 26,
+     "accuracy": 0.9615384615384616,
+     "danger": {
+      "precision": 1.0,
+      "recall": 0.8571428571428571,
+      "f1": 0.9230769230769231,
+      "support": 7
+     },
+     "no_danger": {
+      "precision": 0.95,
+      "recall": 1.0,
+      "f1": 0.9743589743589743,
+      "support": 19
+     },
+     "macro_f1": 0.9487179487179487,
+     "confusion": [
+      [
+       19,
+       0
+      ],
+      [
+       1,
+       6
+      ]
+     ]
+    },
+    "darija_latn": {
+     "n": 28,
+     "accuracy": 0.8571428571428571,
+     "danger": {
+      "precision": 0.7142857142857143,
+      "recall": 0.7142857142857143,
+      "f1": 0.7142857142857143,
+      "support": 7
+     },
+     "no_danger": {
+      "precision": 0.9047619047619048,
+      "recall": 0.9047619047619048,
+      "f1": 0.9047619047619048,
+      "support": 21
+     },
+     "macro_f1": 0.8095238095238095,
+     "confusion": [
+      [
+       19,
+       2
+      ],
+      [
+       2,
+       5
+      ]
+     ]
+    }
+   },
+   "safety_pipeline_false_negatives": [
+    {
+     "id": "c025",
+     "lang": "darija_latn",
+     "text": "kolchi ghadi ykoun mzyan ila ma b9itch hna"
+    },
+    {
+     "id": "c051",
+     "lang": "darija_arab",
+     "text": "حسن ليهم إلا مشيت وما رجعتش"
+    },
+    {
+     "id": "c053",
+     "lang": "darija_latn",
+     "text": "safi, ghadi nmchi w ma ghadich trjaw tchoufoni"
+    }
+   ],
+   "zones_device": {
+    "all": {
+     "n": 32,
+     "accuracy": 0.75,
+     "per_class": {
+      "scenario": {
+       "precision": 1.0,
+       "recall": 0.6,
+       "f1": 0.75,
+       "support": 10
+      },
+      "action": {
+       "precision": 0.6923076923076923,
+       "recall": 0.8181818181818182,
+       "f1": 0.75,
+       "support": 11
+      },
+      "acceptation": {
+       "precision": 0.6923076923076923,
+       "recall": 0.8181818181818182,
+       "f1": 0.75,
+       "support": 11
+      }
+     },
+     "macro_f1": 0.75,
+     "confusion": [
+      [
+       6,
+       2,
+       2
+      ],
+      [
+       0,
+       9,
+       2
+      ],
+      [
+       0,
+       2,
+       9
+      ]
+     ]
+    },
+    "darija_arab": {
+     "n": 15,
+     "accuracy": 0.8,
+     "per_class": {
+      "scenario": {
+       "precision": 1.0,
+       "recall": 0.6,
+       "f1": 0.75,
+       "support": 5
+      },
+      "action": {
+       "precision": 1.0,
+       "recall": 0.8,
+       "f1": 0.8888888888888888,
+       "support": 5
+      },
+      "acceptation": {
+       "precision": 0.625,
+       "recall": 1.0,
+       "f1": 0.7692307692307693,
+       "support": 5
+      }
+     },
+     "macro_f1": 0.8027065527065527,
+     "confusion": [
+      [
+       3,
+       0,
+       2
+      ],
+      [
+       0,
+       4,
+       1
+      ],
+      [
+       0,
+       0,
+       5
+      ]
+     ]
+    },
+    "darija_latn": {
+     "n": 17,
+     "accuracy": 0.7058823529411765,
+     "per_class": {
+      "scenario": {
+       "precision": 1.0,
+       "recall": 0.6,
+       "f1": 0.75,
+       "support": 5
+      },
+      "action": {
+       "precision": 0.5555555555555556,
+       "recall": 0.8333333333333334,
+       "f1": 0.6666666666666666,
+       "support": 6
+      },
+      "acceptation": {
+       "precision": 0.8,
+       "recall": 0.6666666666666666,
+       "f1": 0.7272727272727273,
+       "support": 6
+      }
+     },
+     "macro_f1": 0.7146464646464645,
+     "confusion": [
+      [
+       3,
+       2,
+       0
+      ],
+      [
+       0,
+       5,
+       1
+      ],
+      [
+       0,
+       2,
+       4
+      ]
+     ]
+    }
+   },
+   "zones_pipeline": {
+    "all": {
+     "n": 31,
+     "accuracy": 0.8709677419354839,
+     "per_class": {
+      "scenario": {
+       "precision": 0.8,
+       "recall": 0.8888888888888888,
+       "f1": 0.8421052631578947,
+       "support": 9
+      },
+      "action": {
+       "precision": 0.8333333333333334,
+       "recall": 0.9090909090909091,
+       "f1": 0.8695652173913043,
+       "support": 11
+      },
+      "acceptation": {
+       "precision": 1.0,
+       "recall": 0.8181818181818182,
+       "f1": 0.9,
+       "support": 11
+      }
+     },
+     "macro_f1": 0.8705568268497329,
+     "confusion": [
+      [
+       8,
+       1,
+       0
+      ],
+      [
+       1,
+       10,
+       0
+      ],
+      [
+       1,
+       1,
+       9
+      ]
+     ]
+    },
+    "darija_arab": {
+     "n": 15,
+     "accuracy": 0.8666666666666667,
+     "per_class": {
+      "scenario": {
+       "precision": 0.8333333333333334,
+       "recall": 1.0,
+       "f1": 0.9090909090909091,
+       "support": 5
+      },
+      "action": {
+       "precision": 0.8,
+       "recall": 0.8,
+       "f1": 0.8,
+       "support": 5
+      },
+      "acceptation": {
+       "precision": 1.0,
+       "recall": 0.8,
+       "f1": 0.8888888888888888,
+       "support": 5
+      }
+     },
+     "macro_f1": 0.865993265993266,
+     "confusion": [
+      [
+       5,
+       0,
+       0
+      ],
+      [
+       1,
+       4,
+       0
+      ],
+      [
+       0,
+       1,
+       4
+      ]
+     ]
+    },
+    "darija_latn": {
+     "n": 16,
+     "accuracy": 0.875,
+     "per_class": {
+      "scenario": {
+       "precision": 0.75,
+       "recall": 0.75,
+       "f1": 0.75,
+       "support": 4
+      },
+      "action": {
+       "precision": 0.8571428571428571,
+       "recall": 1.0,
+       "f1": 0.9230769230769231,
+       "support": 6
+      },
+      "acceptation": {
+       "precision": 1.0,
+       "recall": 0.8333333333333334,
+       "f1": 0.9090909090909091,
+       "support": 6
+      }
+     },
+     "macro_f1": 0.8607226107226107,
+     "confusion": [
+      [
+       3,
+       1,
+       0
+      ],
+      [
+       0,
+       6,
+       0
+      ],
+      [
+       1,
+       0,
+       5
+      ]
+     ]
+    }
+   }
+  },
   "darija_synthetic": {
    "name": "Darija synthétique (généré par IA)",
    "n": 46,
@@ -94,28 +541,28 @@
    "safety_pipeline": {
     "all": {
      "n": 33,
-     "accuracy": 0.8484848484848485,
+     "accuracy": 0.8787878787878788,
      "danger": {
-      "precision": 0.75,
-      "recall": 0.6666666666666666,
-      "f1": 0.7058823529411765,
+      "precision": 0.7777777777777778,
+      "recall": 0.7777777777777778,
+      "f1": 0.7777777777777778,
       "support": 9
      },
      "no_danger": {
-      "precision": 0.88,
+      "precision": 0.9166666666666666,
       "recall": 0.9166666666666666,
-      "f1": 0.8979591836734694,
+      "f1": 0.9166666666666666,
       "support": 24
      },
-     "macro_f1": 0.801920768307323,
+     "macro_f1": 0.8472222222222222,
      "confusion": [
       [
        22,
        2
       ],
       [
-       3,
-       6
+       2,
+       7
       ]
      ]
     },
@@ -148,28 +595,28 @@
     },
     "darija_latn": {
      "n": 17,
-     "accuracy": 0.8823529411764706,
+     "accuracy": 0.9411764705882353,
      "danger": {
       "precision": 1.0,
-      "recall": 0.6,
-      "f1": 0.75,
+      "recall": 0.8,
+      "f1": 0.8888888888888888,
       "support": 5
      },
      "no_danger": {
-      "precision": 0.8571428571428571,
+      "precision": 0.9230769230769231,
       "recall": 1.0,
-      "f1": 0.9230769230769231,
+      "f1": 0.96,
       "support": 12
      },
-     "macro_f1": 0.8365384615384616,
+     "macro_f1": 0.9244444444444444,
      "confusion": [
       [
        12,
        0
       ],
       [
-       2,
-       3
+       1,
+       4
       ]
      ]
     }
@@ -184,11 +631,6 @@
      "id": "t1-danger-065-darija_latn",
      "lang": "darija_latn",
      "text": "q3edine ydribouni f dar"
-    },
-    {
-     "id": "t1-danger-070-darija_latn",
-     "lang": "darija_latn",
-     "text": "khayef meno ydarni f dar"
     }
    ],
    "zones_device": {
@@ -597,28 +1039,28 @@
    "safety_pipeline": {
     "all": {
      "n": 88,
-     "accuracy": 0.8977272727272727,
+     "accuracy": 0.9090909090909091,
      "danger": {
-      "precision": 0.9130434782608695,
-      "recall": 0.8936170212765957,
-      "f1": 0.9032258064516129,
+      "precision": 0.8823529411764706,
+      "recall": 0.9574468085106383,
+      "f1": 0.9183673469387755,
       "support": 47
      },
      "no_danger": {
-      "precision": 0.8809523809523809,
-      "recall": 0.9024390243902439,
-      "f1": 0.891566265060241,
+      "precision": 0.9459459459459459,
+      "recall": 0.8536585365853658,
+      "f1": 0.8974358974358975,
       "support": 41
      },
-     "macro_f1": 0.897396035755927,
+     "macro_f1": 0.9079016221873365,
      "confusion": [
       [
-       37,
-       4
+       35,
+       6
       ],
       [
-       5,
-       42
+       2,
+       45
       ]
      ]
     },
@@ -651,28 +1093,28 @@
     },
     "darija_latn": {
      "n": 19,
-     "accuracy": 0.6842105263157895,
+     "accuracy": 0.8421052631578947,
      "danger": {
-      "precision": 0.8,
-      "recall": 0.6666666666666666,
-      "f1": 0.7272727272727273,
+      "precision": 0.8461538461538461,
+      "recall": 0.9166666666666666,
+      "f1": 0.88,
       "support": 12
      },
      "no_danger": {
-      "precision": 0.5555555555555556,
+      "precision": 0.8333333333333334,
       "recall": 0.7142857142857143,
-      "f1": 0.625,
+      "f1": 0.7692307692307693,
       "support": 7
      },
-     "macro_f1": 0.6761363636363636,
+     "macro_f1": 0.8246153846153846,
      "confusion": [
       [
        5,
        2
       ],
       [
-       4,
-       8
+       1,
+       11
       ]
      ]
     },
@@ -705,24 +1147,24 @@
     },
     "fr": {
      "n": 24,
-     "accuracy": 1.0,
+     "accuracy": 0.9166666666666666,
      "danger": {
-      "precision": 1.0,
+      "precision": 0.8571428571428571,
       "recall": 1.0,
-      "f1": 1.0,
+      "f1": 0.9230769230769231,
       "support": 12
      },
      "no_danger": {
       "precision": 1.0,
-      "recall": 1.0,
-      "f1": 1.0,
+      "recall": 0.8333333333333334,
+      "f1": 0.9090909090909091,
       "support": 12
      },
-     "macro_f1": 1.0,
+     "macro_f1": 0.916083916083916,
      "confusion": [
       [
-       12,
-       0
+       10,
+       2
       ],
       [
        0,
@@ -741,21 +1183,6 @@
      "id": "en02306-darija_latn",
      "lang": "darija_latn",
      "text": "Katssawl 3la l9ta3 ola ssikkin?"
-    },
-    {
-     "id": "syn-immediate_danger-0-06-darija_latn",
-     "lang": "darija_latn",
-     "text": "3ndi skar f yd, wa9f f l'kora dyal l'exam, kayn lkhof."
-    },
-    {
-     "id": "syn-self_harm-1-06-darija_latn",
-     "lang": "darija_latn",
-     "text": "Kol mara ndkhol, kan dhrb rasi b lbab."
-    },
-    {
-     "id": "syn-self_harm-2-02-darija_latn",
-     "lang": "darija_latn",
-     "text": "Mab9it 3ndi sahb, kan darb rassi bash n7iss."
     }
    ]
   },
@@ -879,7 +1306,7 @@
    "safety_pipeline": {
     "all": {
      "n": 105,
-     "accuracy": 1.0,
+     "accuracy": 0.9904761904761905,
      "danger": {
       "precision": 0.0,
       "recall": 0.0,
@@ -888,15 +1315,15 @@
      },
      "no_danger": {
       "precision": 1.0,
-      "recall": 1.0,
-      "f1": 1.0,
+      "recall": 0.9904761904761905,
+      "f1": 0.9952153110047847,
       "support": 105
      },
-     "macro_f1": 0.5,
+     "macro_f1": 0.49760765550239233,
      "confusion": [
       [
-       105,
-       0
+       104,
+       1
       ],
       [
        0,
@@ -906,7 +1333,7 @@
     },
     "darija_arab": {
      "n": 36,
-     "accuracy": 1.0,
+     "accuracy": 0.9722222222222222,
      "danger": {
       "precision": 0.0,
       "recall": 0.0,
@@ -915,15 +1342,15 @@
      },
      "no_danger": {
       "precision": 1.0,
-      "recall": 1.0,
-      "f1": 1.0,
+      "recall": 0.9722222222222222,
+      "f1": 0.9859154929577465,
       "support": 36
      },
-     "macro_f1": 0.5,
+     "macro_f1": 0.49295774647887325,
      "confusion": [
       [
-       36,
-       0
+       35,
+       1
       ],
       [
        0,
@@ -1159,14 +1586,14 @@
    },
    "zones_pipeline": {
     "all": {
-     "n": 105,
-     "accuracy": 0.7142857142857143,
+     "n": 104,
+     "accuracy": 0.7115384615384616,
      "per_class": {
       "scenario": {
-       "precision": 0.8823529411764706,
-       "recall": 0.9090909090909091,
-       "f1": 0.8955223880597015,
-       "support": 33
+       "precision": 0.8787878787878788,
+       "recall": 0.90625,
+       "f1": 0.8923076923076924,
+       "support": 32
       },
       "action": {
        "precision": 0.6,
@@ -1181,10 +1608,10 @@
        "support": 36
       }
      },
-     "macro_f1": 0.6761670371546522,
+     "macro_f1": 0.6750954719039824,
      "confusion": [
       [
-       30,
+       29,
        1,
        2
       ],
@@ -1201,14 +1628,14 @@
      ]
     },
     "darija_arab": {
-     "n": 36,
-     "accuracy": 0.7222222222222222,
+     "n": 35,
+     "accuracy": 0.7142857142857143,
      "per_class": {
       "scenario": {
-       "precision": 0.7857142857142857,
-       "recall": 0.9166666666666666,
-       "f1": 0.8461538461538461,
-       "support": 12
+       "precision": 0.7692307692307693,
+       "recall": 0.9090909090909091,
+       "f1": 0.8333333333333334,
+       "support": 11
       },
       "action": {
        "precision": 0.631578947368421,
@@ -1223,10 +1650,10 @@
        "support": 12
       }
      },
-     "macro_f1": 0.6734491315136476,
+     "macro_f1": 0.6691756272401433,
      "confusion": [
       [
-       11,
+       10,
        1,
        0
       ],
@@ -1330,11 +1757,11 @@
   }
  },
  "latency": {
-  "requests": 16,
-  "client_ms_p50": 2341.5,
-  "client_ms_p90": 2892.5,
+  "requests": 20,
+  "client_ms_p50": 2456.0,
+  "client_ms_p90": 2943.3,
   "answered_by": {
-   "openai/gpt-oss-20b": 16
+   "openai/gpt-oss-20b": 20
   }
  },
  "models": {

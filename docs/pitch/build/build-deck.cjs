@@ -138,12 +138,19 @@ function stat(s, x, y, w, value, label, color) {
   if (pipe) stat(s, 3.6, 1.3, 2.9, caught(pipe), `détectées avec l'IA en ligne\n(échantillon, n = ${pipe.n})`, C.danger);
   if (zd) stat(s, 6.7, 1.3, 2.8, `${zd.confusion.reduce((a, r, i) => a + r[i], 0)} sur ${zd.n}`, "bonnes zones sur le téléphone", C.scen);
   s.addText(
-    "Ce que ça dit : en darija, l'IA en ligne a parfois effacé une alerte que le téléphone jugeait ambiguë. Les messages explicites, eux, sont arrêtés sur le téléphone avant tout réseau.",
+    "En darija, l'IA en ligne effaçait parfois une alerte que le téléphone jugeait ambiguë : depuis le 20 nov., un score assez haut garde l'alerte (seuil choisi sur la validation).",
     { x: 0.5, y: 3.1, w: 9, h: 0.6, fontFace: BODY, fontSize: 14, color: C.ink, margin: 0 },
   );
+  const c = M.sets.darija_claude;
+  if (c?.safety_device && c?.safety_pipeline) {
+    s.addText(
+      `Phrases darija écrites directement par Claude (une IA, sans autre modèle) : danger détecté ${caught(c.safety_device.all)} sur le téléphone, ${caught(c.safety_pipeline.all)} en ligne (n = ${c.n}).`,
+      { x: 0.5, y: 3.75, w: 9, h: 0.5, fontFace: BODY, fontSize: 13, color: C.ink, margin: 0 },
+    );
+  }
   s.addText(
     h?.n ? `Phrases écrites à la main par l'équipe : n = ${h.n} (voir Labo).` : "Prochaine étape : des phrases écrites à la main par l'équipe, mesurées de la même façon.",
-    { x: 0.5, y: 3.8, w: 9, h: 0.5, fontFace: BODY, fontSize: 13, italic: true, color: C.ink2, margin: 0 },
+    { x: 0.5, y: 4.3, w: 9, h: 0.4, fontFace: BODY, fontSize: 13, italic: true, color: C.ink2, margin: 0 },
   );
   foot(s, "Phrases darija synthétiques : écrites par une IA (qwen), filtrées par une IA, pas par de vrais utilisateurs. Petit n : à lire avec prudence.");
 }

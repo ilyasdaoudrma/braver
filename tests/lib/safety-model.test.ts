@@ -103,3 +103,49 @@ describe("sort engine with the trained model loaded", () => {
     expect(fetchImpl).not.toHaveBeenCalled();
   });
 });
+
+describe("option B: a high ambiguous score keeps the alert even if the LLM says no", () => {
+  const base = { tone: "doux" as const, forceLocal: false };
+  const line = "kan darb rassi bash n7iss";
+  const score = predictProba(model, line)[1];
+  // Thresholds placed around this line's score: in the band, and above `keep` (or below it).
+  const firmModel = { ...model.model, threshold: score / 2, keep: score * 0.9, high: Math.min(0.999, score * 1.2) };
+  const softModel = { ...model.model, threshold: score / 2, keep: Math.min(0.998, score * 1.1), high: Math.min(0.999, score * 1.2) };
+  const noDanger = (n: number) => ({
+    ok: true as const, model: "openai/gpt-oss-20b", ms: 900, fallbackFrom: [], corrections: [],
+    items: [{ n, zone: "action" as const, why: "x", prediction: null, question: null, step: "y", validation: null, control: null, danger: false, distress: false }],
+  });
+  const fetchNo = () => vi.fn<typeof fetch>().mockResolvedValue({ json: async () => noDanger(1) } as Response);
+
+  afterEach(() => setSafetyModelForTests(null));
+
+  it("the pipeline marks the line firm only above keep", () => {
+    expect(checkSafety(line, prepareModel(firmModel))).toMatchObject({ level: "check", firm: true });
+    expect(checkSafety(line, prepareModel(softModel))).toMatchObject({ level: "check", firm: false });
+  });
+
+  it("above keep: the LLM's 'no danger' does not clear the alert", async () => {
+    setSafetyModelForTests(firmModel);
+    const out = await runSort([line], { ...base, confirmedSafe: false }, [], () => undefined, fetchNo());
+    expect(out.alert?.source).toBe("device_firm");
+  });
+
+  it("below keep: the LLM decides (no alert)", async () => {
+    setSafetyModelForTests(softModel);
+    const out = await runSort([line], { ...base, confirmedSafe: false }, [], () => undefined, fetchNo());
+    expect(out.alert).toBeNull();
+  });
+
+  it("after 'On s'est mal compris' the LLM decides alone", async () => {
+    setSafetyModelForTests(firmModel);
+    const out = await runSort([line], { ...base, confirmedSafe: true }, [], () => undefined, fetchNo());
+    expect(out.alert).toBeNull();
+  });
+
+  it("the shipped model has keep between its two thresholds", () => {
+    const m = model.model;
+    expect(m.keep).toBeGreaterThanOrEqual(m.threshold);
+    expect(m.keep).toBeLessThanOrEqual(m.high);
+    expect(isSafetyModel({ ...m, keep: m.high + 0.1 })).toBe(false);
+  });
+});

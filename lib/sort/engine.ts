@@ -29,9 +29,11 @@ export interface SortCard extends SortResult {
   distress: boolean;
   /** Ambiguous wording ("me tuer"): waiting for the LLM; if it never answers, this becomes an alert. */
   checking: boolean;
+  /** Option B: ambiguous line with a high device score: the alert stays even if the LLM says "no danger". */
+  firm: boolean;
 }
 
-export type AlertSource = "keywords" | "llm" | "offline_doubt";
+export type AlertSource = "keywords" | "llm" | "offline_doubt" | "device_firm";
 
 export interface SortOutcome {
   /** Non-null → show the safety screen, no cards. */
@@ -65,6 +67,7 @@ function deviceCard(
   index: number,
   seen: number,
   level: SafetyLevel,
+  firm = false,
 ): SortCard {
   const { zone } = zoneOnDevice(text);
   return {
@@ -78,6 +81,7 @@ function deviceCard(
     ms: null,
     distress: level === "hopeless",
     checking: level === "check",
+    firm: level === "check" && firm,
   };
 }
 
@@ -88,10 +92,10 @@ export function sortOnDevice(
   history: readonly string[] = [],
 ): SortOutcome {
   const model = getSafetyModel();
-  const checks = lines.map((text) => ({
-    text,
-    level: checkSafety(text, model).level,
-  }));
+  const checks = lines.map((text) => {
+    const s = checkSafety(text, model);
+    return { text, level: s.level, firm: s.firm };
+  });
   const danger = checks.filter((c) => c.level === "danger");
   if (danger.length && !opts.confirmedSafe) {
     return {
@@ -111,6 +115,8 @@ export function sortOnDevice(
       i,
       seenCount(c.text, [...history, ...lines.slice(0, i)]),
       level,
+      // After "On s'est mal compris" the person told us it was a misunderstanding: the LLM decides alone.
+      c.firm && !opts.confirmedSafe,
     );
     // Offline or forced local after "On s'est mal compris", nothing can resolve that doubt: the card always
     // keeps the gentle check-in with the help button, so help stays one tap away.
@@ -136,6 +142,18 @@ export function mergeLLM(
   if (device.alert) return device;
   const byN = new Map<number, ApiSortItem>(res.items.map((it) => [it.n, it]));
   const flagged = device.cards.filter((c) => byN.get(c.index + 1)?.danger);
+  // Option B: a firm line keeps its alert even when the LLM answers "no danger" (or does not answer).
+  const firm = confirmedSafe ? [] : device.cards.filter((c) => c.firm && !byN.get(c.index + 1)?.danger);
+  if (firm.length) {
+    return {
+      ...device,
+      alert: { source: "device_firm", lines: [...flagged, ...firm].map((c) => c.text) },
+      cards: [],
+      engine: "llm",
+      model: res.model,
+      ms: clientMs,
+    };
+  }
   if (flagged.length) {
     return {
       ...device,

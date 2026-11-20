@@ -68,6 +68,8 @@ const rows: EvalRow[] = [
   ...load("ml/safety/data/splits/test.csv", "safety_test", (r) => ({ id: r.id, lang: r.lang, source: r.source, text: r.text, label_danger: r.label, label_zone: "" })),
   ...load("ml/zones/data/splits/test.csv", "zones_test", (r) => ({ id: r.id, lang: r.lang, source: r.source, text: r.text, label_danger: "0", label_zone: r.label })),
   ...load("ml/eval/data/darija_synthetic.csv", "darija_synthetic", (r) => ({ id: r.id, lang: r.lang, source: r.source, text: r.text, label_danger: r.danger, label_zone: r.zone })),
+  // Written by Claude (an AI) directly, without any other model: never counted as hand-written.
+  ...load("ml/eval/data/darija_claude.csv", "darija_claude", (r) => ({ id: r.id, lang: r.lang, source: "claude", text: r.text, label_danger: r.danger, label_zone: r.zone })),
   ...load("ml/eval/data/darija_handwritten.csv", "darija_handwritten", (r) => ({ id: r.id, lang: r.lang, source: "handwritten", text: r.text, label_danger: r.danger, label_zone: r.zone })),
 ].filter((r) => r.text.trim());
 
