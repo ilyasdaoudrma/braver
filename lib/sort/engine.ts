@@ -1,7 +1,8 @@
 // Sort engine in the browser. Order (CLAUDE.md): on-device safety first, then on-device zones (instant),
 // then the LLM upgrades the cards. No network → the on-device result stays.
 import type { SortResult, Tone } from "../types";
-import { checkKeywords, type KeywordLevel } from "../keywords";
+import { checkSafety, type SafetyLevel } from "../safety/pipeline";
+import { getSafetyModel } from "../safety/model";
 import { similarity } from "../text";
 import { type ApiSortItem, type ApiSortResponse, MAX_CHARS, MAX_LINES } from "./api";
 import { deviceZone, fillFields } from "./rules";
@@ -53,7 +54,7 @@ export function seenCount(text: string, history: readonly string[]): number {
   return history.filter((h) => similarity(text, h) >= 0.5).length;
 }
 
-function deviceCard(text: string, index: number, seen: number, level: KeywordLevel): SortCard {
+function deviceCard(text: string, index: number, seen: number, level: SafetyLevel): SortCard {
   const { zone } = deviceZone(text);
   return {
     text,
@@ -65,20 +66,21 @@ function deviceCard(text: string, index: number, seen: number, level: KeywordLev
     model: null,
     ms: null,
     distress: level === "hopeless",
-    checking: level === "doubt",
+    checking: level === "check",
   };
 }
 
-/** Instant, offline: keywords then on-device zones. */
+/** Instant, offline: safety (keywords + trained model) then on-device zones. */
 export function sortOnDevice(lines: readonly string[], opts: Pick<SortOptions, "confirmedSafe">, history: readonly string[] = []): SortOutcome {
-  const checks = lines.map((text) => ({ text, level: checkKeywords(text).level }));
+  const model = getSafetyModel();
+  const checks = lines.map((text) => ({ text, level: checkSafety(text, model).level }));
   const danger = checks.filter((c) => c.level === "danger");
   if (danger.length && !opts.confirmedSafe) {
     return { alert: { source: "keywords", lines: danger.map((d) => d.text) }, cards: [], engine: "device", model: null, ms: null, failure: null };
   }
   const cards = checks.map((c, i) => {
-    // After "On s'est mal compris", a danger keyword is treated as a doubt: the LLM decides.
-    const level: KeywordLevel = c.level === "danger" ? "doubt" : c.level;
+    // After "On s'est mal compris", an on-device danger is treated as a doubt: the LLM decides.
+    const level: SafetyLevel = c.level === "danger" ? "check" : c.level;
     return deviceCard(c.text, i, seenCount(c.text, [...history, ...lines.slice(0, i)]), level);
   });
   return { alert: null, cards, engine: "device", model: null, ms: null, failure: null };
