@@ -138,7 +138,7 @@ function stat(s, x, y, w, value, label, color) {
   if (pipe) stat(s, 3.6, 1.3, 2.9, caught(pipe), `détectées avec l'IA en ligne\n(échantillon, n = ${pipe.n})`, C.danger);
   if (zd) stat(s, 6.7, 1.3, 2.8, `${zd.confusion.reduce((a, r, i) => a + r[i], 0)} sur ${zd.n}`, "bonnes zones sur le téléphone", C.scen);
   s.addText(
-    "En darija, l'IA en ligne effaçait parfois une alerte que le téléphone jugeait ambiguë : depuis le 20 nov., un score assez haut garde l'alerte (seuil choisi sur la validation).",
+    "En darija, l'IA en ligne effaçait parfois une alerte que le téléphone jugeait ambiguë : depuis le 20 nov., un score assez haut garde l'alerte (seuil choisi sur la validation, où 60 % de ces alertes gardées étaient justes).",
     { x: 0.5, y: 3.1, w: 9, h: 0.6, fontFace: BODY, fontSize: 14, color: C.ink, margin: 0 },
   );
   const c = M.sets.darija_claude;
