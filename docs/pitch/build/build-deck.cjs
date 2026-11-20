@@ -13,6 +13,7 @@ const read = (p) => JSON.parse(fs.readFileSync(path.join(ROOT, p), "utf-8"));
 const exists = (p) => fs.existsSync(path.join(ROOT, p));
 const M = read("public/labo/metrics.json");
 const AG = exists("ml/zones/results/agreement.json") ? read("ml/zones/results/agreement.json") : null;
+const HC = exists("ml/zones/results/human_check.json") ? read("ml/zones/results/human_check.json") : null;
 const latFile = fs.readdirSync(path.join(ROOT, "docs/measurements")).filter((f) => f.startsWith("sort-latency")).sort().pop();
 const LAT = latFile ? read(`docs/measurements/${latFile}`) : null;
 const CHARTS = `ml/eval/results/${M.date}`;
@@ -120,8 +121,10 @@ function stat(s, x, y, w, value, label, color) {
   if (pipe) stat(s, 0.5, 2.9, 3.6, pct(pipe.accuracy), `bonne zone par l'IA en ligne (gpt-oss-20b)\nmacro-F1 ${dec(pipe.macro_f1)} · sous-échantillon n = ${pipe.n}`, C.scen);
   const img = `${CHARTS}/zones_device_confusion.png`;
   if (exists(img)) s.addImage({ path: path.join(ROOT, img), x: 4.4, y: 1.15, w: 4.4, h: 3.77 });
-  const ag = AG ? `Étiquettes de tout le jeu (${AG.n_groups} inquiétudes) par deux IA : accord ${pct(AG.agreement_qwen_safeguard)}, kappa ${dec(AG.cohen_kappa_qwen_safeguard)}. Phrases synthétiques ; aucune vérification humaine pour l'instant.` : "";
-  foot(s, ag);
+  const ag = AG ? `Étiquettes de tout le jeu (${AG.n_groups} inquiétudes) par deux IA : accord ${pct(AG.agreement_qwen_safeguard)}, kappa ${dec(AG.cohen_kappa_qwen_safeguard)}. Phrases synthétiques.` : "";
+  const hq = HC?.qwen;
+  const hc = hq ? ` Vérifié par une personne sur ${hq.n} au hasard (étiquettes IA visibles) : ${hq.agree} sur ${hq.n} d'accord, kappa ${dec(hq.kappa)}${HC.disagreements_in_test === 0 ? ", aucun désaccord dans le test" : ""}.` : " Aucune vérification humaine pour l'instant.";
+  foot(s, ag + hc);
 }
 
 // 6 — Darija synthetic set (small n: counts, not percentages)

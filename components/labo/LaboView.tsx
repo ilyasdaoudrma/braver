@@ -30,7 +30,16 @@ export interface LaboMetrics {
   date: string;
   sets: Record<string, SetEntry>;
   latency?: { requests: number; client_ms_p50: number; client_ms_p90: number; answered_by: Record<string, number> };
-  models?: Record<string, { model: string; train_n: number; val_n: number; test?: { n: number } }>;
+  models?: Record<
+    string,
+    {
+      model: string;
+      train_n: number;
+      val_n: number;
+      test?: { n: number };
+      human_check?: { blind: boolean; qwen: { n: number; agree: number; kappa: number | null }; disagreements_in_test: number };
+    }
+  >;
 }
 
 const ZONES = ["scenario", "action", "acceptation"];
@@ -180,6 +189,14 @@ export function LaboView({ metrics }: { metrics: LaboMetrics | null }) {
                 Les phrases en français et en darija du jeu de test sont traduites ou générées par une IA (marquées « synthétique »), pas écrites par de vrais
                 utilisateurs. Détails : ml/safety/DATA_CARD.md et ml/zones/DATA_CARD.md.
               </p>
+              {metrics.models.zones?.human_check && (
+                <p className="text-ink-2">
+                  Zones vérifiées par une personne sur {metrics.models.zones.human_check.qwen.n} inquiétudes tirées au hasard :{" "}
+                  {metrics.models.zones.human_check.qwen.agree} sur {metrics.models.zones.human_check.qwen.n} d&apos;accord avec l&apos;étiquette de l&apos;IA (kappa{" "}
+                  {f(metrics.models.zones.human_check.qwen.kappa)}){metrics.models.zones.human_check.blind ? "" : ", étiquettes de l'IA visibles pendant la vérification"}.{" "}
+                  {metrics.models.zones.human_check.disagreements_in_test === 0 ? "Aucun désaccord dans le jeu de test." : `${metrics.models.zones.human_check.disagreements_in_test} désaccord(s) dans le jeu de test.`}
+                </p>
+              )}
             </article>
           )}
         </>

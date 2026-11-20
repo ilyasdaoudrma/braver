@@ -2152,6 +2152,16 @@
       ]
      }
     }
+   },
+   "human_check": {
+    "blind": false,
+    "qwen": {
+     "n": 100,
+     "agree": 92,
+     "agreement": 0.92,
+     "kappa": 0.8744310155391618
+    },
+    "disagreements_in_test": 0
    }
   }
  }
