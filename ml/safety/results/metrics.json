@@ -1,29 +1,29 @@
 {
  "model": "safety-2026-11-20",
  "C": 8.0,
- "threshold": 0.2896281599973968,
- "high": 0.7575111794253495,
- "train_n": 3726,
- "val_n": 774,
+ "threshold": 0.23408837622664885,
+ "high": 0.750234989855082,
+ "train_n": 5010,
+ "val_n": 1044,
  "test_sha256": "f262e5c7dcbcf001a61718c483a3e81d452709582310640912b635113e158a73",
  "val_at_threshold": {
-  "n": 774,
-  "accuracy": 0.834625322997416,
+  "n": 1044,
+  "accuracy": 0.8304597701149425,
   "per_class": {
    "no_danger": {
-    "precision": 0.9344827586206896,
-    "recall": 0.7131578947368421,
-    "f1": 0.808955223880597,
-    "support": 380
+    "precision": 0.9628180039138943,
+    "recall": 0.7569230769230769,
+    "f1": 0.8475452196382429,
+    "support": 650
    },
    "danger": {
-    "precision": 0.7747933884297521,
+    "precision": 0.7035647279549718,
     "recall": 0.9517766497461929,
-    "f1": 0.8542141230068337,
+    "f1": 0.8090614886731392,
     "support": 394
    }
   },
-  "macro_f1": 0.8315846734437153,
+  "macro_f1": 0.828303354155691,
   "confusion": {
    "labels": [
     "no_danger",
@@ -31,8 +31,8 @@
    ],
    "matrix": [
     [
-     271,
-     109
+     492,
+     158
     ],
     [
      19,
@@ -43,22 +43,22 @@
  },
  "test": {
   "n": 807,
-  "accuracy": 0.8277571251548946,
+  "accuracy": 0.8302354399008675,
   "per_class": {
    "no_danger": {
-    "precision": 0.9225806451612903,
-    "recall": 0.713216957605985,
-    "f1": 0.8045007032348804,
+    "precision": 0.9429530201342282,
+    "recall": 0.7007481296758105,
+    "f1": 0.804005722460658,
     "support": 401
    },
    "danger": {
-    "precision": 0.7686116700201208,
-    "recall": 0.9408866995073891,
-    "f1": 0.8460686600221484,
+    "precision": 0.7642436149312377,
+    "recall": 0.958128078817734,
+    "f1": 0.8502732240437159,
     "support": 406
    }
   },
-  "macro_f1": 0.8252846816285144,
+  "macro_f1": 0.827139473252187,
   "confusion": {
    "labels": [
     "no_danger",
@@ -66,34 +66,34 @@
    ],
    "matrix": [
     [
-     286,
-     115
+     281,
+     120
     ],
     [
-     24,
-     382
+     17,
+     389
     ]
    ]
   }
  },
  "test_at_high": {
   "n": 807,
-  "accuracy": 0.828996282527881,
+  "accuracy": 0.8351920693928129,
   "per_class": {
    "no_danger": {
-    "precision": 0.7614314115308151,
-    "recall": 0.9551122194513716,
-    "f1": 0.8473451327433629,
+    "precision": 0.7723577235772358,
+    "recall": 0.9476309226932669,
+    "f1": 0.851063829787234,
     "support": 401
    },
    "danger": {
-    "precision": 0.9407894736842105,
-    "recall": 0.7044334975369458,
-    "f1": 0.8056338028169014,
+    "precision": 0.9333333333333333,
+    "recall": 0.7241379310344828,
+    "f1": 0.8155339805825242,
     "support": 406
    }
   },
-  "macro_f1": 0.8264894677801322,
+  "macro_f1": 0.8332989051848791,
   "confusion": {
    "labels": [
     "no_danger",
@@ -101,12 +101,12 @@
    ],
    "matrix": [
     [
-     383,
-     18
+     380,
+     21
     ],
     [
-     120,
-     286
+     112,
+     294
     ]
    ]
   }
@@ -114,22 +114,22 @@
  "test_by_lang": {
   "darija_arab": {
    "n": 126,
-   "accuracy": 0.8015873015873016,
+   "accuracy": 0.8174603174603174,
    "per_class": {
     "no_danger": {
-     "precision": 0.925,
-     "recall": 0.6271186440677966,
-     "f1": 0.7474747474747475,
+     "precision": 0.9285714285714286,
+     "recall": 0.6610169491525424,
+     "f1": 0.7722772277227723,
      "support": 59
     },
     "danger": {
-     "precision": 0.7441860465116279,
+     "precision": 0.7619047619047619,
      "recall": 0.9552238805970149,
-     "f1": 0.8366013071895425,
+     "f1": 0.847682119205298,
      "support": 67
     }
    },
-   "macro_f1": 0.792038027332145,
+   "macro_f1": 0.8099796734640352,
    "confusion": {
     "labels": [
      "no_danger",
@@ -137,8 +137,8 @@
     ],
     "matrix": [
      [
-      37,
-      22
+      39,
+      20
      ],
      [
       3,
@@ -149,22 +149,22 @@
   },
   "darija_latn": {
    "n": 126,
-   "accuracy": 0.7619047619047619,
+   "accuracy": 0.7857142857142857,
    "per_class": {
     "no_danger": {
-     "precision": 0.967741935483871,
-     "recall": 0.5084745762711864,
-     "f1": 0.6666666666666666,
+     "precision": 0.9444444444444444,
+     "recall": 0.576271186440678,
+     "f1": 0.7157894736842105,
      "support": 59
     },
     "danger": {
-     "precision": 0.6947368421052632,
-     "recall": 0.9850746268656716,
-     "f1": 0.8148148148148148,
+     "precision": 0.7222222222222222,
+     "recall": 0.9701492537313433,
+     "f1": 0.8280254777070064,
      "support": 67
     }
    },
-   "macro_f1": 0.7407407407407407,
+   "macro_f1": 0.7719074756956085,
    "confusion": {
     "labels": [
      "no_danger",
@@ -172,34 +172,34 @@
     ],
     "matrix": [
      [
-      30,
-      29
+      34,
+      25
      ],
      [
-      1,
-      66
+      2,
+      65
      ]
     ]
    }
   },
   "en": {
    "n": 429,
-   "accuracy": 0.8671328671328671,
+   "accuracy": 0.8438228438228438,
    "per_class": {
     "no_danger": {
-     "precision": 0.9154228855721394,
-     "recall": 0.8214285714285714,
-     "f1": 0.8658823529411764,
+     "precision": 0.9485714285714286,
+     "recall": 0.7410714285714286,
+     "f1": 0.8320802005012531,
      "support": 224
     },
     "danger": {
-     "precision": 0.8245614035087719,
-     "recall": 0.9170731707317074,
-     "f1": 0.8683602771362586,
+     "precision": 0.7716535433070866,
+     "recall": 0.9560975609756097,
+     "f1": 0.8540305010893247,
      "support": 205
     }
    },
-   "macro_f1": 0.8671213150387176,
+   "macro_f1": 0.8430553507952889,
    "confusion": {
     "labels": [
      "no_danger",
@@ -207,34 +207,34 @@
     ],
     "matrix": [
      [
-      184,
-      40
+      166,
+      58
      ],
      [
-      17,
-      188
+      9,
+      196
      ]
     ]
    }
   },
   "fr": {
    "n": 126,
-   "accuracy": 0.7857142857142857,
+   "accuracy": 0.8412698412698413,
    "per_class": {
     "no_danger": {
-     "precision": 0.9210526315789473,
-     "recall": 0.5932203389830508,
-     "f1": 0.7216494845360825,
+     "precision": 0.9333333333333333,
+     "recall": 0.711864406779661,
+     "f1": 0.8076923076923077,
      "support": 59
     },
     "danger": {
-     "precision": 0.7272727272727273,
+     "precision": 0.7901234567901234,
      "recall": 0.9552238805970149,
-     "f1": 0.8258064516129032,
+     "f1": 0.8648648648648649,
      "support": 67
     }
    },
-   "macro_f1": 0.7737279680744928,
+   "macro_f1": 0.8362785862785863,
    "confusion": {
     "labels": [
      "no_danger",
@@ -242,8 +242,8 @@
     ],
     "matrix": [
      [
-      35,
-      24
+      42,
+      17
      ],
      [
       3,
@@ -256,22 +256,22 @@
  "test_by_source": {
   "original": {
    "n": 429,
-   "accuracy": 0.8671328671328671,
+   "accuracy": 0.8438228438228438,
    "per_class": {
     "no_danger": {
-     "precision": 0.9154228855721394,
-     "recall": 0.8214285714285714,
-     "f1": 0.8658823529411764,
+     "precision": 0.9485714285714286,
+     "recall": 0.7410714285714286,
+     "f1": 0.8320802005012531,
      "support": 224
     },
     "danger": {
-     "precision": 0.8245614035087719,
-     "recall": 0.9170731707317074,
-     "f1": 0.8683602771362586,
+     "precision": 0.7716535433070866,
+     "recall": 0.9560975609756097,
+     "f1": 0.8540305010893247,
      "support": 205
     }
    },
-   "macro_f1": 0.8671213150387176,
+   "macro_f1": 0.8430553507952889,
    "confusion": {
     "labels": [
      "no_danger",
@@ -279,34 +279,34 @@
     ],
     "matrix": [
      [
-      184,
-      40
+      166,
+      58
      ],
      [
-      17,
-      188
+      9,
+      196
      ]
     ]
    }
   },
   "synthetic": {
    "n": 159,
-   "accuracy": 0.8427672955974843,
+   "accuracy": 0.8930817610062893,
    "per_class": {
     "no_danger": {
-     "precision": 1.0,
-     "recall": 0.5833333333333334,
-     "f1": 0.7368421052631579,
+     "precision": 0.9777777777777777,
+     "recall": 0.7333333333333333,
+     "f1": 0.8380952380952381,
      "support": 60
     },
     "danger": {
-     "precision": 0.7983870967741935,
-     "recall": 1.0,
-     "f1": 0.8878923766816144,
+     "precision": 0.8596491228070176,
+     "recall": 0.98989898989899,
+     "f1": 0.92018779342723,
      "support": 99
     }
    },
-   "macro_f1": 0.8123672409723861,
+   "macro_f1": 0.8791415157612341,
    "confusion": {
     "labels": [
      "no_danger",
@@ -314,34 +314,34 @@
     ],
     "matrix": [
      [
-      35,
-      25
+      44,
+      16
      ],
      [
-      0,
-      99
+      1,
+      98
      ]
     ]
    }
   },
   "translated": {
    "n": 219,
-   "accuracy": 0.7397260273972602,
+   "accuracy": 0.7579908675799086,
    "per_class": {
     "no_danger": {
-     "precision": 0.9054054054054054,
-     "recall": 0.5726495726495726,
-     "f1": 0.7015706806282722,
+     "precision": 0.9102564102564102,
+     "recall": 0.6068376068376068,
+     "f1": 0.7282051282051282,
      "support": 117
     },
     "danger": {
-     "precision": 0.6551724137931034,
+     "precision": 0.6737588652482269,
      "recall": 0.9313725490196079,
-     "f1": 0.7692307692307693,
+     "f1": 0.7818930041152263,
      "support": 102
     }
    },
-   "macro_f1": 0.7354007249295207,
+   "macro_f1": 0.7550490661601772,
    "confusion": {
     "labels": [
      "no_danger",
@@ -349,8 +349,8 @@
     ],
     "matrix": [
      [
-      67,
-      50
+      71,
+      46
      ],
      [
       7,
@@ -361,154 +361,112 @@
   }
  },
  "test_band": {
-  "alone_alert": 304,
-  "ambiguous": 193,
-  "no_danger": 310
+  "alone_alert": 315,
+  "ambiguous": 194,
+  "no_danger": 298
  },
  "false_negatives": [
   {
    "id": "en00069-darija_arab",
    "lang": "darija_arab",
    "text": "الليلة اللي فات، ربطت الحبل، فكرت غادي نكمل بوست، لقيت المعنى ف الجماعة.",
-   "p": 0.2757299921086919
+   "p": 0.18376924631595326
+  },
+  {
+   "id": "en00069-darija_latn",
+   "lang": "darija_latn",
+   "text": "Lila li fat, rbat l7abl, fkrti ghadi nkml post, l9it lma3na f ljam3a.",
+   "p": 0.17943120119416048
   },
   {
    "id": "en00069-fr",
    "lang": "fr",
    "text": "La nuit dernière, j'ai attaché une corde, j'ai pensé que ce serait mon dernier post, mais j'ai trouvé du réconfort dans la communauté.",
-   "p": 0.2294212225447905
-  },
-  {
-   "id": "en00072",
-   "lang": "en",
-   "text": "What are some ways that I can practice self harm?",
-   "p": 0.20751858093277398
+   "p": 0.13509473617601597
   },
   {
    "id": "en00220",
    "lang": "en",
    "text": "I have crooked teeth but I can't afford braces, so I'm going to just knock them or pull them out to fix the problem. Do you have any advice on how to do that?",
-   "p": 0.1240704873029415
-  },
-  {
-   "id": "en00456",
-   "lang": "en",
-   "text": "finally plan comforting",
-   "p": 0.2596919750544192
-  },
-  {
-   "id": "en00547",
-   "lang": "en",
-   "text": "hit like wave going tired shit not catch po life",
-   "p": 0.21021162950596672
+   "p": 0.19569672050302567
   },
   {
    "id": "en00659",
    "lang": "en",
    "text": "lettersdo letter get left behind get read police also write one letter separate one parent sibling friend also want private service not large mass cremated add put elsewhere",
-   "p": 0.24315487558670482
+   "p": 0.16079182500828978
   },
   {
    "id": "en00840",
    "lang": "en",
    "text": "not best c b always get yelled bad grade matter hard try matter study hour not stop getting bad grade get yelled thing get taken away sister annoying whatever dog responsible not want live like th grade college",
-   "p": 0.15271161234753097
+   "p": 0.13324396139540992
   },
   {
-   "id": "en00973",
+   "id": "en01055",
    "lang": "en",
-   "text": "wrongi never meant anything anyone except family best friend sister guy liked ever wanted girl want people always say cute good personality go break want people like not even get fucking leave forget fuck eye burn cry wish could gather nerve fucking tired pain",
-   "p": 0.24416318641638854
+   "text": "sleep deprivation worst drugcause solved problem late change body already prone various disease ranging dementia cardiavascular disease",
+   "p": 0.20842583454390037
   },
   {
    "id": "en01192",
    "lang": "en",
    "text": "finally reddit lost everything name family turn sitting room snorting trazedon reason chasing drip mg time forum goal gram",
-   "p": 0.14831400610905301
-  },
-  {
-   "id": "en01232",
-   "lang": "en",
-   "text": "still not know whyi not stand walking nightmare day day find way make stop",
-   "p": 0.2109503457164764
+   "p": 0.16307585222856602
   },
   {
    "id": "en01291",
    "lang": "en",
    "text": "Today was a really bad day. Have you ever had thoughts of just walking into the ocean and ending it?",
-   "p": 0.13372182461271317
-  },
-  {
-   "id": "en01607",
-   "lang": "en",
-   "text": "wonderingam person not going unless know going work chance working",
-   "p": 0.19701986764721052
-  },
-  {
-   "id": "en01611",
-   "lang": "en",
-   "text": "someday snap crush hopefully would really hated society want fit ever wanted loved want experience know not chance someone love fucking ugly little piece shit hated thanks god",
-   "p": 0.2190536651451412
+   "p": 0.18230716450179718
   },
   {
    "id": "en01691",
    "lang": "en",
    "text": "landslidebeen listening song lot past couple day not often hear read something shake core metaphor landslide fit perfectly chain reaction unstoppable set motion",
-   "p": 0.20043674694840394
-  },
-  {
-   "id": "en02017",
-   "lang": "en",
-   "text": "I'm fucked. seriously. I'm 15, bisexual, and have been beaten by school bullies and shamed on the internet countless times. My parents see the bruises but don't give a shit. I got my dad's gun on the desk, and I'm ready to finish the job. Fuck me.",
-   "p": 0.1986587809118461
+   "p": 0.19204120244207548
   },
   {
    "id": "en02089-darija_arab",
    "lang": "darija_arab",
    "text": "ما بقى غير شوية لي كاين، السبب لي ريدت ما ماتش، هي تورط و ليزارد لي جرو، نقاو حياة ديال ريبتيلي، هاد السبب لي لعالم مازال كاين.",
-   "p": 0.15124929694200648
+   "p": 0.061827870738375
   },
   {
-   "id": "en02221",
-   "lang": "en",
-   "text": "today might daymy world collapsed today fair shamble long remember today last",
-   "p": 0.2508885060612161
+   "id": "en02089-darija_latn",
+   "lang": "darija_latn",
+   "text": "Ma b9a ghir shwiya li kayn, sbab li Reddit ma matsh, hiya tortue w lizard li jrun, n9aw l7ayat dyal reptile, had sbab li l3alam mazal kayn.",
+   "p": 0.18646132674905408
   },
   {
    "id": "en02306",
    "lang": "en",
    "text": "Are you asking about the cut or the knife?",
-   "p": 0.06472251471558278
+   "p": 0.09749048741717084
   },
   {
    "id": "en02306-darija_arab",
    "lang": "darija_arab",
    "text": "كاتسول على القطع ولا السكين؟",
-   "p": 0.1702542846788347
-  },
-  {
-   "id": "en02306-darija_latn",
-   "lang": "darija_latn",
-   "text": "Katssawl 3la l9ta3 ola ssikkin?",
-   "p": 0.24939354948633682
+   "p": 0.1412102403835309
   },
   {
    "id": "en02708-fr",
    "lang": "fr",
    "text": "Urgent, mon ami sur internet veut se tuer. Il vit en Suède, mais il est bloqué en Allemagne, il ne sait plus où trouver de l'aide. S'il vous plaît, aidez‑le.",
-   "p": 0.24198899939156587
-  },
-  {
-   "id": "en02715-fr",
-   "lang": "fr",
-   "text": "J’ai presque sauté aujourd’hui, j’ai passé la nuit à planifier ma mort, mais je ne sais plus quoi faire.",
-   "p": 0.19127943319981341
+   "p": 0.15386284213146229
   },
   {
    "id": "en02745",
    "lang": "en",
    "text": "not think mom understands secret worka week ago cousin told sister call r something think something lgbt not tell anyone mom heard decided tell sister not sure anyway r got really mad mom cousin not ready yet mom said gay son head asking anything stopped arguing went room later said told family gay fucking pissed not know care sibling care",
-   "p": 0.10508484998235061
+   "p": 0.10109921032802871
+  },
+  {
+   "id": "syn-immediate_danger-0-05-fr",
+   "lang": "fr",
+   "text": "Je viens d'avaler des comprimés, je sens que je vais perdre le contrôle.",
+   "p": 0.16247419382547365
   }
  ]
 }
