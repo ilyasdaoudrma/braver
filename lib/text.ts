@@ -50,3 +50,27 @@ export function prep(patterns: readonly string[]): string[] {
 export function isArabic(s: unknown): boolean {
   return /[؀-ۿ]/.test(String(s ?? ""));
 }
+
+const STOP = new Set(
+  "je j me m te t tu il elle on nous vous ils elles le la les l un une des de du d a au aux et ou mais si que qu qui ce c ca cest est suis es sont va vais vont pas ne n plus mon ma mes ton ta tes son sa ses pour par sur dans avec en y deja encore trop tres fois ana nta nti dyal f fi mn w o ou ghadi ma chi".split(
+    " ",
+  ),
+);
+
+/** Content words of a text (normalised, no stop words, > 2 letters). */
+export function tokens(text: string): string[] {
+  return normalize(text)
+    .trim()
+    .split(" ")
+    .filter((w) => w.length > 2 && !STOP.has(w));
+}
+
+/** Jaccard similarity of the content words of two texts, 0–1. */
+export function similarity(a: string, b: string): number {
+  const A = new Set(tokens(a));
+  const B = new Set(tokens(b));
+  if (!A.size || !B.size) return 0;
+  let inter = 0;
+  for (const w of A) if (B.has(w)) inter++;
+  return inter / (A.size + B.size - inter);
+}

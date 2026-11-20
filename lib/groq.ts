@@ -22,6 +22,8 @@ export interface GroqJSONOptions<T> {
   timeoutMs?: number;
   maxTokens?: number;
   reasoningEffort?: ReasoningEffort;
+  /** Lower = more stable answers between runs. Default 0.2. */
+  temperature?: number;
   /** For tests. */
   fetchImpl?: typeof fetch;
   apiKey?: string;
@@ -111,6 +113,7 @@ async function tryModel<T>(model: string, opts: GroqJSONOptions<T>, key: string,
           response_format: { type: "json_schema", json_schema: { name: opts.name ?? "answer", strict: true, schema: jsonSchema } },
           reasoning_effort: opts.reasoningEffort ?? "low",
           include_reasoning: false,
+          temperature: opts.temperature ?? 0.2,
           max_completion_tokens: opts.maxTokens ?? 1_200,
         }),
       });
