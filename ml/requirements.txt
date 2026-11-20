@@ -1,0 +1,9 @@
+# Python 3.11+ (venv: ml/.venv, created with Python 3.12.9)
+pandas==3.1.1
+numpy==2.5.5
+scikit-learn==1.9.1
+datasets==5.2.0
+huggingface_hub==2.4.0
+matplotlib==3.11.2
+pytest==9.2.0
+requests==2.34.2

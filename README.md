@@ -1,79 +1,56 @@
 # BRAVER — Not fearless. Just braver.
 
-Application de prévention pour les jeunes : on vide sa tête (français, darija en lettres latines ou arabes, ou à la voix), l'IA range chaque inquiétude en **Scénario / Action / Acceptation**, et la sécurité passe avant tout.
+Application de prévention pour les jeunes au Maroc : on écrit ce qui inquiète (français, darija en lettres latines ou arabes), l'IA range chaque inquiétude en **Scénario / Action / Acceptation**, et la sécurité passe avant tout.
 
-## Ce qui est dans l'app
+> Reconstruction en cours (hackathon d'Oujda, 22 novembre 2026). Règles : [CLAUDE.md](CLAUDE.md) · plan : [docs/ROADMAP.md](docs/ROADMAP.md) · défauts du prototype : [docs/REVIEW.md](docs/REVIEW.md) · Groq : [docs/GROQ.md](docs/GROQ.md).
+> Le premier prototype (HTML/JS + Gemini) est gardé tel quel dans [`legacy/`](legacy/) comme référence.
 
-| Écran | Ce qu'il fait |
-|---|---|
-| **Vide ta tête** | Une inquiétude par ligne, dictée vocale (français / darija), bouton « Charger l'exemple » (Yassine). |
-| **Le tri** | Cartes dans 3 zones, avec le « pourquoi ». Déplacement d'un clic ou par glisser-déposer. Mode **Doux / Direct** (ironie seulement sur les scénarios, bloquée sur les sujets sensibles). |
-| Carte Scénario | Prédiction + question pour vérifier + certitude (%) → « Noter ma prédiction » (Replay). |
-| Carte Action | Une étape de moins de 15 min, curseur de peur 0–10, minuteur 10 min, « C'est fait ». |
-| Carte Acceptation | Validation + ce qui reste sous contrôle + exercice en 3 temps (reconnaître, respirer, revenir). |
-| **Mon Replay** | Prédictions à vérifier, comparaison avant / après, **score de calibration** (« sûr à 90 % → le pire est arrivé 1 fois sur 8 »), petites étapes faites. |
-| **Besoin d'aide maintenant** | Écran de sécurité : message prêt (SMS / WhatsApp / copie), numéros d'urgence, bouton « On s'est mal compris ». |
-| Plus → **Résumé pour un professionnel** | Une page imprimable, avec accord, calculée sur le téléphone (option : reformulée par l'IA). |
-| Plus → **Labo** | Mesure du moteur sur les 21 phrases du dossier, sur **24 phrases écrites à l'aveugle**, ou sur vos propres phrases (`phrase | zone`). Bouton « Copier le résultat pour le pitch ». |
+## Stack
 
-Sécurité à deux niveaux : un **filtre local** (mots-clés FR / darija / arabe + variantes 3-7-9) tourne avant tout appel réseau ; les expressions ambiguës (« ce partiel va me tuer ») sont tranchées par l'IA, ou déclenchent l'alerte si l'IA est indisponible. Si l'IA ne répond pas, des **règles locales** prennent le relais : la démo ne plante jamais.
-
-Données : pas de compte, pas de base de données. Le journal reste dans le navigateur (localStorage avec accord, sinon session seulement) et s'efface d'un bouton.
+- Next.js 16 (App Router) + TypeScript + Tailwind v4, déployé sur Vercel.
+- LLM : Groq `openai/gpt-oss-20b`, repli `openai/gpt-oss-120b`, puis les modèles entraînés qui tournent sur le téléphone.
+- ML : Python (`ml/`, pandas + scikit-learn), inférence dans le navigateur à partir de poids JSON.
+- Données sur le téléphone seulement (localStorage avec accord, sinon sessionStorage). Pas de compte.
 
 ## Lancer en local
 
 ```bash
 npm install
+cp .env.example .env.local   # puis coller GROQ_API_KEY (https://console.groq.com/keys)
+npm run dev                  # http://localhost:3000
 ```
 
-Créer un fichier `.env.local` (voir `.env.example`) avec **une** des deux clés :
-
-```
-GEMINI_API_KEY=...          # gratuit, sans carte : https://aistudio.google.com/apikey
-ANTHROPIC_API_KEY=sk-ant-...  # Claude (payant), prioritaire si présent
-```
+Vérifications avant chaque push :
 
 ```bash
-npm run dev
+npm run lint && npm run typecheck && npm test && npm run build
 ```
 
-Ouvrir http://localhost:3000. Sans clé, tout marche en règles locales (le bas de page l'indique).
-
-## Mettre en ligne sur Vercel
+ML (Python 3.11+) :
 
 ```bash
-npx vercel
+py -3.12 -m venv ml/.venv          # Windows ; ailleurs : python3 -m venv ml/.venv
+ml/.venv/Scripts/python -m pip install -r ml/requirements.txt
+ml/.venv/Scripts/python -m pytest ml
 ```
 
-Puis, dans le tableau de bord Vercel du projet : **Settings → Environment Variables** → ajouter `GEMINI_API_KEY` (ou `ANTHROPIC_API_KEY`). Redéployer :
-
-```bash
-npx vercel --prod
-```
-
-Variables optionnelles : `GEMINI_MODEL` (par défaut : `gemini-3.5-flash`, puis `gemini-3.5-flash-lite` et `gemini-flash-lite-latest` si le premier est saturé — `gemini-3.8-flash` et `gemini-3.7-flash` étaient saturés ou trop lents sur l'offre gratuite le 19/11/2026), `BRAVER_MODEL` (Claude, par défaut `claude-opus-5-5`) et `BRAVER_EFFORT` (par défaut `low`).
-Avec l'offre gratuite de Google, les textes envoyés peuvent servir à améliorer leurs produits : n'utiliser que des phrases de test. L'offre gratuite limite aussi le nombre de requêtes par minute (le Labo espace ses appels).
-En ligne : https://braver-app.vercel.app
-
-## Le jour J
-
-1. Ouvrir l'app, vérifier en bas : « Moteur : IA · gemini-… » (point vert).
-2. **Labo** → « 24 phrases écrites à l'aveugle » → moteur **IA** → « Lancer le test » (≈ 6 min) → « Copier le résultat pour le pitch ». Mesure du 19/11/2026 (Gemini 3.5 Flash) : 18/19 bons tris, 5/5 dangers, 0 fausse alerte. Les 24 phrases ont été écrites par une IA séparée qui n'avait vu ni les règles ni la liste du dossier.
-3. Plan B réseau : cocher « Passer en règles locales » en bas de page.
-
-Liens utiles pour la démo et les captures (données de démo, sans réseau) :
-`/?shot=tri&mode=direct` · `/?shot=replay` · `/?shot=aide` · `/?shot=resume` · `/?shot=labo&set=aveugle`
-
-## Structure
+## Où mettre quoi
 
 ```
-index.html, css/, js/          interface (sans build)
-js/engine.js                   filtre de sécurité, appel IA, règles locales, garde-fous
-js/data.js                     exemple, numéros, mots-clés, phrases de test
-api/sort.js, replay.js, summary.js, health.js   fonctions serveur (Vercel)
-api/_prompts.js                instructions du modèle (tri, Replay, résumé) + schémas JSON
-dev-server.mjs                 serveur local qui reproduit Vercel (npm run dev)
+app/(screens)/<écran>/page.tsx   écrans avec la barre du bas (accueil, vider, tri, replay, suivi, plus, respirer, gad7, cartes, labo)
+app/(flow)/onboarding            écrans sans barre du bas
+app/securite                     écran de sécurité (bouton « Besoin d'aide » sur chaque écran)
+app/api/<nom>/route.ts           routes serveur (Groq) — I1
+components/<écran>/              composants d'un écran ; components/nav = partagé
+lib/types.ts, lib/store.ts       modèle de données + stockage sur le téléphone (partagés)
+lib/use-store.ts                 hook React : const [moods, updateMoods] = useStoreValue("moods")
+lib/groq.ts                      groqJSON({ system, user, schema }) → { data, model, ms } (serveur uniquement)
+lib/guards.ts, lib/keywords.ts   garde-fous de sortie, mots-clés de sécurité
+lib/helplines.ts                 numéros marocains + message prêt
+ml/safety, ml/zones, ml/eval     données, entraînement, évaluation
+tests/                           tests Vitest
 ```
+
+Bon à savoir (Next 16.4) : `cacheComponents` est activé. Les écrans visités restent montés en arrière-plan (React `<Activity>`) : un état local survit à la navigation, les effets sont nettoyés puis relancés. Lire `node_modules/next/dist/docs/` avant d'utiliser une API Next que tu ne connais pas.
 
 Ni diagnostic, ni thérapie : un outil de prévention inspiré de la TCC et de l'ACT, à évaluer avec des professionnels.
-

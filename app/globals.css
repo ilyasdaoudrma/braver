@@ -1,0 +1,108 @@
+@import "tailwindcss";
+
+/* BRAVER design tokens. Shared file: change in a small "shared:" PR.
+   No pure #FFF / #000. Zone colours carry meaning: use them only for their zone. */
+:root {
+  --paper: #edf0f4;
+  --surface: #f8f9fb;
+  --surface-2: #e2e7ee;
+  --ink: #131b2c;
+  --ink-2: #4a5468;
+  --line: #d3dae4;
+  --scenario: #5b3fd6;
+  --scenario-soft: #e9e5fb;
+  --action: #b93d0a;
+  --action-soft: #f8e6dd;
+  --acceptation: #0b7065;
+  --acceptation-soft: #ddf0ec;
+  --focus: #2d6cdf;
+  --danger: #c81d25;
+  --danger-soft: #f9e1e2;
+  --nav-h: 4rem;
+  color-scheme: light;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --paper: #0e1420;
+    --surface: #172033;
+    --surface-2: #222d45;
+    --ink: #e7ebf2;
+    --ink-2: #a3adbf;
+    --line: #2b3752;
+    --scenario: #a193f2;
+    --scenario-soft: #251f45;
+    --action: #f2915e;
+    --action-soft: #3a2116;
+    --acceptation: #4fc3b4;
+    --acceptation-soft: #12332f;
+    --focus: #7aa5f2;
+    --danger: #f0767b;
+    --danger-soft: #3b1a1d;
+    color-scheme: dark;
+  }
+}
+
+@theme inline {
+  --color-paper: var(--paper);
+  --color-surface: var(--surface);
+  --color-surface-2: var(--surface-2);
+  --color-ink: var(--ink);
+  --color-ink-2: var(--ink-2);
+  --color-line: var(--line);
+  --color-scenario: var(--scenario);
+  --color-scenario-soft: var(--scenario-soft);
+  --color-action: var(--action);
+  --color-action-soft: var(--action-soft);
+  --color-acceptation: var(--acceptation);
+  --color-acceptation-soft: var(--acceptation-soft);
+  --color-focus: var(--focus);
+  --color-danger: var(--danger);
+  --color-danger-soft: var(--danger-soft);
+  --font-display: var(--font-bricolage), var(--font-plex-arabic), system-ui, sans-serif;
+  --font-sans: var(--font-atkinson), var(--font-plex-arabic), system-ui, sans-serif;
+  --ease-out-soft: cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  background: var(--paper);
+  color: var(--ink);
+  font-family: var(--font-sans);
+  -webkit-tap-highlight-color: transparent;
+}
+
+:focus-visible {
+  outline: 2px solid var(--focus);
+  outline-offset: 2px;
+}
+
+/* Entry motion: fade + slight rise, 220 ms ease-out. */
+@keyframes enter {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+.enter {
+  animation: enter 220ms var(--ease-out-soft) both;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
