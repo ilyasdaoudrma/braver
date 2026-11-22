@@ -274,9 +274,9 @@ function bigStat(s, x, y, w, big, label, n, name, color = C.ink) {
 // 14 ── Ethics & limits
 {
   const s = pres.addSlide();
-  head(s, { eb: "ÉTHIQUE ET LIMITES", parts: ["Ce que BRAVER ", "ne fait pas", "."], sky: "dusk", veil: 86, ebColor: C.danger, notes: "Nos limites, dites franchement. Pas de diagnostic, pas de nom de trouble, pas de fausses promesses rassurantes. Nos données de test sont traduites ou générées par une IA, la vérification humaine n'était pas à l'aveugle, et nous avons encore des fausses alertes et des adieux indirects ratés en darija. (≈ 35 s)" });
+  head(s, { eb: "ÉTHIQUE ET LIMITES", parts: ["Ce que BRAVER ", "ne fait pas", "."], sky: "dusk", veil: 86, ebColor: C.danger, notes: "Nos limites, dites franchement. Pas de diagnostic, pas de nom de trouble, pas de fausses promesses rassurantes. Nos phrases de test en français et en darija sont traduites ou générées par une IA, la vérification humaine n'était pas à l'aveugle, et nous avons encore des fausses alertes et des adieux indirects ratés en darija. (≈ 35 s)" });
   const left = ["Pas de diagnostic, pas de nom de trouble", "Pas de « tout ira bien » : un garde-fou en code les remplace", "Pas de probabilité inventée par l'IA : seulement l'historique de la personne", "GAD-7 : score et tendance, jamais d'étiquette ; ≥ 15 → parler à un professionnel"];
-  const right = ["Données de test traduites ou générées par une IA", "Vérification humaine des zones avec étiquettes IA visibles", `Fausses alertes : ${falseAlarms(N.safety.pipe.confusion)} en ligne (échantillon)`, "Adieux indirects en darija encore ratés"];
+  const right = ["Tests en français et en darija : traduits ou générés par IA", "Vérification humaine des zones avec étiquettes IA visibles", `Fausses alertes : ${falseAlarms(N.safety.pipe.confusion)} en ligne (échantillon)`, "Adieux indirects en darija encore ratés"];
   [[left, "Règles du produit", C.acceptation, 0.6], [right, "Limites mesurées", C.danger, 5.1]].forEach(([items, t, col, x], k) => {
     card(pres, s, x, 1.6, 4.3, 3.3, `@${2 + k} card`);
     s.addText(t, { x: x + 0.25, y: 1.75, w: 3.8, h: 0.35, fontFace: F.bold, fontSize: 13, color: col, margin: 0, objectName: `@${2 + k} t` });

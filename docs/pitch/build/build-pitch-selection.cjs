@@ -116,7 +116,7 @@ const OFF = { scenario: [10.4, 1.0, 0.5], action: [10.6, 2.2, 0.4], acceptation:
   s.addText([
     { text: "Si ça dépasse ce qu'une application peut faire : ", options: { fontFace: F.bold, color: C.danger } },
     { text: "BRAVER s'arrête et oriente vers un professionnel, avec les numéros marocains (19, 15, 2511…).", options: { fontFace: F.body, color: C.ink, breakLine: true } },
-    { text: `Sur le téléphone, ${pct(N.safety.recall)} des messages en danger sont repérés (n = ${N.safety.dangerN}, phrases de test traduites ou générées par IA).`, options: { fontFace: F.body, color: C.ink2, fontSize: 10 } },
+    { text: `Sur le téléphone, ${pct(N.safety.recall)} des messages en danger sont repérés (n = ${N.safety.dangerN}, test en majorité traduit ou généré par IA).`, options: { fontFace: F.body, color: C.ink2, fontSize: 10 } },
   ], { x: 0.85, y: 4.03, w: 8.35, h: 1.15, fontSize: 12, margin: 0, valign: "middle", objectName: "@5 helpt" });
   addOrbs(s, { action: [0.85, 2.05, 0.55], acceptation: [3.85, 2.05, 0.55], scenario: [6.85, 2.05, 0.55] });
   s.addNotes(
