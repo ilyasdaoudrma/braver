@@ -14,7 +14,7 @@
   <img alt="Next.js 16" src="https://img.shields.io/badge/Next.js_16-1b2333?style=for-the-badge&logo=nextdotjs&logoColor=white">
   <img alt="TypeScript" src="https://img.shields.io/badge/TypeScript-1b2333?style=for-the-badge&logo=typescript&logoColor=white">
   <img alt="Python, scikit-learn" src="https://img.shields.io/badge/scikit--learn-1b2333?style=for-the-badge&logo=scikitlearn&logoColor=white">
-  <img alt="Groq" src="https://img.shields.io/badge/LLM-gpt--oss--20b_on_Groq-0b7065?style=for-the-badge">
+  <a href="#use-it-with-your-own-ai-key"><img alt="AI: bring your own key" src="https://img.shields.io/badge/AI-bring_your_own_key-0b7065?style=for-the-badge"></a>
 </p>
 
 <p align="center"><sub>Built for the Nexus HealthTech Hackathon 2026 · Oujda, Morocco · Team CTRL C</sub></p>
@@ -24,6 +24,36 @@
 </p>
 
 ---
+
+## Use it with your own AI key
+
+BRAVER works **without any key**: the safety check and the sorting run on your phone. To get the finer AI sorting on the [live site](https://braver-omega.vercel.app), add **your own key**. The public app does not use ours.
+
+1. Create a key with one of the providers below.
+2. Open BRAVER → **Plus** → **« Ta clé d'IA »**.
+3. Pick the provider, paste the key, then tap **« Tester et enregistrer »**. BRAVER checks the key before it saves it.
+
+| Provider | Default model | Cost | Get a key |
+|---|---|---|---|
+| Groq | `openai/gpt-oss-20b` (fallback `gpt-oss-120b`) | free tier | [console.groq.com/keys](https://console.groq.com/keys) |
+| Google AI Studio (Gemini) | `gemini-2.5-flash` | free tier | [aistudio.google.com/apikey](https://aistudio.google.com/apikey) |
+| Mistral | `mistral-small-latest` | free tier | [console.mistral.ai/api-keys](https://console.mistral.ai/api-keys) |
+| OpenRouter | `openai/gpt-oss-20b` (hundreds of models) | some free models | [openrouter.ai/keys](https://openrouter.ai/keys) |
+| OpenAI | `gpt-5-mini` | paid | [platform.openai.com/api-keys](https://platform.openai.com/api-keys) |
+| Anthropic (Claude) | `claude-haiku-5-5` | paid | [console.anthropic.com](https://console.anthropic.com/settings/keys) |
+| DeepSeek | `deepseek-chat` | paid, low cost | [platform.deepseek.com](https://platform.deepseek.com/api_keys) |
+| Any OpenAI-compatible API | your choice (Together, Fireworks, xAI, Cerebras…) | depends | paste its `https://…/v1` address |
+
+You can type any other model name the provider offers; after the key test, BRAVER suggests the models your key can use.
+
+**What happens to your key**
+- It is stored **only on your device**, never in an account or a database.
+- It goes with a sort request in one header (`x-ai-key`). Our server forwards it to your provider for that call only, and never stores, logs or sends it back.
+- Only the text being sorted goes to the provider, with no name or identifier.
+- Tip: use a dedicated key with a spending limit, and remove it from Plus whenever you want.
+- A custom address must be public `https` (no IP, no local network), so the server cannot be pointed at private machines.
+
+Source: [`lib/ai/providers.ts`](lib/ai/providers.ts) (presets), [`lib/server/connection.ts`](lib/server/connection.ts) (key and address checks), [`components/plus/AiKeySetting.tsx`](components/plus/AiKeySetting.tsx) (the setting).
 
 ## Why BRAVER
 
@@ -91,17 +121,17 @@ flowchart LR
     A["Worry<br/>French · Darija"] --> B["Keywords<br/>(on the phone)"]
     B --> C{"Safety model<br/>TF-IDF + LR<br/>(in the browser)"}
     C -- "danger, sure" --> H["Help screen<br/>Moroccan numbers"]
-    C -- "doubtful" --> L["LLM · gpt-oss-20b<br/>(Groq, fallback 120b)"]
+    C -- "doubtful" --> L["LLM · your own key<br/>(Groq gpt-oss-20b by default)"]
     L -- "danger / score ≥ keep" --> H
     C -- "no danger" --> Z["Zone model<br/>(in the browser)"]
     L -- "no danger" --> Z
     Z --> S["Scenario · Action · Acceptance<br/>phone answers first, LLM refines"]
-    C -. "no network + doubtful" .-> H
+    C -. "no network or no key + doubtful" .-> H
 ```
 
 - **Models trained by us** (Python, scikit-learn): character TF-IDF (2–5) + logistic regression for safety and for zones. Exported as JSON and run in **TypeScript in the browser**; a parity test proves Python and TypeScript give the same probabilities (|Δ| < 1e-6).
 - **Used, not trained:** an LLM for doubtful cases and finer sorting — by default `openai/gpt-oss-20b` on Groq (fallback `gpt-oss-120b`); `multilingual-e5-small` for an optional memory, off by default.
-- **Bring your own key:** the public app does not use our key. Anyone can paste their own key in Plus → « Ta clé d'IA »: Groq, OpenAI, Google AI Studio (Gemini), Anthropic (Claude), OpenRouter, Mistral, DeepSeek, or any OpenAI-compatible API. The key stays on the device and is sent only with a sort request; the server uses it for that one call and never stores or logs it.
+- **Bring your own key:** the public app does not use our key; see [Use it with your own AI key](#use-it-with-your-own-ai-key). Without a key, a doubtful line opens the help screen, as when there is no network: safety first.
 
 ## Gallery
 
@@ -144,7 +174,7 @@ ml/.venv/Scripts/python -m pip install -r ml/requirements.txt   # macOS/Linux: m
 ml/.venv/Scripts/python -m pytest ml
 ```
 
-Without any key the app still works: sorting and safety run on the phone. On the public site, each person can add **their own AI key** in Plus → « Ta clé d'IA ».
+Without any key the app still works: sorting and safety run on the phone. You can also skip `.env.local` and paste your own key in Plus → « Ta clé d'IA », as on the public site.
 
 <details>
 <summary><b>Where things are</b></summary>
@@ -152,7 +182,7 @@ Without any key the app still works: sorting and safety run on the phone. On the
 ```
 app/(screens)/<screen>/page.tsx   screens with the tab bar (accueil, vider, tri, replay, suivi, plus, respirer, gad7, cartes, labo)
 app/(flow)/onboarding             onboarding without the tab bar
-app/api/*/route.ts                server routes (sorting via Groq)
+app/api/*/route.ts                server routes (sorting via your AI provider, key check)
 components/landing/               scroll-driven landing page (GSAP ScrollTrigger + Framer Motion)
 lib/                              store, safety pipeline, guards, helplines, i18n
 ml/safety · ml/zones · ml/eval    training, exported models, evaluation (Python)
