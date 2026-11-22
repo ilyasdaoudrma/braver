@@ -1,7 +1,10 @@
-// Server-only Groq client (Route Handlers). Never import this from a "use client" file:
-// GROQ_API_KEY must stay on the server. Shared file: change it in a small "shared:" PR.
+// Server-only AI client (Route Handlers). Never import this from a "use client" file.
+// Default: Groq with the server's GROQ_API_KEY (local dev). With `connection`: the person's own provider and key
+// (bring your own key, see lib/ai/providers.ts); the key is used for this call only, never stored or logged.
+// Shared file: change it in a small "shared:" PR.
 import "server-only";
 import { z } from "zod";
+import { extractJson, type AiConnection } from "./ai/providers";
 
 export const GROQ_URL = "https://api.groq.com/openai/v1/chat/completions";
 export const PRIMARY_MODEL = "openai/gpt-oss-20b";
@@ -27,6 +30,8 @@ export interface GroqJSONOptions<T> {
   /** For tests. */
   fetchImpl?: typeof fetch;
   apiKey?: string;
+  /** The person's own provider + key. When set, the server key and the Groq defaults are not used. */
+  connection?: AiConnection;
 }
 
 export interface GroqJSONResult<T> {
@@ -95,29 +100,63 @@ class TryFailure extends Error {
   }
 }
 
-async function tryModel<T>(model: string, opts: GroqJSONOptions<T>, key: string, jsonSchema: JsonSchema): Promise<T> {
+/** Default connection: Groq with the server key (local dev, or a deployment that sets GROQ_API_KEY). */
+function serverConnection(key: string, models: readonly string[]): AiConnection {
+  return {
+    provider: "groq",
+    url: GROQ_URL,
+    modelsUrl: GROQ_URL.replace("/chat/completions", "/models"),
+    models: [...models],
+    headers: { Authorization: `Bearer ${key}`, "Content-Type": "application/json" },
+    mode: "strict",
+    groqExtras: true,
+    noTemperature: false,
+    completionTokens: true,
+    timeoutMs: TRY_TIMEOUT_MS,
+  };
+}
+
+/** Request body for one model, adapted to how the provider returns JSON. */
+function requestBody<T>(model: string, opts: GroqJSONOptions<T>, conn: AiConnection, jsonSchema: JsonSchema): Record<string, unknown> {
+  const schemaHint = `
+
+Réponds UNIQUEMENT avec un objet JSON valide (sans texte autour) qui suit ce schéma JSON :
+${JSON.stringify(jsonSchema)}`;
+  const system = conn.mode === "strict" ? opts.system : opts.system + schemaHint;
+  // Providers other than Groq may use thinking models that spend tokens before answering: give them room.
+  const maxTokens = conn.groqExtras ? (opts.maxTokens ?? 1_200) : Math.max(2_000, 2 * (opts.maxTokens ?? 1_200));
+  const body: Record<string, unknown> = {
+    model,
+    messages: [
+      { role: "system", content: system },
+      { role: "user", content: opts.user },
+    ],
+    [conn.completionTokens ? "max_completion_tokens" : "max_tokens"]: maxTokens,
+  };
+  if (conn.mode === "strict") body.response_format = { type: "json_schema", json_schema: { name: opts.name ?? "answer", strict: true, schema: jsonSchema } };
+  if (conn.mode === "object") body.response_format = { type: "json_object" };
+  if (conn.groqExtras) {
+    body.reasoning_effort = opts.reasoningEffort ?? "low";
+    body.include_reasoning = false;
+  }
+  if (!conn.noTemperature) body.temperature = opts.temperature ?? 0.2;
+  return body;
+}
+
+async function tryModel<T>(model: string, opts: GroqJSONOptions<T>, conn: AiConnection, jsonSchema: JsonSchema): Promise<T> {
   const doFetch = opts.fetchImpl ?? fetch;
   const controller = new AbortController();
-  const timer = setTimeout(() => controller.abort(), opts.timeoutMs ?? TRY_TIMEOUT_MS);
+  const timer = setTimeout(() => controller.abort(), opts.timeoutMs ?? conn.timeoutMs);
   try {
     let res: Response;
     try {
-      res = await doFetch(GROQ_URL, {
+      res = await doFetch(conn.url, {
         method: "POST",
         signal: controller.signal,
-        headers: { Authorization: `Bearer ${key}`, "Content-Type": "application/json" },
-        body: JSON.stringify({
-          model,
-          messages: [
-            { role: "system", content: opts.system },
-            { role: "user", content: opts.user },
-          ],
-          response_format: { type: "json_schema", json_schema: { name: opts.name ?? "answer", strict: true, schema: jsonSchema } },
-          reasoning_effort: opts.reasoningEffort ?? "low",
-          include_reasoning: false,
-          temperature: opts.temperature ?? 0.2,
-          max_completion_tokens: opts.maxTokens ?? 1_200,
-        }),
+        // A custom base URL must not bounce the server to another (internal) address.
+        redirect: "error",
+        headers: conn.headers,
+        body: JSON.stringify(requestBody(model, opts, conn, jsonSchema)),
       });
     } catch {
       throw new TryFailure(controller.signal.aborted ? "timeout" : "network");
@@ -126,7 +165,7 @@ async function tryModel<T>(model: string, opts: GroqJSONOptions<T>, key: string,
     let content: unknown;
     try {
       const body = (await res.json()) as { choices?: { message?: { content?: unknown } }[] };
-      content = JSON.parse(String(body.choices?.[0]?.message?.content ?? ""));
+      content = extractJson(String(body.choices?.[0]?.message?.content ?? ""));
     } catch {
       throw new TryFailure(controller.signal.aborted ? "timeout" : "invalid_json", res.status);
     }
@@ -144,15 +183,19 @@ async function tryModel<T>(model: string, opts: GroqJSONOptions<T>, key: string,
  * Throws GroqError ("no_key" | "all_failed"); the caller then keeps the on-device result.
  */
 export async function groqJSON<T>(opts: GroqJSONOptions<T>): Promise<GroqJSONResult<T>> {
-  const key = opts.apiKey ?? process.env.GROQ_API_KEY;
-  if (!key) throw new GroqError("no_key");
+  let conn = opts.connection;
+  if (!conn) {
+    const key = opts.apiKey ?? process.env.GROQ_API_KEY;
+    if (!key) throw new GroqError("no_key");
+    conn = serverConnection(key, opts.models ?? defaultModels());
+  }
   const jsonSchema = toGroqSchema(opts.schema);
   const start = performance.now();
   const attempts: GroqAttempt[] = [];
-  for (const model of opts.models ?? defaultModels()) {
+  for (const model of opts.connection ? conn.models : (opts.models ?? defaultModels())) {
     const t = performance.now();
     try {
-      const data = await tryModel(model, opts, key, jsonSchema);
+      const data = await tryModel(model, opts, conn, jsonSchema);
       return { data, model, ms: Math.round(performance.now() - start), attempts };
     } catch (err) {
       const f = err instanceof TryFailure ? err : new TryFailure("network");

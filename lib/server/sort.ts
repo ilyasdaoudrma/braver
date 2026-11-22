@@ -3,6 +3,7 @@ import "server-only";
 import type { z } from "zod";
 import { guardObject, guardText } from "../guards";
 import { checkKeywords } from "../keywords";
+import type { AiConnection } from "../ai/providers";
 import { groqJSON, type GroqJSONResult } from "../groq";
 import type { ApiSortItem, replayRequestSchema, sortRequestSchema } from "../sort/api";
 import { fillFields } from "../sort/rules";
@@ -73,8 +74,9 @@ export interface ServerSortResult {
   corrections: string[];
 }
 
-export async function runSort(input: SortInput, call: typeof groqJSON = groqJSON): Promise<ServerSortResult> {
+export async function runSort(input: SortInput, call: typeof groqJSON = groqJSON, connection?: AiConnection): Promise<ServerSortResult> {
   const res: GroqJSONResult<LlmSort> = await call({
+    connection,
     system: SORT_SYSTEM,
     user: buildSortUser(input),
     schema: llmSortSchema,
@@ -103,13 +105,17 @@ export function localReplayComment(input: Pick<ReplayInput, "certainty" | "worst
   return `${c ? `Tu étais sûr à ${c} %, et` : "Et"} le pire n'est pas arrivé : la réalité a été différente de ta prédiction. Qu'est-ce que tu en retiens pour la prochaine fois ?`;
 }
 
-export async function runReplay(input: ReplayInput, call: typeof groqJSON = groqJSON): Promise<{ model: string; ms: number; comment: string }> {
+export async function runReplay(
+  input: ReplayInput,
+  call: typeof groqJSON = groqJSON,
+  connection?: AiConnection,
+): Promise<{ model: string; ms: number; comment: string }> {
   const user = [
     `Prédiction avant : ${input.prediction}`,
     `Certitude avant : ${input.certainty} %`,
     `Ce qui s'est vraiment passé : ${input.outcome}`,
     `Le pire est-il arrivé ? ${input.worstHappened ? WORST[input.worstHappened] : "non précisé"}`,
   ].join("\n");
-  const res = await call({ system: REPLAY_SYSTEM, user, schema: llmReplaySchema, name: "braver_replay", maxTokens: 700 });
+  const res = await call({ connection, system: REPLAY_SYSTEM, user, schema: llmReplaySchema, name: "braver_replay", maxTokens: 700 });
   return { model: res.model, ms: res.ms, comment: guardText(res.data.commentaire, localReplayComment(input)).text };
 }

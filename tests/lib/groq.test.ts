@@ -1,5 +1,6 @@
 import { describe, expect, it, vi } from "vitest";
 import { z } from "zod";
+import { connectionFor, type AiRequest } from "@/lib/ai/providers";
 import { FALLBACK_MODEL, GroqError, groqJSON, PRIMARY_MODEL, toGroqSchema } from "@/lib/groq";
 
 const schema = z.object({
@@ -71,5 +72,50 @@ describe("groqJSON", () => {
     await expect(groqJSON({ ...base, apiKey: undefined, fetchImpl })).rejects.toMatchObject({ code: "no_key" });
     if (prev !== undefined) process.env.GROQ_API_KEY = prev;
     expect(fetchImpl).not.toHaveBeenCalled();
+  });
+});
+
+describe("groqJSON with a personal connection (bring your own key)", () => {
+  const conn = (provider: AiRequest["provider"], model = "", baseUrl = "") =>
+    connectionFor({ provider, model, baseUrl }, "user-key-123456");
+  const lastBody = (f: ReturnType<typeof vi.fn>) => JSON.parse(String(f.mock.calls.at(-1)?.[1]?.body));
+
+  it("calls the provider URL with the person's key, not the server key", async () => {
+    const fetchImpl = vi.fn<typeof fetch>(async () => ok({ zone: "action", why: "w", step: "s" }));
+    const r = await groqJSON({ system: "s", user: "u", schema, connection: conn("openai", "gpt-4.1-mini"), fetchImpl });
+    expect(r.model).toBe("gpt-4.1-mini");
+    expect(fetchImpl.mock.calls[0][0]).toBe("https://api.openai.com/v1/chat/completions");
+    const headers = fetchImpl.mock.calls[0][1]?.headers as Record<string, string>;
+    expect(headers.Authorization).toBe("Bearer user-key-123456");
+    const body = lastBody(fetchImpl);
+    expect(body.temperature).toBeUndefined();
+    expect(body.reasoning_effort).toBeUndefined();
+    expect(body.response_format.type).toBe("json_schema");
+  });
+
+  it("json_object mode: puts the schema in the system prompt", async () => {
+    const fetchImpl = vi.fn<typeof fetch>(async () => ok({ zone: "scenario", why: "w", step: null }));
+    await groqJSON({ system: "SYS", user: "u", schema, connection: conn("gemini"), fetchImpl });
+    const body = lastBody(fetchImpl);
+    expect(body.response_format).toEqual({ type: "json_object" });
+    expect(body.messages[0].content).toContain("SYS");
+    expect(body.messages[0].content).toContain('"zone"');
+    expect(body.max_tokens).toBeGreaterThanOrEqual(2000);
+  });
+
+  it("prompt mode (Claude): no response_format, and fenced JSON is still read", async () => {
+    const fenced = new Response(JSON.stringify({ choices: [{ message: { content: '```json\n{"zone":"acceptation","why":"w","step":null}\n```' } }] }), {
+      status: 200,
+    });
+    const fetchImpl = vi.fn<typeof fetch>(async () => fenced);
+    const r = await groqJSON({ system: "s", user: "u", schema, connection: conn("anthropic"), fetchImpl });
+    expect(r.data.zone).toBe("acceptation");
+    expect(lastBody(fetchImpl).response_format).toBeUndefined();
+  });
+
+  it("reports an invalid key as an http failure with its status", async () => {
+    const fetchImpl = vi.fn<typeof fetch>(async () => new Response("{}", { status: 401 }));
+    const err = await groqJSON({ system: "s", user: "u", schema, connection: conn("mistral"), fetchImpl }).catch((e: unknown) => e);
+    expect((err as GroqError).attempts).toEqual([expect.objectContaining({ failure: "http", status: 401 })]);
   });
 });

@@ -4,6 +4,7 @@
 import type { ApiReplayResponse, ReplayRequest } from "./sort/api";
 import { guardText } from "./guards";
 import type { ReplayEntry, SortSource, WorstHappened } from "./types";
+import { currentAiParts } from "./ai/client";
 
 export const CHECK_DELAYS = [
   { days: 1, label: "Demain" },
@@ -167,16 +168,18 @@ export async function fetchComment(
   worst: WorstHappened,
   fetchImpl: typeof fetch = fetch,
 ): Promise<{ comment: string; source: SortSource; model: string | null }> {
+  const personal = currentAiParts();
   const body: ReplayRequest = {
     prediction: entry.prediction,
     outcome,
     certainty: entry.certainty,
     worstHappened: worst,
+    ai: personal.ai,
   };
   try {
     const res = await fetchImpl("/api/replay", {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
+      headers: { "Content-Type": "application/json", ...personal.headers },
       body: JSON.stringify(body),
       signal: AbortSignal.timeout(REPLAY_TIMEOUT_MS),
     });

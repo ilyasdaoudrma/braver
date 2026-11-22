@@ -100,7 +100,8 @@ flowchart LR
 ```
 
 - **Models trained by us** (Python, scikit-learn): character TF-IDF (2–5) + logistic regression for safety and for zones. Exported as JSON and run in **TypeScript in the browser**; a parity test proves Python and TypeScript give the same probabilities (|Δ| < 1e-6).
-- **Used, not trained:** `openai/gpt-oss-20b` on Groq (fallback `gpt-oss-120b`) for doubtful cases and finer sorting; `multilingual-e5-small` for an optional memory, off by default.
+- **Used, not trained:** an LLM for doubtful cases and finer sorting — by default `openai/gpt-oss-20b` on Groq (fallback `gpt-oss-120b`); `multilingual-e5-small` for an optional memory, off by default.
+- **Bring your own key:** the public app does not use our key. Anyone can paste their own key in Plus → « Ta clé d'IA »: Groq, OpenAI, Google AI Studio (Gemini), Anthropic (Claude), OpenRouter, Mistral, DeepSeek, or any OpenAI-compatible API. The key stays on the device and is sent only with a sort request; the server uses it for that one call and never stores or logs it.
 
 ## Gallery
 
@@ -125,7 +126,7 @@ Data cards: [`ml/safety/DATA_CARD.md`](ml/safety/DATA_CARD.md) · [`ml/zones/DAT
 
 ```bash
 npm install
-cp .env.example .env.local   # then paste GROQ_API_KEY (https://console.groq.com/keys)
+cp .env.example .env.local   # optional: paste a GROQ_API_KEY for local development
 npm run dev                  # http://localhost:3000
 ```
 
@@ -143,7 +144,7 @@ ml/.venv/Scripts/python -m pip install -r ml/requirements.txt   # macOS/Linux: m
 ml/.venv/Scripts/python -m pytest ml
 ```
 
-Without a Groq key the app still works: sorting and safety run on the phone.
+Without any key the app still works: sorting and safety run on the phone. On the public site, each person can add **their own AI key** in Plus → « Ta clé d'IA ».
 
 <details>
 <summary><b>Where things are</b></summary>

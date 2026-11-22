@@ -1,6 +1,6 @@
 "use client";
 import Link from "next/link";
-import { CloudOff, Cpu, PenLine, Sparkles } from "lucide-react";
+import { CloudOff, Cpu, KeyRound, PenLine, Sparkles } from "lucide-react";
 import { useSortSession } from "@/lib/sort/session";
 import { useMemoryLines } from "@/lib/memory/use-memory";
 import type { SortOutcome } from "@/lib/sort/engine";
@@ -25,6 +25,20 @@ function EngineFooter({
   else if (outcome.engine === "llm" && outcome.model) {
     icon = <Sparkles aria-hidden size={16} />;
     text = `Tri affiné par ${shortModel(outcome.model)}${outcome.ms !== null ? ` en ${formatSeconds(outcome.ms)}` : ""}.`;
+  } else if (outcome.failure === "no_key") {
+    return (
+      <p role="status" aria-live="polite" className="flex flex-wrap items-center gap-x-2 gap-y-1 text-sm text-ink-2">
+        <Cpu aria-hidden size={16} />
+        Tri fait sur ton téléphone.
+        <Link href="/plus" className="inline-flex items-center gap-1 font-bold text-focus underline-offset-4 hover:underline">
+          <KeyRound aria-hidden size={14} />
+          Ajoute ta clé d&apos;IA pour un tri plus fin
+        </Link>
+      </p>
+    );
+  } else if (outcome.failure === "key_rejected") {
+    icon = <KeyRound aria-hidden size={16} />;
+    text = "Ta clé d'IA a été refusée (vérifie-la dans Plus) : tri fait sur ton téléphone.";
   } else if (outcome.failure) {
     icon = <CloudOff aria-hidden size={16} />;
     text = "L'IA n'a pas répondu : tri fait sur ton téléphone.";
