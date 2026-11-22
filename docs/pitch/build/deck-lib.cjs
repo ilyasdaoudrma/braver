@@ -76,4 +76,31 @@ function logo(slide, x, y, name, color = C.ink) {
   slide.addText("BRAVER", { x: x + 0.33, y, w: 1.6, h: 0.3, fontFace: F.bold, fontSize: 13, color, margin: 0, objectName: name });
 }
 
-module.exports = { ROOT, A, C, F, pct, dec, trunc, numbers, scene, addOrbs, accentRuns, card, eyebrow, logo };
+/** Team CTRL C (from the official Nexus HealthTech participant cards). */
+const TEAM = [
+  { name: "Ilyas Daoud El Asmi", role: "Chef d'équipe · Génie informatique" },
+  { name: "Ayoub El Mouhib", role: "Génie informatique" },
+  { name: "Soukayna El Wali", role: "Génie des systèmes industriels" },
+  { name: "Mossab Mfarram", role: "Génie informatique" },
+];
+const EVENT = "Nexus HealthTech Hackathon · Oujda · 20–21 novembre 2026";
+
+/** Team on the night slide: dark cards, names only (no photos in the public repo). */
+function teamCards(pres, slide, { x0 = 0.6, y0 = 2.15 } = {}) {
+  TEAM.forEach((m, i) => {
+    const x = x0 + (i % 2) * 3.15, y = y0 + Math.floor(i / 2) * 0.95;
+    card(pres, slide, x, y, 2.95, 0.8, `@${2 + i} card`, { dark: true });
+    slide.addText([{ text: m.name, options: { fontFace: F.bold, fontSize: 12, color: C.moon, breakLine: true } }, { text: `${m.role} · EHEI Oujda`, options: { fontFace: F.body, fontSize: 8.5, color: "C9C3EE" } }], { x: x + 0.22, y: y + 0.08, w: 2.6, h: 0.64, margin: 0, valign: "middle", objectName: `@${2 + i} t` });
+  });
+}
+
+/** Organiser logos (EST Oujda, CIRMSS, HECI) and the Nexus HealthTech mark, on one light card. */
+function partnerLogos(pres, slide, x, y, name) {
+  slide.addShape(pres.shapes.ROUNDED_RECTANGLE, { x, y, w: 4.25, h: 0.78, rectRadius: 0.14, fill: { color: "F3F6FB" }, line: { color: "DCE3EE", width: 0.75 }, objectName: `${name} bg` });
+  slide.addImage({ path: A("logo-est.png"), x: x + 0.15, y: y + 0.07, w: 0.55, h: 0.64, objectName: `${name} est` });
+  slide.addImage({ path: A("logo-cirmss.png"), x: x + 0.82, y: y + 0.12, w: 0.92, h: 0.55, objectName: `${name} cirmss` });
+  slide.addImage({ path: A("logo-heci.png"), x: x + 1.86, y: y + 0.08, w: 0.64, h: 0.62, objectName: `${name} heci` });
+  slide.addImage({ path: A("logo-nexus.png"), x: x + 2.66, y: y + 0.03, w: 1.44, h: 0.72, objectName: `${name} nexus` });
+}
+
+module.exports = { TEAM, EVENT, teamCards, partnerLogos, ROOT, A, C, F, pct, dec, trunc, numbers, scene, addOrbs, accentRuns, card, eyebrow, logo };
