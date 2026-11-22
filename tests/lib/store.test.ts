@@ -64,6 +64,14 @@ describe("store", () => {
     expect(s.get("settings")).toEqual({ ...defaults().settings, tone: "direct" });
   });
 
+  it("replaces a corrupt or unknown AI key setting with the safe default", () => {
+    const session = memory();
+    session.setItem(STORE_PREFIX + "ai", JSON.stringify({ provider: "evil", key: 42, model: null }));
+    expect(createStore(() => ({ local: memory(), session })).get("ai")).toEqual(defaults().ai);
+    session.setItem(STORE_PREFIX + "ai", JSON.stringify({ provider: "gemini", key: "AIzaTest12345", model: "gemini-2.5-flash", baseUrl: "" }));
+    expect(createStore(() => ({ local: memory(), session })).get("ai")).toMatchObject({ provider: "gemini", key: "AIzaTest12345" });
+  });
+
   it("migrates every key when consent changes through settings", () => {
     const local = memory();
     const session = memory();

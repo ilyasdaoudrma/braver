@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { aiRequestParts } from "@/lib/ai/client";
 import { DEFAULT_AI_SETTINGS, type AiSettings } from "@/lib/ai/providers";
-import { keyRejected, resolveConnection } from "@/lib/server/connection";
+import { isPrivateAddress, keyRejected, resolveConnection } from "@/lib/server/connection";
 
 const s = (o: Partial<AiSettings>): AiSettings => ({ ...DEFAULT_AI_SETTINGS, ...o });
 
@@ -47,4 +47,12 @@ describe("keyRejected", () => {
     expect(keyRejected([{ model: "m", failure: "http", status: 429, ms: 1 }])).toBe(false);
     expect(keyRejected([])).toBe(false);
   });
+});
+
+describe("isPrivateAddress (DNS check for custom providers)", () => {
+  it.each(["127.0.0.1", "10.1.2.3", "172.16.0.1", "192.168.1.10", "169.254.169.254", "100.64.0.1", "0.0.0.0", "::1", "::", "fe80::1", "fd00::1", "::ffff:127.0.0.1"])(
+    "%s is private",
+    (ip) => expect(isPrivateAddress(ip)).toBe(true),
+  );
+  it.each(["8.8.8.8", "104.18.0.1", "2606:4700::1111"])("%s is public", (ip) => expect(isPrivateAddress(ip)).toBe(false));
 });

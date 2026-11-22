@@ -1,11 +1,46 @@
 import { z } from "zod";
 import { aiRequestSchema } from "@/lib/ai/providers";
-import { resolveConnection } from "@/lib/server/connection";
+import { connectionAllowed, resolveConnection } from "@/lib/server/connection";
 import { allow, clientKey } from "@/lib/server/rate-limit";
 
 const CHECKS_PER_MINUTE = 10;
 const TIMEOUT_MS = 6_000;
 const MAX_MODELS = 300;
+const MAX_BYTES = 1_000_000;
+const MODEL_ID = /^[\w.:/@+-]{1,120}$/;
+
+/** Reads at most MAX_BYTES of the body (a hostile host could stream forever). */
+async function readLimited(res: Response): Promise<string> {
+  const reader = res.body?.getReader();
+  if (!reader) return "";
+  const chunks: Uint8Array[] = [];
+  let size = 0;
+  for (;;) {
+    const { done, value } = await reader.read();
+    if (done) break;
+    size += value.byteLength;
+    if (size > MAX_BYTES) {
+      await reader.cancel();
+      throw new Error("too_large");
+    }
+    chunks.push(value);
+  }
+  return new TextDecoder().decode(Buffer.concat(chunks));
+}
+
+/** OpenAI-style `{data:[{id}]}` or Gemini-style `{models:[{name}]}`; null when the answer is not JSON. */
+type ModelList = { data?: ({ id?: unknown } | null)[]; models?: ({ name?: unknown } | null)[] };
+
+async function readModelList(res: Response): Promise<ModelList | null> {
+  try {
+    const parsed: unknown = JSON.parse(await readLimited(res));
+    if (!parsed || typeof parsed !== "object") return null;
+    const { data, models } = parsed as Record<string, unknown>;
+    return { data: Array.isArray(data) ? data : undefined, models: Array.isArray(models) ? models : undefined };
+  } catch {
+    return null;
+  }
+}
 
 export type AiCheckResponse =
   | { ok: true; models: string[] }
@@ -24,7 +59,7 @@ export async function POST(request: Request): Promise<Response> {
   const parsed = bodySchema.safeParse(await request.json().catch(() => null));
   if (!parsed.success) return reply({ ok: false, error: "invalid_input" }, 400);
   const conn = resolveConnection(request.headers, parsed.data.ai);
-  if (!conn.ok || !conn.connection) return reply({ ok: false, error: "invalid_input" }, 400);
+  if (!conn.ok || !conn.connection || !(await connectionAllowed(conn.connection))) return reply({ ok: false, error: "invalid_input" }, 400);
   const { modelsUrl, headers, provider } = conn.connection;
   try {
     const getHeaders = Object.fromEntries(Object.entries(headers).filter(([k]) => k !== "Content-Type"));
@@ -34,11 +69,12 @@ export async function POST(request: Request): Promise<Response> {
       console.warn("[api/ai-check] provider status", provider, res.status);
       return reply({ ok: false, error: "unreachable" }, 200);
     }
-    const body = (await res.json().catch(() => null)) as { data?: { id?: unknown }[]; models?: { name?: unknown }[] } | null;
-    const ids = (body?.data ?? []).map((m) => m.id).concat((body?.models ?? []).map((m) => m.name));
+    const body = await readModelList(res);
+    const ids = (body?.data ?? []).map((m) => m?.id).concat((body?.models ?? []).map((m) => m?.name));
     const models = ids
       .filter((id): id is string => typeof id === "string")
       .map((id) => id.replace(/^models\//, ""))
+      .filter((id) => MODEL_ID.test(id))
       .sort()
       .slice(0, MAX_MODELS);
     return reply({ ok: true, models }, 200);

@@ -2,7 +2,7 @@
 // Consent "device" → localStorage; otherwise (session / not asked yet) → sessionStorage.
 // Storage blocked or broken → in-memory only, the app keeps working.
 // Shared file: add a NEW key with a default value; never rename a key.
-import { DEFAULT_AI_SETTINGS, type AiSettings } from "./ai/providers";
+import { AI_PROVIDER_IDS, DEFAULT_AI_SETTINGS, type AiSettings } from "./ai/providers";
 import type {
   BreathingSession,
   Consent,
@@ -96,7 +96,7 @@ function coerce<K extends StoreKey>(key: K, raw: unknown): StoreData[K] {
     const obj = raw && typeof raw === "object" && !Array.isArray(raw) ? (raw as Record<string, unknown>) : {};
     const str = (v: unknown, d: string): string => (typeof v === "string" ? v : d);
     return {
-      provider: str(obj.provider, DEFAULT_AI_SETTINGS.provider),
+      provider: (AI_PROVIDER_IDS as string[]).includes(str(obj.provider, "")) ? obj.provider : DEFAULT_AI_SETTINGS.provider,
       key: str(obj.key, ""),
       model: str(obj.model, ""),
       baseUrl: str(obj.baseUrl, ""),

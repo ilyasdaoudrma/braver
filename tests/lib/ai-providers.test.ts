@@ -114,3 +114,17 @@ describe("extractJson", () => {
     expect(() => extractJson("no json here")).toThrow();
   });
 });
+
+describe("isSafeBaseUrl, security review", () => {
+  it.each([
+    "https://localhost./v1",
+    "https://metadata.google.internal./v1",
+    "https://printer.local./v1",
+    "https://2130706433/v1",
+    "https://0x7f.1/v1",
+    "https://api.example.com/v1?x=1",
+    "https://api.example.com/v1#frag",
+  ])("rejects %s", (url) => {
+    expect(isSafeBaseUrl(url)).toBe(false);
+  });
+});

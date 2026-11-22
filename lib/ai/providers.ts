@@ -133,10 +133,12 @@ export function isSafeBaseUrl(raw: string): boolean {
   } catch {
     return false;
   }
-  if (u.protocol !== "https:" || u.username || u.password) return false;
+  if (u.protocol !== "https:" || u.username || u.password || u.search || u.hash) return false;
   if (u.port && u.port !== "443") return false;
-  const host = u.hostname.toLowerCase();
+  // "localhost." (trailing dot) is the same host as "localhost": strip dots before every check.
+  const host = u.hostname.toLowerCase().replace(/\.+$/, "");
   if (!host.includes(".") || host.startsWith("[") || host.includes(":") || IPV4.test(host)) return false;
+  if (host.split(".").some((label) => /^(\d+|0x[0-9a-f]+)$/.test(label))) return false;
   return !PRIVATE_HOST.test(host);
 }
 

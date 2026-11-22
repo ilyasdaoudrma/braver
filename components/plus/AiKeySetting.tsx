@@ -13,7 +13,10 @@ const mask = (key: string): string => (key.length > 8 ? `••••${key.slice
 /** "Ta clé d'IA": bring your own key. Stored on this device only; sent with each sort request, never kept by the server. */
 export function AiKeySetting() {
   const [saved, setSaved] = useStoreValue("ai");
-  const [draft, setDraft] = useState<AiSettings>(() => (saved.provider === "none" ? { ...DEFAULT_AI_SETTINGS, provider: "groq" } : saved));
+  // null until the person edits: the form then shows the saved key once the store is hydrated (not the SSR default).
+  const [edited, setEdited] = useState<AiSettings | null>(null);
+  const draft: AiSettings = edited ?? (saved.provider === "none" ? { ...DEFAULT_AI_SETTINGS, provider: "groq" } : saved);
+  const setDraft = (fn: (d: AiSettings) => AiSettings) => setEdited(fn(draft));
   const [showKey, setShowKey] = useState(false);
   const [check, setCheck] = useState<Check>({ state: "idle" });
   const [models, setModels] = useState<string[]>([]);
@@ -72,7 +75,7 @@ export function AiKeySetting() {
 
   function remove() {
     setSaved(() => ({ ...DEFAULT_AI_SETTINGS }));
-    setDraft({ ...DEFAULT_AI_SETTINGS, provider: "groq" });
+    setEdited(null);
     setModels([]);
     setCheck({ state: "idle" });
   }
@@ -86,14 +89,15 @@ export function AiKeySetting() {
         </h2>
         <p className="text-sm text-ink-2">
           BRAVER marche sans clé : le tri et la sécurité tournent sur ton téléphone. Avec ta propre clé, une IA affine le tri.
-          Ta clé reste sur ce téléphone et part seulement avec une demande de tri : notre serveur ne la garde jamais.
+          Ta clé reste sur ce téléphone. Elle passe par notre serveur seulement pour relayer ta demande au fournisseur, qui ne la
+          garde jamais. Conseil : utilise une clé dédiée avec un plafond de dépense, et retire-la ici quand tu veux.
         </p>
       </div>
 
       {isSaved && (
         <p className="enter flex items-center gap-2 rounded-xl bg-acceptation-soft px-3 py-2 text-sm text-acceptation" role="status">
           <CheckCircle2 aria-hidden size={16} />
-          Clé active : {AI_PROVIDERS[saved.provider as AiProviderId].label} · {saved.model || AI_PROVIDERS[saved.provider as AiProviderId].defaultModel} ·{" "}
+          Clé active : {AI_PROVIDERS[saved.provider as AiProviderId]?.label} · {saved.model || AI_PROVIDERS[saved.provider as AiProviderId]?.defaultModel} ·{" "}
           {mask(saved.key)}
         </p>
       )}
@@ -131,7 +135,11 @@ export function AiKeySetting() {
                 autoComplete="off"
                 spellCheck={false}
                 value={draft.baseUrl}
-                onChange={(e) => setDraft((d) => ({ ...d, baseUrl: e.target.value }))}
+                onChange={(e) => {
+                  const v = e.target.value;
+                  setDraft((d) => ({ ...d, baseUrl: v }));
+                  setCheck({ state: "idle" });
+                }}
                 placeholder="https://api.together.xyz/v1"
                 aria-invalid={Boolean(urlError)}
                 aria-describedby={ids.urlErr}
@@ -163,7 +171,8 @@ export function AiKeySetting() {
                 spellCheck={false}
                 value={draft.key}
                 onChange={(e) => {
-                  setDraft((d) => ({ ...d, key: e.target.value }));
+                  const v = e.target.value;
+                  setDraft((d) => ({ ...d, key: v }));
                   setCheck({ state: "idle" });
                 }}
                 placeholder="Colle ta clé ici"
@@ -198,7 +207,11 @@ export function AiKeySetting() {
               autoComplete="off"
               spellCheck={false}
               value={draft.model}
-              onChange={(e) => setDraft((d) => ({ ...d, model: e.target.value }))}
+              onChange={(e) => {
+                const v = e.target.value;
+                setDraft((d) => ({ ...d, model: v }));
+                setCheck({ state: "idle" });
+              }}
               placeholder={provider.defaultModel || "nom-du-modèle"}
               className="min-h-12 w-full rounded-xl border border-line bg-paper px-3 font-mono text-sm"
             />

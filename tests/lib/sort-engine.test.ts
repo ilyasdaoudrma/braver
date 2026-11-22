@@ -82,6 +82,15 @@ describe("mergeLLM / onLLMFailure", () => {
     expect(onLLMFailure(device(), "network", opts).alert?.source).toBe("offline_doubt");
   });
 
+  it("a refused personal key is handled like offline: a doubt still opens the help screen", () => {
+    const out = onLLMFailure(device(), "key_rejected", opts);
+    expect(out.alert).toEqual({ source: "offline_doubt", lines: ["ce partiel va me tuer"] });
+  });
+
+  it("no key at all: a doubt still opens the help screen", () => {
+    expect(onLLMFailure(device(), "no_key", opts).alert?.source).toBe("offline_doubt");
+  });
+
   it("offline without doubt: keeps the device cards and says why", () => {
     const d = sortOnDevice(["Mazal ma siftsh dossier dyal la bourse."], opts);
     const out = onLLMFailure(d, "timeout", opts);

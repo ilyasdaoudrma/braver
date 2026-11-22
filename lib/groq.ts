@@ -124,7 +124,7 @@ Réponds UNIQUEMENT avec un objet JSON valide (sans texte autour) qui suit ce sc
 ${JSON.stringify(jsonSchema)}`;
   const system = conn.mode === "strict" ? opts.system : opts.system + schemaHint;
   // Providers other than Groq may use thinking models that spend tokens before answering: give them room.
-  const maxTokens = conn.groqExtras ? (opts.maxTokens ?? 1_200) : Math.max(2_000, 2 * (opts.maxTokens ?? 1_200));
+  const maxTokens = conn.groqExtras ? (opts.maxTokens ?? 1_200) : Math.max(4_000, 2 * (opts.maxTokens ?? 1_200));
   const body: Record<string, unknown> = {
     model,
     messages: [

@@ -35,6 +35,24 @@ describe("groqJSON", () => {
     expect(body.include_reasoning).toBe(false);
   });
 
+  it("without a personal connection, sends the same Groq request as before bring-your-own-key", async () => {
+    const fetchImpl = vi.fn<typeof fetch>(async () => ok({ zone: "action", why: "w", step: "s" }));
+    await groqJSON({ ...base, maxTokens: 900, fetchImpl });
+    expect(fetchImpl.mock.calls[0][0]).toBe("https://api.groq.com/openai/v1/chat/completions");
+    const headers = fetchImpl.mock.calls[0][1]?.headers as Record<string, string>;
+    expect(headers.Authorization).toBe("Bearer test-key");
+    const body = JSON.parse(String(fetchImpl.mock.calls[0][1]?.body));
+    expect(Object.keys(body).sort()).toEqual(
+      ["include_reasoning", "max_completion_tokens", "messages", "model", "reasoning_effort", "response_format", "temperature"].sort(),
+    );
+    expect(body.model).toBe(PRIMARY_MODEL);
+    expect(body.max_completion_tokens).toBe(900);
+    expect(body.messages).toEqual([
+      { role: "system", content: "s" },
+      { role: "user", content: "u" },
+    ]);
+  });
+
   it("falls back to 120b on HTTP 429", async () => {
     const fetchImpl = vi
       .fn()
@@ -100,7 +118,7 @@ describe("groqJSON with a personal connection (bring your own key)", () => {
     expect(body.response_format).toEqual({ type: "json_object" });
     expect(body.messages[0].content).toContain("SYS");
     expect(body.messages[0].content).toContain('"zone"');
-    expect(body.max_tokens).toBeGreaterThanOrEqual(2000);
+    expect(body.max_tokens).toBeGreaterThanOrEqual(4000);
   });
 
   it("prompt mode (Claude): no response_format, and fenced JSON is still read", async () => {
