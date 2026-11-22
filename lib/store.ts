@@ -2,6 +2,7 @@
 // Consent "device" → localStorage; otherwise (session / not asked yet) → sessionStorage.
 // Storage blocked or broken → in-memory only, the app keeps working.
 // Shared file: add a NEW key with a default value; never rename a key.
+import { AI_PROVIDER_IDS, DEFAULT_AI_SETTINGS, type AiSettings } from "./ai/providers";
 import type {
   BreathingSession,
   Consent,
@@ -22,6 +23,8 @@ export interface StoreData {
   embeddings: EmbeddingEntry[];
   settings: Settings;
   onboarded: boolean;
+  /** Bring your own AI key (provider, key, model). Stays on this device like everything else. */
+  ai: AiSettings;
 }
 
 export type StoreKey = keyof StoreData;
@@ -46,6 +49,7 @@ export function defaults(): StoreData {
     embeddings: [],
     settings: { ...DEFAULT_SETTINGS },
     onboarded: false,
+    ai: { ...DEFAULT_AI_SETTINGS },
   };
 }
 
@@ -87,6 +91,16 @@ function coerce<K extends StoreKey>(key: K, raw: unknown): StoreData[K] {
   if (key === "settings") {
     const obj = raw && typeof raw === "object" && !Array.isArray(raw) ? raw : {};
     return { ...DEFAULT_SETTINGS, ...obj } as StoreData[K];
+  }
+  if (key === "ai") {
+    const obj = raw && typeof raw === "object" && !Array.isArray(raw) ? (raw as Record<string, unknown>) : {};
+    const str = (v: unknown, d: string): string => (typeof v === "string" ? v : d);
+    return {
+      provider: (AI_PROVIDER_IDS as string[]).includes(str(obj.provider, "")) ? obj.provider : DEFAULT_AI_SETTINGS.provider,
+      key: str(obj.key, ""),
+      model: str(obj.model, ""),
+      baseUrl: str(obj.baseUrl, ""),
+    } as StoreData[K];
   }
   return (typeof raw === typeof fallback ? raw : fallback) as StoreData[K];
 }

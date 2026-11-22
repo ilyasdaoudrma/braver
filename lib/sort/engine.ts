@@ -12,6 +12,7 @@ import {
 } from "./api";
 import { fillFields } from "./rules";
 import { zoneOnDevice } from "../zones/model";
+import { currentAiParts } from "../ai/client";
 
 export interface SortOptions {
   tone: Tone;
@@ -237,13 +238,15 @@ export async function requestSort(
   fetchImpl: typeof fetch = fetch,
 ): Promise<ApiSortResponse | { ok: false; error: "network" | "timeout" }> {
   try {
+    const personal = currentAiParts();
     const res = await fetchImpl("/api/sort", {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
+      headers: { "Content-Type": "application/json", ...personal.headers },
       body: JSON.stringify({
         worries: cards.map((c) => ({ text: c.text, seen: c.seen })),
         tone: opts.tone,
         confirmedSafe: opts.confirmedSafe,
+        ai: personal.ai,
       }),
       signal: AbortSignal.timeout(CLIENT_TIMEOUT_MS),
     });

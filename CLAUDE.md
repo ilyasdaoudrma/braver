@@ -19,10 +19,11 @@ Team coding: **Ilyas** (Claude Code) and **Ayoub** (Antigravity). Both do ML + b
 ## Stack
 
 - **Next.js (App Router) + TypeScript + Tailwind**, deployed on Vercel. API = Route Handlers in `app/api/*/route.ts`.
-- **LLM: Groq, `openai/gpt-oss-20b`**, fallback `openai/gpt-oss-120b`, then the on-device trained models. Groq is OpenAI-compatible (`https://api.groq.com/openai/v1`). Use structured outputs (`response_format` json_schema) if Groq supports it for gpt-oss, else `json_object` + schema validation with **zod**. `reasoning_effort: "low"` for the sort. Timeout 8 s per try. Key: `GROQ_API_KEY`.
-- **No Gemini.** Remove every Gemini path from the old code.
+- **LLM: Groq, `openai/gpt-oss-20b`**, fallback `openai/gpt-oss-120b`, then the on-device trained models. Groq is OpenAI-compatible (`https://api.groq.com/openai/v1`). Use structured outputs (`response_format` json_schema) if Groq supports it for gpt-oss, else `json_object` + schema validation with **zod**. `reasoning_effort: "low"` for the sort. Timeout 8 s per try. Key: `GROQ_API_KEY` (local dev only).
+- **Bring your own key (since 22 Nov):** the public deployment has no server key. Each person can paste their own key in Plus → « Ta clé d'IA » (Groq, OpenAI, Google AI Studio, Anthropic, OpenRouter, Mistral, DeepSeek, or any OpenAI-compatible API — `lib/ai/providers.ts`). The key stays on the device (store key `ai`), travels only in the `x-ai-key` header of a sort/replay request, and the server uses it for that one call: never store, log or echo it. Without a key the app keeps the on-device result (a doubtful line then opens the help screen, as offline).
+- **No Gemini as the app's own engine** (the old prototype's Gemini paths are gone). Gemini is only one of the providers a person may choose for their own key.
 - **ML training in Python** under `ml/` (pandas, scikit-learn), **inference in the browser** in TypeScript from exported JSON weights. A parity test must prove TS and Python give the same probabilities (|Δ| < 1e-6) on 50 sample texts.
-- Data stays **on the device** (localStorage with consent, else sessionStorage). No account, no database. Only the text being sorted is sent to Groq, without any identifier.
+- Data stays **on the device** (localStorage with consent, else sessionStorage). No account, no database. Only the text being sorted is sent to the AI provider, without any identifier.
 - The old prototype stays in `legacy/` for reference until everything is ported; do not edit it.
 
 ## Secrets

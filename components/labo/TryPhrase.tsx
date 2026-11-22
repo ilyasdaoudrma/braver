@@ -5,6 +5,7 @@ import { checkSafety, type SafetyCheck } from "@/lib/safety/pipeline";
 import { getSafetyModel, loadSafetyModel } from "@/lib/safety/model";
 import { getZonesModel, loadZonesModel, zoneOnDevice, type ZoneGuess } from "@/lib/zones/model";
 import type { ApiSortResponse } from "@/lib/sort/api";
+import { currentAiParts } from "@/lib/ai/client";
 
 const LEVEL: Record<SafetyCheck["level"], string> = {
   danger: "Danger → écran d'aide tout de suite",
@@ -39,10 +40,11 @@ export function TryPhrase() {
   async function runLlm() {
     setLlm({ state: "loading" });
     try {
+      const personal = currentAiParts();
       const r = await fetch("/api/sort", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ worries: [{ text: text.trim().slice(0, 500) }], tone: "doux" }),
+        headers: { "Content-Type": "application/json", ...personal.headers },
+        body: JSON.stringify({ worries: [{ text: text.trim().slice(0, 500) }], tone: "doux", ai: personal.ai }),
         signal: AbortSignal.timeout(20_000),
       });
       setLlm({ state: "done", res: (await r.json()) as ApiSortResponse });

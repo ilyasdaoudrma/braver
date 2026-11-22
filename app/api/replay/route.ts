@@ -1,6 +1,7 @@
 import { GroqError } from "@/lib/groq";
 import type { ApiReplayResponse } from "@/lib/sort/api";
 import { replayRequestSchema } from "@/lib/sort/api";
+import { connectionAllowed, keyRejected, resolveConnection } from "@/lib/server/connection";
 import { allow, clientKey } from "@/lib/server/rate-limit";
 import { runReplay } from "@/lib/server/sort";
 
@@ -16,10 +17,13 @@ export async function POST(request: Request): Promise<Response> {
   const body: unknown = await request.json().catch(() => null);
   const parsed = replayRequestSchema.safeParse(body);
   if (!parsed.success) return reply({ ok: false, error: "invalid_input" }, 400);
+  const conn = resolveConnection(request.headers, parsed.data.ai);
+  if (!conn.ok || !(await connectionAllowed(conn.connection))) return reply({ ok: false, error: "invalid_input" }, 400);
   try {
-    return reply({ ok: true, ...(await runReplay(parsed.data)) }, 200);
+    return reply({ ok: true, ...(await runReplay(parsed.data, undefined, conn.connection)) }, 200);
   } catch (err) {
     if (err instanceof GroqError && err.code === "no_key") return reply({ ok: false, error: "no_key" }, 503);
+    if (err instanceof GroqError && conn.connection && keyRejected(err.attempts)) return reply({ ok: false, error: "key_rejected" }, 401);
     console.error("[api/replay] llm_failed", err instanceof GroqError ? err.attempts.map((a) => `${a.model}:${a.failure}`).join(", ") : "unexpected");
     return reply({ ok: false, error: "llm_failed" }, 502);
   }

@@ -6,6 +6,7 @@ import { clearDemo, loadDemo } from "@/lib/demo";
 import { store } from "@/lib/store";
 import type { Tone } from "@/lib/types";
 import { useStoreValue } from "@/lib/use-store";
+import { AiKeySetting } from "./AiKeySetting";
 import { MemorySetting } from "./MemorySetting";
 
 const TONES: { value: Tone; label: string; hint: string }[] = [
@@ -73,6 +74,8 @@ export function PlusSettings() {
           className="size-6 accent-ink"
         />
       </label>
+
+      <AiKeySetting />
 
       <MemorySetting />
 
