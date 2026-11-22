@@ -68,6 +68,7 @@ def timing(shapes: list[tuple[str, int]]) -> str:
 
 
 def process_slide(xml: str) -> str:
+    xml = re.sub(r"<mc:AlternateContent\b.*?</mc:AlternateContent>", "", xml, flags=re.S)  # idempotent re-runs
     xml = re.sub(r"<p:transition\b.*?</p:transition>", "", xml, flags=re.S)
     xml = re.sub(r"<p:timing>.*?</p:timing>", "", xml, flags=re.S)
     shapes = [(m.group(1), int(m.group(2))) for m in SHAPE.finditer(xml)]
@@ -75,6 +76,8 @@ def process_slide(xml: str) -> str:
     anchor = "</p:clrMapOvr>"
     if anchor in xml:
         return xml.replace(anchor, anchor + insert, 1)
+    if "<p:extLst>" in xml:  # schema order: transition and timing come before extLst
+        return xml.replace("<p:extLst>", insert + "<p:extLst>", 1)
     return xml.replace("</p:sld>", insert + "</p:sld>", 1)
 
 
@@ -85,6 +88,8 @@ def main(path: Path) -> None:
             data = zin.read(item.filename)
             if re.fullmatch(r"ppt/slides/slide\d+\.xml", item.filename):
                 data = process_slide(data.decode("utf-8")).encode("utf-8")
+            # Note: do NOT reorder <p:notesMasterIdLst> in presentation.xml. The XSD prefers it before <p:sldIdLst>,
+            # but PowerPoint (Microsoft 365, Nov 2026) then refuses the file as corrupted; pptxgenjs' order opens fine.
             zout.writestr(item, data)
     shutil.move(str(tmp), path)
     print(f"motion added: {path}")

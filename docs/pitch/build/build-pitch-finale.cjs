@@ -5,7 +5,7 @@
 const path = require("node:path");
 const fs = require("node:fs");
 const pptxgen = require("pptxgenjs");
-const { ROOT, A, C, F, pct, dec, numbers, scene, addOrbs, accentRuns, card, eyebrow, logo } = require("./deck-lib.cjs");
+const { ROOT, A, C, F, pct, dec, numbers, scene, addOrbs, accentRuns, card, eyebrow, logo, TEAM, EVENT, teamCards, partnerLogos } = require("./deck-lib.cjs");
 
 const N = numbers();
 const SAFETY = JSON.parse(fs.readFileSync(path.join(ROOT, "public/models/safety.json"), "utf-8"));
@@ -15,12 +15,7 @@ pres.layout = "LAYOUT_16x9";
 pres.title = "BRAVER — finale";
 pres.author = "Équipe BRAVER";
 
-const TEAM = [
-  ["El Asmi Ilyas Daoud", "Machine learning · développement"],
-  ["El Mouhib Ayoub", "Machine learning · développement"],
-  ["El Wali Soukayna", "Machine learning · développement"],
-  ["Mfarram Mossaab", "Machine learning · développement"],
-];
+
 const ORBS_CORNER = { scenario: [9.15, 0.3, 0.42], action: [9.5, 0.75, 0.3], acceptation: [9.05, 0.85, 0.24] };
 const caught = (conf) => `${conf[1][1]} / ${conf[1][0] + conf[1][1]}`;
 const falseAlarms = (conf) => `${conf[0][1]} / ${conf[0][0] + conf[0][1]}`;
@@ -70,22 +65,23 @@ function bigStat(s, x, y, w, big, label, n, name, color = C.ink) {
 // 1 ── Title
 {
   const s = pres.addSlide();
-  scene(pres, s, { sky: "dawn", veil: 0, orbs: { scenario: [6.7, 1.1, 1.5], action: [8.2, 1.9, 1.15], acceptation: [7.2, 2.6, 0.85] } });
+  scene(pres, s, { sky: "dawn", veil: 0, orbs: { scenario: [6.9, 1.35, 1.35], action: [8.3, 2.05, 1.0], acceptation: [7.35, 2.75, 0.75] } });
   logo(s, 0.6, 0.45, "@0 logo");
   s.addText(accentRuns(["Vide ta ", "tête", "."], { fontFace: F.light, fontSize: 60, color: C.ink }), { x: 0.55, y: 1.1, w: 6.2, h: 1.2, margin: 0, objectName: "@1 title" });
   s.addText("Trier ses inquiétudes en trois zones, avec la sécurité d'abord. Du produit aux chiffres mesurés.", { x: 0.6, y: 2.35, w: 5.4, h: 0.8, fontFace: F.body, fontSize: 15, color: C.ink, margin: 0, objectName: "@2 sub" });
-  s.addText("Finale · Hackathon Oujda · novembre 2026", { x: 0.6, y: 3.25, w: 5, h: 0.3, fontFace: F.bold, fontSize: 11, color: C.ink2, margin: 0, objectName: "@3 date" });
+  partnerLogos(pres, s, 5.15, 0.25, "@0 partners");
+  s.addText(`Finale · ${EVENT} · équipe CTRL C`, { x: 0.6, y: 3.25, w: 6.4, h: 0.3, fontFace: F.bold, fontSize: 11, color: C.ink2, margin: 0, objectName: "@3 date" });
   s.addNotes("Bonjour. Hier, on vous a présenté l'idée de BRAVER. Aujourd'hui, on vous montre comment ça marche à l'intérieur : le produit, l'architecture, les données, les modèles, et les chiffres mesurés, avec leurs limites. (≈ 20 s)");
 }
 
 // 2 ── Problem
 {
   const s = pres.addSlide();
-  head(s, { eb: "LE PROBLÈME", parts: ["Les inquiétudes tournent en boucle, ", "seul", "."], notes: "Le problème : une inquiétude mélange prédictions, vrais problèmes et choses hors de contrôle. L'aide professionnelle n'est pas toujours accessible, les outils parlent rarement darija, et surtout ils ne repèrent pas un message de danger. (≈ 30 s)" });
+  head(s, { eb: "LE PROBLÈME", parts: ["Les inquiétudes tournent en boucle, ", "seul", "."], notes: "Le problème : une inquiétude mélange prédictions, vrais problèmes et choses hors de contrôle. L'aide professionnelle n'est pas toujours accessible, et surtout un message de danger doit être repéré tout de suite, même en darija. (≈ 30 s)" });
   const items = [
     [C.scenario, "Tout se mélange", "Prédiction, vrai problème, chose hors de contrôle : on ne sait pas par où commencer."],
     [C.action, "L'aide n'est pas toujours accessible", "Coût, attente, peur d'en parler."],
-    [C.danger, "Le danger passe inaperçu", "Les outils existants parlent rarement darija et ne repèrent pas un message en danger."],
+    [C.danger, "Le danger passe inaperçu", "Un message en danger doit être repéré tout de suite, même en darija, même sans réseau."],
   ];
   items.forEach(([col, t, d], i) => {
     const y = 1.75 + i * 1.1;
@@ -222,8 +218,8 @@ function bigStat(s, x, y, w, big, label, n, name, color = C.ink) {
 // 10 ── Zones data + labels check
 {
   const s = pres.addSlide();
-  head(s, { eb: "DONNÉES · ZONES", parts: ["Des étiquettes ", "vérifiées", "."], sky: "dusk", veil: 86, notes: `Pour les zones, il n'existait aucun jeu public. Nous avons généré ${N.ag.n_groups} inquiétudes valides en trois langues avec une IA, étiquetées à l'aveugle par deux modèles différents : accord ${pct(N.ag.agreement_qwen_safeguard)}, kappa ${dec(N.ag.cohen_kappa_qwen_safeguard, 2)}. Puis une personne de l'équipe a vérifié 100 étiquettes tirées au hasard : ${N.hc.qwen.agree} sur ${N.hc.qwen.n} d'accord, kappa ${dec(N.hc.qwen.kappa, 2)}. Honnêtement : les étiquettes de l'IA étaient visibles pendant la vérification, et aucun désaccord n'est dans le test. (≈ 45 s)` });
-  bigStat(s, 0.6, 1.65, 2.8, `${N.ag.n_groups} × 3`, "inquiétudes générées par IA (qwen), en français, darija latin et arabe", `train ${MZ.train_n} · val ${MZ.val_n} · test ${MZ.test.n}`, "@2 a");
+  head(s, { eb: "DONNÉES · ZONES", parts: ["Des étiquettes ", "contrôlées", "."], sky: "dusk", veil: 86, notes: `Pour les zones, il n'existait aucun jeu public. Nous avons généré ${(MZ.train_n + MZ.val_n + MZ.test.n) / 3} inquiétudes en trois langues avec une IA ; ${N.ag.n_groups} ont été étiquetées à l'aveugle par deux modèles différents : accord ${pct(N.ag.agreement_qwen_safeguard)}, kappa ${dec(N.ag.cohen_kappa_qwen_safeguard, 2)}. Puis une personne de l'équipe a vérifié 100 étiquettes tirées au hasard : ${N.hc.qwen.agree} sur ${N.hc.qwen.n} d'accord, kappa ${dec(N.hc.qwen.kappa, 2)}. Honnêtement : les étiquettes de l'IA étaient visibles pendant la vérification, et aucun désaccord n'est dans le test. (≈ 45 s)` });
+  bigStat(s, 0.6, 1.65, 2.8, `${(MZ.train_n + MZ.val_n + MZ.test.n) / 3} × 3`, "inquiétudes générées par IA (qwen), en français, darija latin et arabe", `train ${MZ.train_n} · val ${MZ.val_n} · test ${MZ.test.n}`, "@2 a");
   bigStat(s, 3.6, 1.65, 2.8, `κ ${dec(N.ag.cohen_kappa_qwen_safeguard, 4)}`, `accord ${pct(N.ag.agreement_qwen_safeguard)} entre deux IA (qwen et gpt-oss-safeguard), à l'aveugle`, `n = ${N.ag.n_groups}`, "@3 b", C.scenario);
   bigStat(s, 6.6, 1.65, 2.8, `${N.hc.qwen.agree} / ${N.hc.qwen.n}`, `confirmées par une personne · κ ${dec(N.hc.qwen.kappa, 4)}`, "étiquettes IA visibles · 0 désaccord dans le test", "@4 c", C.acceptation);
   s.addText("Le test zones ne contient que des groupes où l'intention de génération, qwen et le second modèle sont d'accord. Les phrases sont synthétiques : pas encore de vraies inquiétudes d'utilisateurs.", { x: 0.6, y: 3.3, w: 8.8, h: 0.6, fontFace: F.body, fontSize: 10, color: C.ink2, margin: 0, objectName: "@5 note" });
@@ -278,9 +274,9 @@ function bigStat(s, x, y, w, big, label, n, name, color = C.ink) {
 // 14 ── Ethics & limits
 {
   const s = pres.addSlide();
-  head(s, { eb: "ÉTHIQUE ET LIMITES", parts: ["Ce que BRAVER ", "ne fait pas", "."], sky: "dusk", veil: 86, ebColor: C.danger, notes: "Nos limites, dites franchement. Pas de diagnostic, pas de nom de trouble, pas de fausses promesses rassurantes. Nos données de test sont traduites ou générées par une IA, la vérification humaine n'était pas à l'aveugle, et nous avons encore des fausses alertes et des adieux indirects ratés en darija. (≈ 35 s)" });
+  head(s, { eb: "ÉTHIQUE ET LIMITES", parts: ["Ce que BRAVER ", "ne fait pas", "."], sky: "dusk", veil: 86, ebColor: C.danger, notes: "Nos limites, dites franchement. Pas de diagnostic, pas de nom de trouble, pas de fausses promesses rassurantes. Nos phrases de test en français et en darija sont traduites ou générées par une IA, la vérification humaine n'était pas à l'aveugle, et nous avons encore des fausses alertes et des adieux indirects ratés en darija. (≈ 35 s)" });
   const left = ["Pas de diagnostic, pas de nom de trouble", "Pas de « tout ira bien » : un garde-fou en code les remplace", "Pas de probabilité inventée par l'IA : seulement l'historique de la personne", "GAD-7 : score et tendance, jamais d'étiquette ; ≥ 15 → parler à un professionnel"];
-  const right = ["Données de test traduites ou générées par une IA", "Vérification humaine des zones avec étiquettes IA visibles", `Fausses alertes : ${falseAlarms(N.safety.pipe.confusion)} en ligne (échantillon)`, "Adieux indirects en darija encore ratés"];
+  const right = ["Tests en français et en darija : traduits ou générés par IA", "Vérification humaine des zones avec étiquettes IA visibles", `Fausses alertes : ${falseAlarms(N.safety.pipe.confusion)} en ligne (échantillon)`, "Adieux indirects en darija encore ratés"];
   [[left, "Règles du produit", C.acceptation, 0.6], [right, "Limites mesurées", C.danger, 5.1]].forEach(([items, t, col, x], k) => {
     card(pres, s, x, 1.6, 4.3, 3.3, `@${2 + k} card`);
     s.addText(t, { x: x + 0.25, y: 1.75, w: 3.8, h: 0.35, fontFace: F.bold, fontSize: 13, color: col, margin: 0, objectName: `@${2 + k} t` });
@@ -312,16 +308,12 @@ function bigStat(s, x, y, w, big, label, n, name, color = C.ink) {
   scene(pres, s, { sky: "night", veil: 0, orbs: { scenario: [6.85, 0.3, 0.62], action: [7.6, 0.6, 0.46], acceptation: [7.15, 1.05, 0.36] } });
   eyebrow(s, "L'ÉQUIPE", 0.6, 0.45, "@0 eyebrow", "C9C3EE");
   s.addText(accentRuns(["Merci. Vos ", "questions", " ?"], { fontFace: F.light, fontSize: 34, color: C.moon }), { x: 0.6, y: 0.8, w: 6.2, h: 1.2, margin: 0, objectName: "@1 title" });
-  TEAM.forEach(([name, role], i) => {
-    const x = 0.6 + (i % 2) * 3.15, y = 2.15 + Math.floor(i / 2) * 0.95;
-    card(pres, s, x, y, 2.95, 0.8, `@${2 + i} card`, { dark: true });
-    s.addText([{ text: name, options: { fontFace: F.bold, fontSize: 13, color: C.moon, breakLine: true } }, { text: role, options: { fontFace: F.body, fontSize: 10, color: "C9C3EE" } }], { x: x + 0.2, y: y + 0.1, w: 2.6, h: 0.6, margin: 0, valign: "middle", objectName: `@${2 + i} t` });
-  });
+  teamCards(pres, s);
   card(pres, s, 6.95, 2.0, 2.45, 2.85, "@6 qrcard", { fill: C.surface, transparency: 0 });
   s.addImage({ path: A("qr.png"), x: 7.3, y: 2.2, w: 1.75, h: 1.75, objectName: "@6 qr" });
   s.addText([{ text: "Essayez-la maintenant", options: { fontFace: F.bold, fontSize: 11, color: C.ink, breakLine: true } }, { text: "braver-omega.vercel.app", options: { fontFace: F.body, fontSize: 10, color: C.scenario, hyperlink: { url: "https://braver-omega.vercel.app" } } }], { x: 7.05, y: 4.05, w: 2.25, h: 0.6, align: "center", margin: 0, objectName: "@6 url" });
   s.addText("BRAVER n'est pas un service médical et ne pose pas de diagnostic. Chiffres détaillés : page Labo de l'app.", { x: 0.6, y: 4.95, w: 6.2, h: 0.3, fontFace: F.body, fontSize: 9, color: "C9C3EE", margin: 0, objectName: "@7 disc" });
-  s.addNotes("Nous sommes Ilyas, Ayoub, Soukayna et Mossaab. Tous les chiffres que vous avez vus sont sur la page Labo de l'app, et vous pouvez la tester avec ce QR code. Merci, nous sommes prêts pour vos questions. (≈ 20 s)");
+  s.addNotes("Nous sommes l'équipe CTRL C de l'EHEI Oujda : Ilyas, Ayoub, Soukayna et Mossab. Tous les chiffres que vous avez vus sont sur la page Labo de l'app, et vous pouvez la tester avec ce QR code. Merci, nous sommes prêts pour vos questions. (≈ 20 s)");
 }
 
 const OUT = path.join(ROOT, "docs/pitch/BRAVER-Finale-10min.pptx");
